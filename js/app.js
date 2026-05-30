@@ -458,18 +458,25 @@ document.addEventListener("DOMContentLoaded", () => {
         const tenant = Security.getLoggedInTenant();
         if (!tenant) return;
 
-        console.log(`📡 [Realtime] Abonnement aux alertes de pannes pour l'entrée ${tenant.entrance}...`);
+        console.log(`📡 [Realtime] Abonnement aux alertes et mises à jour de pannes...`);
 
         realtimeChannel = supabase
-            .channel('public:reports')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
-                const report = payload.new;
-                console.log("📡 [Realtime] Nouveau signalement reçu en direct :", report);
-
-                // Filtrage d'immeuble (entrée choisie par le locataire)
-                if (String(report.entrance) === String(tenant.entrance)) {
-                    triggerNotification(report);
+            .channel('public:db-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, async payload => {
+                console.log("📡 [Realtime] Signalement modifié :", payload);
+                
+                // Si c'est un nouveau rapport pour l'entrée du locataire, on affiche une alerte
+                if (payload.eventType === 'INSERT' && String(payload.new.entrance) === String(tenant.entrance)) {
+                    triggerNotification(payload.new);
                 }
+                
+                // Rafraîchir l'état global pour mettre à jour les tuiles (statistiques, badges)
+                await Store.init();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'elevators' }, async payload => {
+                console.log("📡 [Realtime] Statut d'ascenseur modifié :", payload);
+                // Rafraîchir l'état global
+                await Store.init();
             })
             .subscribe((status) => {
                 console.log(`📡 [Realtime] Statut d'abonnement : ${status}`);

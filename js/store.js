@@ -88,6 +88,9 @@ const Store = (() => {
                     history: elHistory
                 };
             });
+            
+            // Notifier l'application que les données ont été mises à jour
+            window.dispatchEvent(new CustomEvent("storeUpdated"));
         } catch (err) {
             console.error("Erreur d'assemblage de l'état depuis Supabase", err);
             throw err;
