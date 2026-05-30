@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     year: 'numeric', month: '2-digit', day: '2-digit',
                     hour: '2-digit', minute: '2-digit', second: '2-digit'
                 });
-                ctx.fillText(`Amicale Leclerc Cachan • ${dateStr}`, width - Math.max(10, Math.round(width * 0.02)), height - (barHeight / 2));
+                ctx.fillText(`Collectif Plaine • ${dateStr}`, width - Math.max(10, Math.round(width * 0.02)), height - (barHeight / 2));
 
                 // Signature à gauche
                 ctx.textAlign = "left";
