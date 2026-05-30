@@ -515,8 +515,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 3. Soumission au store
         try {
+            // Affichage d'un indicateur de chargement sur le bouton
+            const submitBtn = reportForm.querySelector("button[type='submit']");
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = "Téléversement en cours...";
+            submitBtn.disabled = true;
+
             // Le pseudo de l'auteur est récupéré de manière sécurisée côté Store pour éviter toute usurpation
-            Store.addReport(entrance, { type, description, photo: selectedPhotoData });
+            await Store.addReport(entrance, { type, description, photo: selectedPhotoData });
             
             // Affichage succès
             reportSuccessMsg.textContent = "Votre signalement a été enregistré avec succès. Merci pour votre aide !";
@@ -525,16 +531,19 @@ document.addEventListener("DOMContentLoaded", () => {
             // Réinitialiser le formulaire photo
             resetPhotoUpload();
             
-            const submitBtn = reportForm.querySelector("button[type='submit']");
-            submitBtn.disabled = true;
+            // Rafraîchir l'affichage local
+            renderDashboard();
 
             setTimeout(() => {
                 closeModal(reportModal);
+                submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }, 1800);
             
         } catch (err) {
             showReportError("Une erreur est survenue lors de l'enregistrement : " + err.message);
+            const submitBtn = reportForm.querySelector("button[type='submit']");
+            submitBtn.disabled = false;
         }
     });
 
@@ -635,14 +644,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Attacher l'action de modération (suppression de signalement)
                 if (isAdmin) {
-                    item.querySelector(".btn-delete-report").addEventListener("click", () => {
+                    item.querySelector(".btn-delete-report").addEventListener("click", async () => {
                         if (confirm("Voulez-vous vraiment supprimer ce signalement locataire ?")) {
                             try {
-                                Store.deleteReport(elevator.id, report.id);
+                                await Store.deleteReport(elevator.id, report.id);
                                 // Re-rendre le tableau de bord et réouvrir/actualiser la modale de détails
+                                renderDashboard();
                                 openDetailsModal(elevator.id);
                             } catch (err) {
-                                alert("Erreur d'autorisation : " + err.message);
+                                alert("Erreur de suppression : " + err.message);
                             }
                         }
                     });
@@ -690,7 +700,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Traitement du formulaire d'administration de statut
-    adminStatusForm.addEventListener("submit", (e) => {
+    adminStatusForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         
         const id = adminEntranceIdInput.value;
@@ -698,12 +708,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const notes = adminMaintenanceNotes.value;
 
         try {
-            Store.updateStatus(id, newStatus, notes);
+            await Store.updateStatus(id, newStatus, notes);
             
             // Message flash de confirmation pro
             alert(`Mise à jour effectuée avec succès pour l'entrée ${id}.`);
             
             // Actualiser l'affichage
+            renderDashboard();
             openDetailsModal(id);
         } catch (err) {
             alert("Erreur de modification du statut : " + err.message);
@@ -751,8 +762,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </button>
             `;
             
-            document.getElementById("tenant-logout-btn").addEventListener("click", () => {
-                Security.logoutTenant();
+            document.getElementById("tenant-logout-btn").addEventListener("click", async () => {
+                await Store.logoutTenant();
                 renderAuthHeader();
                 renderDashboard();
                 if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
@@ -961,9 +972,34 @@ document.addEventListener("DOMContentLoaded", () => {
         renderDashboard();
     });
 
+    async function initApp() {
+        initTheme();
+        applyAdminUIState(Security.isAdminLoggedIn());
+        renderAuthHeader();
+        
+        try {
+            // Afficher un loader visuel temporaire premium
+            entrancesGrid.innerHTML = `
+                <div class="loading-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; color: var(--text-muted);">
+                    <div style="font-size: 2rem; margin-bottom: 1rem; animation: pulse 1.5s infinite;">📡</div>
+                    <div>Connexion en cours à Supabase...</div>
+                </div>
+            `;
+            
+            // Charger les ascenseurs depuis le cloud Supabase
+            await Store.init();
+            
+            renderDashboard();
+        } catch (err) {
+            console.error("Erreur d'initialisation Supabase", err);
+            entrancesGrid.innerHTML = `
+                <div class="alert-box alert-danger" style="margin-top: 1.5rem;">
+                    ⚠️ Impossible de se connecter à l'instance Supabase. Veuillez vous assurer d'avoir bien initialisé vos tables PostgreSQL et configuré votre réseau.
+                </div>
+            `;
+        }
+    }
+
     // Démarrage initial de l'application
-    initTheme();
-    applyAdminUIState(Security.isAdminLoggedIn());
-    renderAuthHeader();
-    renderDashboard();
+    initApp();
 });
