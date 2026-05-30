@@ -140,6 +140,7 @@ const Store = (() => {
          * Initialise la connexion et effectue l'auto-seeding si la base est vide
          */
         async init() {
+            _isLocalMode = false; // Tenter de se reconnecter à Supabase en direct
             try {
                 _ensureSupabase();
                 // 1. Synchroniser la session active de Supabase Auth
@@ -181,6 +182,14 @@ const Store = (() => {
 
                 // 4. Charger et assembler l'état
                 await _fetchAndAssembleState();
+
+                // Masquer le bandeau local si la connexion réussit
+                const banner = document.getElementById("admin-banner");
+                if (banner && banner.classList.contains("local-mode-active")) {
+                    banner.classList.add("hidden");
+                    banner.classList.remove("local-mode-active");
+                }
+
                 console.log("📡 [Store] Connexion Cloud Supabase opérationnelle.");
 
             } catch (err) {
