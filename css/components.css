@@ -301,7 +301,7 @@
     color: var(--text-primary);
 }
 
-.btn-close-modal {
+.modal-header .btn-close-modal {
     background: none;
     border: none;
     color: var(--text-muted);
@@ -317,7 +317,7 @@
     border-radius: 50%;
 }
 
-.btn-close-modal:hover {
+.modal-header .btn-close-modal:hover {
     color: var(--text-primary);
     background-color: var(--border-color);
 }
