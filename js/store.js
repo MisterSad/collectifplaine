@@ -3,8 +3,8 @@
  * Gère la persistance locale sécurisée, les opérations CRUD, les comptes utilisateurs et l'application des contrôles d'accès.
  */
 const Store = (() => {
-    const ELEVATOR_STORAGE_KEY = "leclerc_asc_data_v1";
-    const USER_STORAGE_KEY = "leclerc_asc_users_v1";
+    const ELEVATOR_STORAGE_KEY = "leclerc_asc_data_v2";
+    const USER_STORAGE_KEY = "leclerc_asc_users_v2";
 
     // Variables d'état interne
     let _elevators = [];
@@ -34,23 +34,11 @@ const Store = (() => {
             if (usersData) {
                 _users = JSON.parse(usersData);
             } else {
-                // Comptes de test pré-configurés (Mot de passe : voisin123)
-                _users = [
-                    {
-                        username: "Marc40",
-                        entrance: "40",
-                        apartment: "12",
-                        passwordHash: "bb14a0eae2e70754e08ce2f42aefe3ca7ec5f2f36afa23b8ee9f20a927ccd3ff"
-                    },
-                    {
-                        username: "Sarah48",
-                        entrance: "48",
-                        apartment: "4B",
-                        passwordHash: "37d93c1adfa447d633445724cd3a21dbd8a0d9b4641adce52fc2bda0e16cee70"
-                    }
-                ];
+                // Aucun compte de test pré-configuré pour un démarrage 100 % propre et sécurisé
+                _users = [];
                 _saveUsersState();
             }
+        }
         } catch (e) {
             console.error("Erreur d'accès au localStorage (utilisateurs), chargement par défaut", e);
             _users = [];
