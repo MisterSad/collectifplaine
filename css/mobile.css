@@ -437,7 +437,7 @@ button, a, select, input, textarea, label {
         margin-top: 0.2rem;
     }
 
-    /* Zone droite : boutons côte à côte (compact) */
+    /* Zone droite : bouton Détails uniquement (Signaler masqué) */
     .card-actions {
         flex-direction: row;
         gap: 0.35rem;
@@ -445,11 +445,16 @@ button, a, select, input, textarea, label {
         flex-shrink: 0;
     }
 
+    /* Masquer le bouton Signaler sur les tuiles mobile */
+    .card-actions .btn-report-card {
+        display: none;
+    }
+
     .card-actions .btn {
         flex: none;
         min-height: 34px;
         font-size: 0.72rem;
-        padding: 0.3rem 0.6rem;
+        padding: 0.3rem 0.75rem;
         white-space: nowrap;
     }
 }
