@@ -1,0 +1,371 @@
+/* =========================================================
+   MOBILE.CSS — Mobile-First Responsive Overrides
+   Collectif Plaine — v2.0
+   Breakpoints: 480px (xs), 640px (sm), 768px (md), 1024px (lg)
+   ========================================================= */
+
+/* =========================================================
+   1. HEADER — Responsive
+   ========================================================= */
+
+/* Sur mobile, réduire le logo et masquer le sous-titre */
+@media (max-width: 480px) {
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+    }
+
+    .logo-text h1 {
+        font-size: 1rem;
+    }
+
+    .logo-text .subtitle {
+        display: none; /* Masqué sur très petit écran */
+    }
+
+    .header-actions {
+        gap: 0.4rem;
+    }
+
+    /* Réduire la taille des boutons du header */
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.6rem;
+        min-height: 34px;
+    }
+}
+
+/* =========================================================
+   2. AUTH HEADER AREA — empêcher le débordement
+   ========================================================= */
+
+.auth-header-area {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap; /* par défaut pas de wrap */
+}
+
+@media (max-width: 480px) {
+    /* Sur mobile : on affiche les boutons auth en dessous si besoin */
+    .auth-header-area {
+        gap: 0.35rem;
+    }
+
+    /* Le badge utilisateur connecté est tronqué */
+    .user-profile-badge {
+        max-width: 120px;
+        overflow: hidden;
+    }
+
+    .user-profile-badge span:last-child {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 80px;
+    }
+}
+
+/* =========================================================
+   3. NOTIFICATIONS DROPDOWN — responsive
+   ========================================================= */
+
+@media (max-width: 480px) {
+    .notification-dropdown {
+        width: calc(100vw - 2rem);
+        right: -60px; /* Recentrer sur mobile */
+        left: auto;
+    }
+}
+
+/* =========================================================
+   4. STATS GRID — 3 col → 3 petites col sur mobile correct
+   ========================================================= */
+
+/* Déjà en 3 col, mais on ajuste le padding et les tailles */
+@media (max-width: 640px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 0.6rem 0.4rem;
+    }
+
+    .stat-num {
+        font-size: 1.4rem;
+    }
+
+    .stat-label {
+        font-size: 0.65rem;
+    }
+}
+
+/* =========================================================
+   5. ENTRANCES GRID — 2 col sur tablette, 1 sur mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .entrances-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .elevator-card {
+        padding: 1rem 0.85rem;
+    }
+
+    .entrance-label .title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .entrances-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   6. TABS NAV — masquer texte sur xs, garder icône + label court
+   ========================================================= */
+
+@media (max-width: 480px) {
+    .app-tabs-nav {
+        gap: 0.25rem;
+        padding: 0.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .tab-link {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.75rem;
+        gap: 0.3rem;
+        min-height: 38px;
+    }
+
+    /* Masquer l'emoji des spans (on garde le SVG icône) */
+    .tab-link span:not(.badge-soon) {
+        display: none;
+    }
+
+    /* Sauf l'onglet actif qui affiche son texte court */
+    .tab-link.active span:not(.badge-soon) {
+        display: inline;
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+
+    .tab-icon {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* =========================================================
+   7. MODALES — corrige le footer avec boutons qui s'imbriquent
+   ========================================================= */
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-wrap: nowrap; /* par défaut OK */
+}
+
+/* Sur mobile : les boutons passent en pleine largeur empilés */
+@media (max-width: 480px) {
+    .modal-backdrop {
+        padding: 0.5rem;
+        align-items: flex-end; /* La modale colle au bas de l'écran */
+    }
+
+    .modal-card {
+        max-height: 92vh;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0; /* Arrondi seulement en haut */
+        width: 100%;
+    }
+
+    .modal-card.modal-sm {
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .modal-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .modal-body {
+        padding: 1.25rem;
+    }
+
+    /* CORRECTION PRINCIPALE : boutons empilés en colonne sur mobile */
+    .modal-footer {
+        flex-direction: column-reverse; /* Primary en haut, Annuler en bas */
+        gap: 0.5rem;
+        padding: 1rem 1.25rem;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Sauf le bouton fermer × qui garde sa taille */
+    .modal-footer .btn-close-modal:not(.btn) {
+        width: auto;
+    }
+}
+
+/* =========================================================
+   8. AUTH MODAL SPÉCIFIQUE — onglets Connexion/Créer un compte
+   ========================================================= */
+
+@media (max-width: 480px) {
+    .modal-tab-btn {
+        font-size: 0.95rem;
+        padding: 1rem 0.25rem 0.75rem 0.25rem;
+    }
+
+    .modal-alerts-container {
+        padding: 0.75rem 1.25rem 0 1.25rem;
+    }
+}
+
+/* =========================================================
+   9. SECTION MANIFESTE / WELCOME — padding mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .welcome-association {
+        padding: 1.25rem 1rem;
+    }
+
+    .manifest-highlight {
+        padding: 1rem;
+    }
+
+    .call-to-action-text {
+        font-size: 0.95rem;
+        padding: 1rem;
+    }
+}
+
+/* =========================================================
+   10. TOASTS — déjà géré mais amélioration
+   ========================================================= */
+
+@media (max-width: 480px) {
+    .toast-container {
+        top: auto;
+        bottom: 16px;
+        right: 8px;
+        left: 8px;
+        max-width: 100%;
+    }
+}
+
+/* =========================================================
+   11. ACTION SECTION — bouton pleine largeur sur mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .action-section {
+        margin: 1rem 0;
+    }
+
+    .pulse-button {
+        font-size: 0.95rem;
+        padding: 0.75rem 1.25rem;
+    }
+}
+
+/* =========================================================
+   12. FOOTER — centré sur mobile
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .gdpr-tag {
+        justify-content: center;
+    }
+
+    .last-update {
+        text-align: center;
+    }
+}
+
+/* =========================================================
+   13. DÉTAILS MODALE — status container responsive
+   ========================================================= */
+
+@media (max-width: 480px) {
+    .details-status-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.85rem;
+    }
+
+    .admin-actions-section {
+        padding: 1rem;
+    }
+}
+
+/* =========================================================
+   14. CARD ACTIONS — boutons dans les cartes ascenseur
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .card-actions {
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .card-actions .btn {
+        width: 100%;
+        flex: none;
+    }
+}
+
+/* =========================================================
+   15. PLACEHOLDER SECTIONS
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .placeholder-section {
+        padding: 2.5rem 1.25rem;
+    }
+}
+
+/* =========================================================
+   16. GLOBAL TOUCH IMPROVEMENTS
+   ========================================================= */
+
+/* Éviter le double-tap zoom sur les boutons iOS */
+button, a, select, input, textarea {
+    touch-action: manipulation;
+}
+
+/* Safe area pour iPhone avec notch / Dynamic Island */
+@supports (padding: max(0px)) {
+    .app-header {
+        padding-left: max(0rem, env(safe-area-inset-left));
+        padding-right: max(0rem, env(safe-area-inset-right));
+    }
+
+    .modal-backdrop {
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+
+    .toast-container {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+}

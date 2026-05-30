@@ -303,20 +303,4 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* Responsive Overrides */
-@media (max-width: 600px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
-        align-items: center;
-    }
-    
-    .last-update {
-        text-align: center;
-        margin-top: 0.5rem;
-    }
-}
+/* Responsive overrides → voir css/mobile.css */
