@@ -12,6 +12,18 @@ const Store = (() => {
      */
     function _ensureSupabase() {
         if (typeof supabase === 'undefined' || !supabase) {
+            // Tentative d'initialisation tardive de secours (en cas de chargement asynchrone ou décalé du CDN/lib)
+            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+                try {
+                    const supabaseUrl = "https://iblfurgquymrcyzefwzy.supabase.co";
+                    const supabaseKey = "sb_publishable_yweP1a-OQKW3-IYNxz1Prg_1Eg7b-0B";
+                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                    console.log("📡 [Store] Réinitialisation à la volée du client de base de données réussie.");
+                    return;
+                } catch (e) {
+                    console.error("Échec de l'initialisation de secours :", e);
+                }
+            }
             throw new Error("Le client de base de données (Supabase) n'a pas pu être initialisé. Cela est généralement dû à un bloqueur de publicités (AdBlock/uBlock) ou un bouclier de navigateur (Brave Shields) bloquant le script CDN de Supabase. Veuillez désactiver votre bloqueur pour ce site et rafraîchir la page.");
         }
     }
