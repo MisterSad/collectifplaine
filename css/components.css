@@ -1155,3 +1155,42 @@ textarea:focus {
     }
 }
 
+/* Style de l'état vide des actualités (sans annonces fictives) */
+.no-news-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--glass-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--glass-shadow);
+    margin-top: 1.5rem;
+    animation: fadeIn var(--transition-normal);
+}
+
+.no-news-icon {
+    font-size: 3rem;
+    margin-bottom: 1.25rem;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+}
+
+.no-news-container h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-family: 'Outfit', sans-serif;
+}
+
+.no-news-container p {
+    max-width: 450px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+
