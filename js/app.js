@@ -284,6 +284,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
+        document.querySelectorAll(".btn-view-details").forEach(btn => {
+            btn.addEventListener("click", () => {
+                openDetailsModal(btn.dataset.id);
+            });
+        });
+
         renderIncidents();
         renderMessages();
     }
