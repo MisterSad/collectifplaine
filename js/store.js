@@ -90,7 +90,7 @@ const Store = (() => {
                     }))
                     : [];
 
-                const elHistory = histories
+                    const elHistory = histories
                     ? histories.filter(h => String(h.entrance) === String(el.id)).map(h => ({
                         id: h.id,
                         timestamp: new Date(h.created_at).getTime(),
@@ -99,13 +99,42 @@ const Store = (() => {
                     }))
                     : [];
 
+                // Calculate cumulative downtime
+                let downtimeMs = 0;
+                let downSince = null;
+                const sortedHistory = [...elHistory].sort((a, b) => a.timestamp - b.timestamp);
+                
+                for (const event of sortedHistory) {
+                    if (event.status !== 'en_service') {
+                        if (downSince === null) downSince = event.timestamp;
+                    } else {
+                        if (downSince !== null) {
+                            downtimeMs += (event.timestamp - downSince);
+                            downSince = null;
+                        }
+                    }
+                }
+                
+                // If currently down and we have a tracked downSince
+                if (el.status !== 'en_service') {
+                    if (downSince !== null) {
+                        downtimeMs += (Date.now() - downSince);
+                    } else if (el.last_status_change) {
+                        // Edge case: no prior history, but we know it's currently down since last_status_change
+                        downtimeMs += (Date.now() - new Date(el.last_status_change).getTime());
+                    }
+                }
+
+                const downtimeDays = Math.floor(downtimeMs / (1000 * 60 * 60 * 24));
+
                 return {
                     id: el.id,
                     status: el.status,
                     lastStatusChange: new Date(el.last_status_change).getTime(),
                     maintenanceNotes: el.maintenance_notes || "",
                     tenantReports: elReports,
-                    history: elHistory
+                    history: elHistory,
+                    downtimeDays: downtimeDays
                 };
             });
             
@@ -422,11 +451,15 @@ const Store = (() => {
         },
 
         getStats() {
-            const stats = { en_service: 0, en_maintenance: 0, en_panne: 0, total: _elevators.length };
+            const stats = { en_service: 0, en_maintenance: 0, en_panne: 0, total: _elevators.length, total_downtime: 0 };
             _elevators.forEach(e => {
                 if (e.status === "en_service") stats.en_service++;
                 else if (e.status === "en_maintenance") stats.en_maintenance++;
                 else if (e.status === "en_panne") stats.en_panne++;
+                
+                if (e.downtimeDays) {
+                    stats.total_downtime += e.downtimeDays;
+                }
             });
             return stats;
         },

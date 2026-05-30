@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const statFunctional = document.getElementById("stat-functional");
     const statMaintenance = document.getElementById("stat-maintenance");
     const statBroken = document.getElementById("stat-broken");
+    const statDowntime = document.getElementById("stat-downtime");
     
     // Boutons d'actions principaux
     const quickReportBtn = document.getElementById("quick-report-btn");
@@ -46,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const detailsStatusBadge = document.getElementById("details-status-badge");
     const detailsStatusText = document.getElementById("details-status-text");
     const detailsLastChange = document.getElementById("details-last-change");
+    const detailsDowntime = document.getElementById("details-downtime");
     const maintenanceInfoBox = document.getElementById("maintenance-info-box");
     const maintenanceDetails = document.getElementById("maintenance-details");
     const tenantReportsList = document.getElementById("tenant-reports-list");
@@ -181,6 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
         statFunctional.textContent = stats.en_service;
         statMaintenance.textContent = stats.en_maintenance;
         statBroken.textContent = stats.en_panne;
+        statDowntime.textContent = stats.total_downtime ? `${stats.total_downtime} j` : "0 j";
 
         // 2. Nettoyage de la grille
         entrancesGrid.innerHTML = "";
@@ -996,6 +999,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         detailsStatusText.textContent = statusText;
         detailsLastChange.textContent = `Dernier changement de statut : ${formatTimeAgo(elevator.lastStatusChange)}`;
+        detailsDowntime.textContent = elevator.downtimeDays > 0 ? `Pannes cumulées : ${elevator.downtimeDays} jour(s)` : "";
 
         // 3. Bloc de maintenance active
         if ((elevator.status === "en_maintenance" || elevator.status === "en_panne") && elevator.maintenanceNotes) {
