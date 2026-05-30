@@ -1241,7 +1241,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Erreur d'initialisation Supabase", err);
             entrancesGrid.innerHTML = `
                 <div class="alert-box alert-danger" style="margin-top: 1.5rem;">
-                    ⚠️ Impossible de se connecter à l'instance Supabase. Veuillez vous assurer d'avoir bien initialisé vos tables PostgreSQL et configuré votre réseau.
+                    ⚠️ Impossible de se connecter à la base de données. L'application est actuellement indisponible. Veuillez vérifier votre connexion ou désactiver vos bloqueurs de publicité pour ce site.
                 </div>
             `;
         }

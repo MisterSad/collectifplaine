@@ -1,51 +1,15 @@
 /**
  * Collectif Plaine - Magasin de Données (Store Supabase Live)
- * Gère la persistance sécurisée dans le cloud Supabase (PostgreSQL, Auth, Storage)
+ * Gère la persistance sécurisée dans le cloud Supabase (PostgreSQL, Storage)
+ * L'authentification utilise une table personnalisée "residents".
  */
 const Store = (() => {
-    // Variable locale pour stocker l'état assemblé des ascenseurs (compatibilité frontend)
     let _elevators = [];
-    let _users = [];
-    let _isLocalMode = false;
-
-    // Charger les utilisateurs locaux depuis localStorage
-    try {
-        const storedUsers = localStorage.getItem("leclerc_asc_users_local");
-        _users = storedUsers ? JSON.parse(storedUsers) : [];
-    } catch (e) {
-        console.error("Erreur de lecture de _users locaux", e);
-    }
-
-    function _loadLocalElevatorsState() {
-        try {
-            const data = localStorage.getItem("leclerc_asc_elevators_local");
-            if (data) {
-                _elevators = JSON.parse(data);
-            } else {
-                _elevators = JSON.parse(JSON.stringify(INITIAL_ELEVATOR_DATA));
-                _saveLocalElevatorsState();
-            }
-        } catch (e) {
-            console.error("Erreur de chargement de l'état local", e);
-            _elevators = JSON.parse(JSON.stringify(INITIAL_ELEVATOR_DATA));
-        }
-    }
-
-    function _saveLocalElevatorsState() {
-        try {
-            localStorage.setItem("leclerc_asc_elevators_local", JSON.stringify(_elevators));
-        } catch (e) {
-            console.error("Erreur d'écriture de l'état local", e);
-        }
-    }
 
     /**
      * Vérifie de manière robuste si le client Supabase est initialisé.
-     * Lève une exception claire si un bloqueur de publicité ou Brave bloque le CDN.
      */
     function _ensureSupabase() {
-        if (_isLocalMode) return; // Si nous sommes en mode local hors-ligne de secours, ne rien bloquer
-
         if (typeof supabase === 'undefined' || !supabase) {
             // Tentative d'initialisation tardive de secours (en cas de chargement asynchrone ou décalé du CDN/lib)
             if (window.supabase && window.supabase.createClient) {
@@ -59,7 +23,7 @@ const Store = (() => {
                     console.error("Échec de l'initialisation de secours :", e);
                 }
             }
-            throw new Error("Le client de base de données (Supabase) n'a pas pu être initialisé. Cela est généralement dû à un bloqueur de publicités (AdBlock/uBlock) ou un bouclier de navigateur (Brave Shields) bloquant le script CDN de Supabase. Veuillez désactiver votre bloqueur pour ce site et rafraîchir la page.");
+            throw new Error("Le client de base de données (Supabase) n'a pas pu être initialisé. Assurez-vous d'être connecté à internet et désactivez vos bloqueurs de publicité.");
         }
     }
 
@@ -67,10 +31,6 @@ const Store = (() => {
      * Effectue le requêtage de Supabase et assemble l'objet local _elevators
      */
     async function _fetchAndAssembleState() {
-        if (_isLocalMode) {
-            _loadLocalElevatorsState();
-            return;
-        }
         _ensureSupabase();
         try {
             // 1. Récupérer les ascenseurs
@@ -100,7 +60,7 @@ const Store = (() => {
             // 4. Assemblage au format de l'application
             _elevators = elevators.map(el => {
                 const elReports = reports
-                    ? reports.filter(r => r.entrance === el.id).map(r => ({
+                    ? reports.filter(r => String(r.entrance) === String(el.id)).map(r => ({
                         id: r.id,
                         timestamp: new Date(r.created_at).getTime(),
                         type: r.type,
@@ -111,7 +71,7 @@ const Store = (() => {
                     : [];
 
                 const elHistory = histories
-                    ? histories.filter(h => h.entrance === el.id).map(h => ({
+                    ? histories.filter(h => String(h.entrance) === String(el.id)).map(h => ({
                         id: h.id,
                         timestamp: new Date(h.created_at).getTime(),
                         status: h.status,
@@ -128,7 +88,6 @@ const Store = (() => {
                     history: elHistory
                 };
             });
-
         } catch (err) {
             console.error("Erreur d'assemblage de l'état depuis Supabase", err);
             throw err;
@@ -140,30 +99,17 @@ const Store = (() => {
          * Initialise la connexion et effectue l'auto-seeding si la base est vide
          */
         async init() {
-            _isLocalMode = false; // Tenter de se reconnecter à Supabase en direct
             try {
                 _ensureSupabase();
-                // 1. Synchroniser la session active de Supabase Auth
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session && session.user) {
-                    const meta = session.user.user_metadata;
-                    Security.setTenantSession({
-                        username: meta.username || session.user.email.split('@')[0],
-                        entrance: meta.entrance || "",
-                        apartment: meta.apartment || ""
-                    });
-                } else {
-                    Security.logoutTenant();
-                }
-
-                // 2. Charger les ascenseurs pour vérifier si la table est vide
+                
+                // 1. Charger les ascenseurs pour vérifier si la table est vide
                 const { data: elevators, error } = await supabase
                     .from('elevators')
                     .select('id');
 
                 if (error) throw error;
 
-                // 3. Auto-seeding si 0 lignes trouvées
+                // 2. Auto-seeding si 0 lignes trouvées
                 if (elevators.length === 0) {
                     console.log("🚀 [Supabase Seeding] Base vide. Seeding automatique des 9 entrées...");
                     const seedData = INITIAL_ELEVATOR_DATA.map(el => ({
@@ -180,10 +126,10 @@ const Store = (() => {
                     if (seedError) throw seedError;
                 }
 
-                // 4. Charger et assembler l'état
+                // 3. Charger et assembler l'état
                 await _fetchAndAssembleState();
 
-                // Masquer le bandeau local si la connexion réussit
+                // Masquer le bandeau local s'il existe (nettoyage UI)
                 const banner = document.getElementById("admin-banner");
                 if (banner && banner.classList.contains("local-mode-active")) {
                     banner.classList.add("hidden");
@@ -191,93 +137,39 @@ const Store = (() => {
                 }
 
                 console.log("📡 [Store] Connexion Cloud Supabase opérationnelle.");
-
             } catch (err) {
-                console.warn("📡 [Store Fallback] Supabase indisponible ou bloqué. Passage en Mode Local Hors-ligne.", err);
-                _isLocalMode = true;
-                
-                // Charger l'état local
-                _loadLocalElevatorsState();
-                
-                // Restaurer la session locale si elle existe
-                const localTenant = Security.getLoggedInTenant();
-                if (localTenant) {
-                    Security.setTenantSession(localTenant);
-                } else {
-                    Security.logoutTenant();
-                }
-
-                // Afficher un bandeau informatif premium discret dans l'en-tête
-                setTimeout(() => {
-                    const banner = document.getElementById("admin-banner");
-                    if (banner) {
-                        banner.innerHTML = `⚠️ Mode Local Hors-ligne activé (Supabase est bloqué ou inaccessible). Les données sont conservées localement dans votre navigateur.`;
-                        banner.className = "admin-banner local-mode-active";
-                        banner.style.background = "linear-gradient(135deg, #f59e0b, #d97706)";
-                        banner.style.color = "#ffffff";
-                        banner.classList.remove("hidden");
-                    }
-                }, 500);
+                console.error("Erreur critique lors de l'initialisation Supabase.", err);
+                throw err; // Propage l'erreur pour la gérer dans app.js
             }
         },
 
-        /**
-         * Récupère la liste complète des ascenseurs (copie profonde)
-         */
         getElevators() {
             return JSON.parse(JSON.stringify(_elevators));
         },
 
-        /**
-         * Récupère un ascenseur spécifique par son numéro d'entrée
-         */
         getElevatorById(id) {
             const elevator = _elevators.find(e => e.id === String(id));
             return elevator ? JSON.parse(JSON.stringify(elevator)) : null;
         },
 
-        /**
-         * Ajoute un signalement locataire dans PostgreSQL (et charge la photo sur Storage)
-         */
         async addReport(entranceId, rawReportData) {
+            _ensureSupabase();
             const loggedTenant = Security.getLoggedInTenant();
             if (!loggedTenant) {
                 throw new Error("Accès refusé : Vous devez créer un compte locataire et être connecté pour signaler un incident.");
             }
 
             const reportId = "r_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
-
-            if (_isLocalMode) {
-                const el = _elevators.find(e => e.id === String(entranceId));
-                if (!el) throw new Error("Ascenseur introuvable");
-                
-                const userDisplay = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
-                const newReport = {
-                    id: reportId,
-                    timestamp: Date.now(),
-                    type: String(rawReportData.type),
-                    description: Security.sanitizeHTML(String(rawReportData.description).trim()),
-                    user: userDisplay,
-                    photo: rawReportData.photo || null
-                };
-                
-                el.tenantReports.unshift(newReport);
-                _saveLocalElevatorsState();
-                return { id: reportId, photo: rawReportData.photo || null };
-            }
-
             let publicPhotoUrl = null;
 
-            // 1. Traitement de la photo si elle est fournie (Base64)
+            // 1. Traitement de la photo si elle est fournie
             if (rawReportData.photo) {
                 try {
-                    // Convertir le base64 en Blob pour le téléversement
                     const response = await fetch(rawReportData.photo);
                     const blob = await response.blob();
                     
                     const filePath = `reports/${entranceId}/${reportId}.jpg`;
 
-                    // Téléverser l'image dans le bucket Supabase Storage
                     const { error: uploadError } = await supabase.storage
                         .from('elevator-photos')
                         .upload(filePath, blob, {
@@ -288,20 +180,18 @@ const Store = (() => {
 
                     if (uploadError) throw uploadError;
 
-                    // Récupérer l'URL publique de la photo
                     const { data: { publicUrl } } = supabase.storage
                         .from('elevator-photos')
                         .getPublicUrl(filePath);
                     
                     publicPhotoUrl = publicUrl;
-
                 } catch (err) {
-                    console.error("Erreur de téléversement de la photo sur Supabase Storage", err);
-                    throw new Error("Impossible de stocker la photo sur le serveur. " + err.message);
+                    console.error("Erreur de téléversement de la photo", err);
+                    throw new Error("Impossible de stocker la photo. " + err.message);
                 }
             }
 
-            // 2. Insérer le rapport dans la table reports PostgreSQL
+            // 2. Insérer le rapport dans PostgreSQL
             const userDisplay = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
             const { error: insertError } = await supabase
                 .from('reports')
@@ -316,46 +206,28 @@ const Store = (() => {
 
             if (insertError) throw insertError;
 
-            // 3. Rafraîchir l'état local
             await _fetchAndAssembleState();
-            
             return { id: reportId, photo: publicPhotoUrl };
         },
 
-        /**
-         * Supprime un signalement locataire (Réservé à l'administrateur)
-         */
         async deleteReport(entranceId, reportId) {
+            _ensureSupabase();
             if (!Security.isAdminLoggedIn()) {
                 throw new Error("Accès refusé : Connexion administrateur requise.");
             }
 
-            if (_isLocalMode) {
-                const el = _elevators.find(e => e.id === String(entranceId));
-                if (el) {
-                    el.tenantReports = el.tenantReports.filter(r => r.id !== String(reportId));
-                    _saveLocalElevatorsState();
-                }
-                return true;
-            }
-
-            // 1. Supprimer le rapport de PostgreSQL
             const { error } = await supabase
                 .from('reports')
                 .delete()
                 .eq('id', String(reportId));
 
             if (error) throw error;
-
-            // 2. Rafraîchir l'état local
             await _fetchAndAssembleState();
             return true;
         },
 
-        /**
-         * Met à jour le statut et les notes techniques de l'ascenseur (Réservé à l'administrateur)
-         */
         async updateStatus(entranceId, newStatus, technicalNotes) {
+            _ensureSupabase();
             if (!Security.isAdminLoggedIn()) {
                 throw new Error("Accès refusé : Connexion administrateur requise.");
             }
@@ -376,30 +248,6 @@ const Store = (() => {
                 historyNote = `${statusLabels[newStatus]} (changement d'état sans détails supplémentaires).`;
             }
 
-            if (_isLocalMode) {
-                const el = _elevators.find(e => e.id === String(entranceId));
-                if (!el) throw new Error("Ascenseur introuvable");
-                
-                el.status = newStatus;
-                el.lastStatusChange = Date.now();
-                el.maintenanceNotes = sanitizedNotes;
-                
-                el.history.unshift({
-                    id: historyId,
-                    timestamp: Date.now(),
-                    status: newStatus,
-                    notes: historyNote
-                });
-                
-                if (newStatus === "en_service") {
-                    el.tenantReports = [];
-                }
-                
-                _saveLocalElevatorsState();
-                return true;
-            }
-
-            // 1. Mettre à jour l'ascenseur
             const { error: elError } = await supabase
                 .from('elevators')
                 .update({
@@ -411,7 +259,6 @@ const Store = (() => {
 
             if (elError) throw elError;
 
-            // 2. Ajouter l'historique
             const { error: histError } = await supabase
                 .from('histories')
                 .insert({
@@ -423,7 +270,6 @@ const Store = (() => {
 
             if (histError) throw histError;
 
-            // 3. Si remise en service complète, supprimer automatiquement tous les signalements de panne en cours
             if (newStatus === "en_service") {
                 const { error: delError } = await supabase
                     .from('reports')
@@ -433,92 +279,59 @@ const Store = (() => {
                 if (delError) console.error("Erreur lors de la suppression des signalements résolus", delError);
             }
 
-            // 4. Rafraîchir l'état local
             await _fetchAndAssembleState();
             return true;
         },
 
-        /**
-         * Récupère les statistiques globales
-         */
         getStats() {
-            const stats = {
-                en_service: 0,
-                en_maintenance: 0,
-                en_panne: 0,
-                total: _elevators.length
-            };
-
+            const stats = { en_service: 0, en_maintenance: 0, en_panne: 0, total: _elevators.length };
             _elevators.forEach(e => {
                 if (e.status === "en_service") stats.en_service++;
                 else if (e.status === "en_maintenance") stats.en_maintenance++;
                 else if (e.status === "en_panne") stats.en_panne++;
             });
-
             return stats;
         },
 
         // ---------------------------------------------------------
-        // GESTION DES RESIDENTS (SUPABASE AUTH)
+        // GESTION DES RESIDENTS (SUPABASE TABLE 'residents')
         // ---------------------------------------------------------
 
-        /**
-         * Inscrit un nouveau locataire dans Supabase Auth (via email virtuel)
-         */
         async registerTenant(username, password, entrance, apartment) {
             _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
 
-            if (_isLocalMode) {
-                const exists = _users.some(u => u.username.toLowerCase() === normalizedUser.toLowerCase());
-                if (exists) {
-                    throw new Error("Ce pseudo est déjà utilisé par un autre résident.");
-                }
+            // 1. Vérifier si le pseudo existe déjà dans Supabase
+            const { data: existingUser, error: searchError } = await supabase
+                .from('residents')
+                .select('username')
+                .ilike('username', normalizedUser)
+                .maybeSingle();
+                
+            if (searchError) throw searchError;
+            if (existingUser) {
+                throw new Error("Ce pseudo est déjà utilisé par un autre résident.");
+            }
 
-                const passwordHash = await Security.hashPassword(password, normalizedUser);
-                const newUser = {
+            // 2. Hacher le mot de passe localement avant envoi
+            const passwordHash = await Security.hashPassword(password, normalizedUser);
+            const userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+
+            // 3. Insérer le nouvel utilisateur dans la table
+            const { error: insertError } = await supabase
+                .from('residents')
+                .insert({
+                    id: userId,
                     username: normalizedUser,
+                    password_hash: passwordHash,
                     entrance: String(entrance),
-                    apartment: normalizedApartment,
-                    passwordHash: passwordHash
-                };
+                    apartment: normalizedApartment
+                });
 
-                _users.push(newUser);
-                try {
-                    localStorage.setItem("leclerc_asc_users_local", JSON.stringify(_users));
-                } catch (e) {
-                    console.error("Erreur d'écriture de _users", e);
-                }
+            if (insertError) throw insertError;
 
-                Security.setTenantSession(newUser);
-                return newUser;
-            }
-
-            const virtualEmail = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
-
-            // Inscrire l'utilisateur dans Supabase Auth
-            const { data, error } = await supabase.auth.signUp({
-                email: virtualEmail,
-                password: password,
-                options: {
-                    data: {
-                        username: normalizedUser,
-                        entrance: String(entrance),
-                        apartment: normalizedApartment
-                    }
-                }
-            });
-
-            if (error) {
-                // Traduction conviviale de l'erreur d'unicité de Supabase
-                if (error.message.includes("already registered")) {
-                    throw new Error("Ce pseudo est déjà utilisé par un autre résident.");
-                }
-                throw error;
-            }
-
-            // Initialiser la session locale synchrone
+            // 4. Initialiser la session locale
             const tenant = {
                 username: normalizedUser,
                 entrance: String(entrance),
@@ -528,68 +341,39 @@ const Store = (() => {
             return tenant;
         },
 
-        /**
-         * Authentifie un locataire existant avec Supabase Auth
-         */
         async loginTenant(username, password) {
             _ensureSupabase();
             const normalizedUser = String(username).trim();
 
-            if (_isLocalMode) {
-                const user = _users.find(u => u.username.toLowerCase() === normalizedUser.toLowerCase());
-                if (!user) {
-                    throw new Error("Pseudo ou mot de passe incorrect.");
-                }
+            // 1. Rechercher l'utilisateur
+            const { data: user, error } = await supabase
+                .from('residents')
+                .select('*')
+                .ilike('username', normalizedUser)
+                .maybeSingle();
 
-                const calculatedHash = await Security.hashPassword(password, user.username);
-                if (calculatedHash !== user.passwordHash) {
-                    throw new Error("Pseudo ou mot de passe incorrect.");
-                }
-
-                Security.setTenantSession(user);
-                return user;
+            if (error) throw error;
+            if (!user) {
+                throw new Error("Pseudo ou mot de passe incorrect.");
             }
 
-            const virtualEmail = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
-
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: virtualEmail,
-                password: password
-            });
-
-            if (error) {
-                if (error.message.includes("Invalid login credentials")) {
-                    throw new Error("Pseudo ou mot de passe incorrect.");
-                }
-                throw error;
+            // 2. Vérifier le mot de passe
+            const calculatedHash = await Security.hashPassword(password, user.username);
+            if (calculatedHash !== user.password_hash) {
+                throw new Error("Pseudo ou mot de passe incorrect.");
             }
 
-            // Récupérer les métadonnées de l'utilisateur
-            const meta = data.user.user_metadata;
+            // 3. Initialiser la session
             const tenant = {
-                username: meta.username || normalizedUser,
-                entrance: meta.entrance || "",
-                apartment: meta.apartment || ""
+                username: user.username,
+                entrance: user.entrance,
+                apartment: user.apartment
             };
-
             Security.setTenantSession(tenant);
             return tenant;
         },
 
-        /**
-         * Déconnecte le locataire actif
-         */
         async logoutTenant() {
-            _ensureSupabase();
-            if (_isLocalMode) {
-                Security.logoutTenant();
-                return;
-            }
-            try {
-                await supabase.auth.signOut();
-            } catch (e) {
-                console.error("Erreur de déconnexion réseau Supabase", e);
-            }
             Security.logoutTenant();
         }
     };
