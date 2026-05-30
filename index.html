@@ -85,12 +85,6 @@
 
     <!-- Contenu Principal -->
     <main class="container">
-        <!-- Bannière d'alerte générale d'administration en cours -->
-        <div id="admin-banner" class="admin-banner hidden">
-            <span class="pulse-indicator"></span>
-            <p><strong>Mode Professionnel Activé</strong> - Vous pouvez modifier l'état des ascenseurs et modérer les signalements.</p>
-        </div>
-
         <!-- ============================================ -->
         <!-- NAVIGATION PAR ONGLETS (TABS) -->
         <!-- ============================================ -->
@@ -398,7 +392,7 @@
                 <!-- Section Espace Pro - Modification d'état (Caché si pas loggué) -->
                 <div id="admin-actions-section" class="admin-actions-section hidden">
                     <div class="admin-action-header">
-                        <h5>🛠️ Administration - Modifier le statut de cette entrée</h5>
+                        <h5>✅ Mettre à jour le statut de l'ascenseur</h5>
                     </div>
                     
                     <form id="admin-status-form" class="admin-status-form">
@@ -407,18 +401,18 @@
                         <div class="form-group">
                             <label for="admin-select-status">Nouveau statut</label>
                             <select id="admin-select-status" required>
-                                <option value="en_service">En Service</option>
-                                <option value="en_maintenance">En Maintenance / Intervention</option>
-                                <option value="en_panne">En Panne (Arrêt Complet)</option>
+                                <option value="en_service">🟢 En Service (Réparé)</option>
+                                <option value="en_maintenance">🟡 En Maintenance (Intervention prévue)</option>
+                                <option value="en_panne">🔴 En Panne (Hors Service)</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="admin-maintenance-notes">Notes de maintenance / Détails de l'intervention</label>
-                            <textarea id="admin-maintenance-notes" rows="2" placeholder="Ex: Intervention d'Otis programmée pour demain 10h. Pièce de rechange commandée." maxlength="200"></textarea>
+                            <label for="admin-maintenance-notes">Commentaire ou informations utiles</label>
+                            <textarea id="admin-maintenance-notes" rows="2" placeholder="Ex: Ascenseur réparé par le technicien ce matin." maxlength="200"></textarea>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">Enregistrer les modifications</button>
+                        <button type="submit" class="btn btn-primary btn-block">Valider le changement</button>
                     </form>
                 </div>
             </div>
@@ -508,29 +502,6 @@
     </div>
 
     <!-- ============================================ -->
-    <!-- MODALE : CONNEXION ADMINISTRATION (PIN CODE) -->
-    <!-- ============================================ -->
-    <div id="login-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass modal-sm" tabindex="-1">
-            <div class="modal-header">
-                <h3>Connexion Espace Pro</h3>
-                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
-            </div>
-            <form id="login-form">
-                <div class="modal-body">
-                    <div id="login-error-msg" class="alert-box alert-danger hidden"></div>
-                    <div class="form-group center-text">
-                        <label for="admin-pin">Saisir le Code PIN Administrateur</label>
-                        <input type="password" id="admin-pin" class="pin-input" placeholder="••••" required maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Valider</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <!-- ============================================ -->
     <!-- MODALE : ZOOM PHOTO (LIGHTBOX) -->
     <!-- ============================================ -->

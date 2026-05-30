@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderDashboard() {
         const elevators = Store.getElevators();
         const stats = Store.getStats();
-        const isAdmin = Security.isAdminLoggedIn();
+        const tenant = Security.getLoggedInTenant();
 
         // 1. Remplissage des statistiques
         statFunctional.textContent = stats.en_service;
@@ -759,7 +759,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const isAdmin = Security.isAdminLoggedIn();
+        const tenant = Security.getLoggedInTenant();
 
         // 1. Renseigner l'en-tête
         detailsEntranceNum.textContent = elevator.id;
@@ -799,8 +799,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const item = document.createElement("div");
                 item.className = "report-item";
                 
-                // Bouton de suppression pour l'administrateur
-                const deleteBtnHtml = isAdmin 
+                // Bouton de suppression pour tout locataire connecté
+                const deleteBtnHtml = tenant 
                     ? `<button class="btn-delete-report" data-report-id="${report.id}">
                         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-left">
                             <polyline points="3 6 5 6 21 6"/>
@@ -835,13 +835,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 }
 
-                // Attacher l'action de modération (suppression de signalement)
-                if (isAdmin) {
+                // Attacher l'action (suppression de signalement) accessible à tout locataire
+                if (tenant) {
                     item.querySelector(".btn-delete-report").addEventListener("click", async () => {
-                        if (confirm("Voulez-vous vraiment supprimer ce signalement locataire ?")) {
+                        if (confirm("Voulez-vous vraiment supprimer ce signalement ?")) {
                             try {
                                 await Store.deleteReport(elevator.id, report.id);
-                                // Re-rendre le tableau de bord et réouvrir/actualiser la modale de détails
                                 renderDashboard();
                                 openDetailsModal(elevator.id);
                             } catch (err) {
@@ -878,8 +877,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // 6. Section Administration Interne dans la modale
-        if (isAdmin) {
+        // 6. Section de mise à jour de statut (accessible aux locataires)
+        if (tenant) {
             adminEntranceIdInput.value = elevator.id;
             adminSelectStatus.value = elevator.status;
             adminMaintenanceNotes.value = elevator.maintenanceNotes || "";
@@ -892,7 +891,7 @@ document.addEventListener("DOMContentLoaded", () => {
         openModal(detailsModal);
     }
 
-    // Traitement du formulaire d'administration de statut
+    // Traitement du formulaire de mise à jour de statut
     adminStatusForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         
@@ -903,11 +902,12 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             await Store.updateStatus(id, newStatus, notes);
             
-            // Message flash de confirmation pro
+            // Message flash de confirmation
             alert(`Mise à jour effectuée avec succès pour l'entrée ${id}.`);
             
             // Actualiser l'affichage
             renderDashboard();
+            openDetailsModal(id);
             openDetailsModal(id);
         } catch (err) {
             alert("Erreur de modification du statut : " + err.message);
@@ -924,26 +924,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderAuthHeader() {
         authHeaderArea.innerHTML = "";
         
-        const adminLoggedIn = Security.isAdminLoggedIn();
         const tenant = Security.getLoggedInTenant();
 
-        if (adminLoggedIn) {
-            authHeaderArea.innerHTML = `
-                <button id="admin-logout-btn" class="btn btn-danger btn-sm" aria-label="Quitter Mode Pro">
-                    <span>Quitter Mode Pro</span>
-                </button>
-            `;
-            
-            document.getElementById("admin-logout-btn").addEventListener("click", () => {
-                Security.logoutAdmin();
-                applyAdminUIState(false);
-                renderAuthHeader();
-                renderDashboard();
-                if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
-                    openDetailsModal(activeDetailsEntranceId);
-                }
-            });
-        } else if (tenant) {
+        if (tenant) {
             const firstLetter = tenant.username.charAt(0).toUpperCase();
             authHeaderArea.innerHTML = `
                 <div class="user-profile-badge" title="Connecté en tant que résident">
@@ -968,22 +951,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button id="tenant-login-btn" class="btn btn-primary btn-sm" aria-label="Connexion Espace Locataire">
                     <span>Connexion Résident</span>
                 </button>
-                <button id="admin-login-btn" class="btn btn-secondary btn-sm" aria-label="Espace Gestionnaire">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-left">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                    <span>Espace Pro</span>
-                </button>
             `;
             
             document.getElementById("tenant-login-btn").addEventListener("click", () => {
                 openAuthModal();
-            });
-            document.getElementById("admin-login-btn").addEventListener("click", () => {
-                loginForm.reset();
-                loginErrorMsg.classList.add("hidden");
-                openModal(loginModal);
             });
         }
     }
@@ -1097,40 +1068,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Formulaire Administration (Code PIN)
-    loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        loginErrorMsg.classList.add("hidden");
-        
-        const pin = adminPinInput.value;
-        const success = await Security.verifyAdminPin(pin);
-        
-        if (success) {
-            applyAdminUIState(true);
-            closeModal(loginModal);
-            renderAuthHeader();
-            renderDashboard();
-            if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
-                openDetailsModal(activeDetailsEntranceId);
-            }
-        } else {
-            loginErrorMsg.textContent = "Code PIN administrateur incorrect.";
-            loginErrorMsg.classList.remove("hidden");
-            adminPinInput.value = "";
-            adminPinInput.focus();
-        }
-    });
 
-    /**
-     * Ajuste visuellement les éléments interactifs de l'application selon la connexion Admin
-     */
-    function applyAdminUIState(isAdmin) {
-        if (isAdmin) {
-            adminBanner.classList.remove("hidden");
-        } else {
-            adminBanner.classList.add("hidden");
-        }
-    }
 
     // ---------------------------------------------------------
     // 6. GESTION DE LA NAVIGATION PAR ONGLETS (TABS)

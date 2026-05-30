@@ -3,11 +3,7 @@
  * Gère l'assainissement XSS, la validation, le Rate Limiting, le RBAC et le hachage des mots de passe.
  */
 const Security = (() => {
-    // Hachage SHA-256 du code PIN administrateur par défaut "1989"
-    const ADMIN_PIN_HASH = "9113b98df80f877c7a2ee5d865a04c9514b4e9bf25a49d315b0b15f115d2f0d2";
-    
     // Clés de stockage sessionStorage / localStorage
-    const ADMIN_SESSION_KEY = "leclerc_asc_admin_session";
     const TENANT_SESSION_KEY = "leclerc_asc_tenant_session";
     const RATE_LIMIT_KEY = "leclerc_asc_rate_limit";
     
@@ -224,37 +220,7 @@ const Security = (() => {
             };
         },
 
-        /**
-         * Vérifie le code PIN administrateur saisi par hachage SHA-256
-         */
-        async verifyAdminPin(pin) {
-            if (!pin || typeof pin !== 'string') return false;
-            
-            const inputHash = await _sha256(pin.trim());
-            
-            if (inputHash === ADMIN_PIN_HASH) {
-                const sessionToken = "token_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
-                sessionStorage.setItem(ADMIN_SESSION_KEY, sessionToken);
-                return true;
-            }
-            
-            return false;
-        },
 
-        /**
-         * Détermine si l'utilisateur est actuellement authentifié comme administrateur
-         */
-        isAdminLoggedIn() {
-            const token = sessionStorage.getItem(ADMIN_SESSION_KEY);
-            return (token && token.startsWith("token_"));
-        },
-
-        /**
-         * Déconnecte l'administrateur et détruit la session active
-         */
-        logoutAdmin() {
-            sessionStorage.removeItem(ADMIN_SESSION_KEY);
-        },
 
         // ---------------------------------------------------------
         // SECURE SESSION MANAGEMENT : LOCATAIRES (TENANTS)

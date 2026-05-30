@@ -277,19 +277,7 @@ button, a, select, input, textarea, label {
     }
 }
 
-/* =========================================================
-   4. BANNIÈRE ADMIN
-   ========================================================= */
 
-@media (max-width: 640px) {
-    .admin-banner {
-        font-size: 0.8rem;
-        padding: 0.6rem 0.85rem;
-        margin: 0.75rem 0;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-}
 
 /* =========================================================
    5. STATS SECTION

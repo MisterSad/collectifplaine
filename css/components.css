@@ -420,15 +420,7 @@ textarea:focus {
     margin-top: 0.25rem;
 }
 
-/* Code PIN administrateur */
-.pin-input {
-    letter-spacing: 0.5em;
-    font-size: 1.5rem !important;
-    text-align: center;
-    font-family: monospace;
-    max-width: 150px;
-    margin: 0.5rem auto 0 auto;
-}
+
 
 /* Alert system */
 .alert-box {

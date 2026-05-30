@@ -206,14 +206,38 @@ const Store = (() => {
 
             if (insertError) throw insertError;
 
+            // 3. Passer automatiquement l'ascenseur en panne
+            const elevator = this.getElevatorById(entranceId);
+            if (elevator && elevator.status !== 'en_panne') {
+                const historyId = "h_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const historyNote = `Signalement de panne automatique suite au rapport de ${userDisplay}`;
+                
+                await supabase
+                    .from('elevators')
+                    .update({
+                        status: 'en_panne',
+                        last_status_change: new Date().toISOString()
+                    })
+                    .eq('id', String(entranceId));
+                    
+                await supabase
+                    .from('status_history')
+                    .insert({
+                        id: historyId,
+                        entrance: String(entranceId),
+                        status: 'en_panne',
+                        notes: historyNote
+                    });
+            }
+
             await _fetchAndAssembleState();
             return { id: reportId, photo: publicPhotoUrl };
         },
 
         async deleteReport(entranceId, reportId) {
             _ensureSupabase();
-            if (!Security.isAdminLoggedIn()) {
-                throw new Error("Accès refusé : Connexion administrateur requise.");
+            if (!Security.getLoggedInTenant()) {
+                throw new Error("Accès refusé : Vous devez être connecté pour supprimer un signalement.");
             }
 
             const { error } = await supabase
@@ -228,8 +252,8 @@ const Store = (() => {
 
         async updateStatus(entranceId, newStatus, technicalNotes) {
             _ensureSupabase();
-            if (!Security.isAdminLoggedIn()) {
-                throw new Error("Accès refusé : Connexion administrateur requise.");
+            if (!Security.getLoggedInTenant()) {
+                throw new Error("Accès refusé : Vous devez être connecté pour mettre à jour le statut.");
             }
 
             const sanitizedNotes = technicalNotes ? Security.sanitizeHTML(String(technicalNotes).trim()) : "";
