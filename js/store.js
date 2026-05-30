@@ -212,7 +212,7 @@ const Store = (() => {
                 const historyId = "h_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
                 const historyNote = `Signalement de panne automatique suite au rapport de ${userDisplay}`;
                 
-                await supabase
+                const { error: updateError } = await supabase
                     .from('elevators')
                     .update({
                         status: 'en_panne',
@@ -220,14 +220,18 @@ const Store = (() => {
                     })
                     .eq('id', String(entranceId));
                     
-                await supabase
-                    .from('status_history')
+                if (updateError) console.error("Erreur mise à jour statut auto:", updateError);
+
+                const { error: histError } = await supabase
+                    .from('histories')
                     .insert({
                         id: historyId,
                         entrance: String(entranceId),
                         status: 'en_panne',
                         notes: historyNote
                     });
+                    
+                if (histError) console.error("Erreur historique auto:", histError);
             }
 
             await _fetchAndAssembleState();
