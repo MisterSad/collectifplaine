@@ -278,14 +278,107 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        });
-
         document.querySelectorAll(".btn-report-card").forEach(btn => {
             btn.addEventListener("click", () => {
                 openReportModal(btn.dataset.id);
             });
         });
+
+        renderIncidents();
+        renderMessages();
     }
+
+    /**
+     * Rendu des Incidents
+     */
+    function renderIncidents() {
+        if (!incidentsFeed) return;
+        const incidents = Store.getIncidents();
+        incidentsFeed.innerHTML = "";
+
+        if (incidents.length === 0) {
+            incidentsFeed.innerHTML = `<div class="loading-placeholder">Aucun incident signalé pour le moment.</div>`;
+            return;
+        }
+
+        const categoryIcons = {
+            "porte": "🚪", "vigik": "🔑", "proprete": "🚮", 
+            "chauffage": "🌡️", "eclairage": "💡", "securite": "⚠️", "autre": "❓"
+        };
+
+        incidents.forEach(incident => {
+            const el = document.createElement("div");
+            el.className = "report-item";
+            
+            const badgeClass = incident.status === 'resolu' ? 'badge-functional' : 'badge-broken';
+            const badgeText = incident.status === 'resolu' ? 'Résolu' : 'En cours';
+
+            el.innerHTML = `
+                <div class="report-header">
+                    <div class="report-meta">
+                        <strong>${categoryIcons[incident.category] || "❓"} ${incident.entrance !== 'tous' ? 'Bâtiment ' + incident.entrance : 'Espaces Communs'}</strong>
+                        <span class="report-author">${incident.user_display}</span>
+                    </div>
+                    <span class="report-time">${formatTimeAgo(new Date(incident.created_at).getTime())}</span>
+                </div>
+                <div class="report-content">
+                    <p>${incident.description}</p>
+                </div>
+                ${incident.photo_url ? `<div class="report-photo-thumb" style="background-image: url('${incident.photo_url}'); cursor:pointer;" onclick="window.openLightbox('${incident.photo_url}')" title="Agrandir la photo"></div>` : ""}
+                <div style="margin-top:0.75rem; display:flex; justify-content:space-between; align-items:center;">
+                    <span class="status-badge ${badgeClass}" style="font-size:0.7rem; padding:2px 6px;">${badgeText}</span>
+                </div>
+            `;
+            incidentsFeed.appendChild(el);
+        });
+    }
+
+    /**
+     * Rendu des Messages d'Entraide
+     */
+    function renderMessages() {
+        if (!messagesFeed) return;
+        const messages = Store.getMessages();
+        messagesFeed.innerHTML = "";
+
+        if (messages.length === 0) {
+            messagesFeed.innerHTML = `<div class="loading-placeholder">Soyez le premier à publier un message !</div>`;
+            return;
+        }
+
+        const typeLabels = {
+            "annonce": "📌 Annonce",
+            "entraide": "🤝 Entraide",
+            "alerte": "🚨 Alerte"
+        };
+
+        messages.forEach(msg => {
+            const el = document.createElement("div");
+            el.className = "card glass";
+            el.style.marginBottom = "1rem";
+            el.style.padding = "1.25rem";
+            
+            el.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
+                    <div>
+                        <span class="status-badge" style="background-color:rgba(255,255,255,0.1); color:var(--text-primary); margin-bottom:0.5rem; display:inline-block; font-size:0.75rem;">${typeLabels[msg.type]}</span>
+                        <h4 style="margin:0; font-size:1rem;">${msg.author}</h4>
+                        <span class="report-time" style="font-size:0.75rem;">${formatTimeAgo(new Date(msg.created_at).getTime())} ${msg.entrance ? '• Bât. ' + msg.entrance : ''}</span>
+                    </div>
+                </div>
+                <p style="margin:0; line-height:1.5; color:var(--text-secondary);">${msg.content}</p>
+            `;
+            messagesFeed.appendChild(el);
+        });
+    }
+
+    // Export pour le onclick depuis le DOM HTML sur les images d'incident
+    window.openLightbox = (url) => {
+        if (!lightboxImg) return;
+        lightboxImg.src = url;
+        lightboxModal.classList.remove("hidden");
+        lightboxModal.setAttribute("aria-hidden", "false");
+    };
 
     // ---------------------------------------------------------
     // 5. GESTION DES MODALES (OUVERTURE & FERMETURE)
