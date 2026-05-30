@@ -230,7 +230,7 @@ const Security = (() => {
         async verifyAdminPin(pin) {
             if (!pin || typeof pin !== 'string') return false;
             
-            const inputHash = await _sha256(pin);
+            const inputHash = await _sha256(pin.trim());
             
             if (inputHash === ADMIN_PIN_HASH) {
                 const sessionToken = "token_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
