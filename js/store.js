@@ -7,9 +7,20 @@ const Store = (() => {
     let _elevators = [];
 
     /**
+     * Vérifie de manière robuste si le client Supabase est initialisé.
+     * Lève une exception claire si un bloqueur de publicité ou Brave bloque le CDN.
+     */
+    function _ensureSupabase() {
+        if (typeof supabase === 'undefined' || !supabase) {
+            throw new Error("Le client de base de données (Supabase) n'a pas pu être initialisé. Cela est généralement dû à un bloqueur de publicités (AdBlock/uBlock) ou un bouclier de navigateur (Brave Shields) bloquant le script CDN de Supabase. Veuillez désactiver votre bloqueur pour ce site et rafraîchir la page.");
+        }
+    }
+
+    /**
      * Effectue le requêtage de Supabase et assemble l'objet local _elevators
      */
     async function _fetchAndAssembleState() {
+        _ensureSupabase();
         try {
             // 1. Récupérer les ascenseurs
             const { data: elevators, error: elError } = await supabase
@@ -78,6 +89,7 @@ const Store = (() => {
          * Initialise la connexion et effectue l'auto-seeding si la base est vide
          */
         async init() {
+            _ensureSupabase();
             try {
                 // 1. Synchroniser la session active de Supabase Auth
                 const { data: { session } } = await supabase.auth.getSession();
@@ -318,6 +330,7 @@ const Store = (() => {
          * Inscrit un nouveau locataire dans Supabase Auth (via email virtuel)
          */
         async registerTenant(username, password, entrance, apartment) {
+            _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
             const virtualEmail = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
@@ -357,6 +370,7 @@ const Store = (() => {
          * Authentifie un locataire existant avec Supabase Auth
          */
         async loginTenant(username, password) {
+            _ensureSupabase();
             const normalizedUser = String(username).trim();
             const virtualEmail = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
 
@@ -388,6 +402,7 @@ const Store = (() => {
          * Déconnecte le locataire actif
          */
         async logoutTenant() {
+            _ensureSupabase();
             try {
                 await supabase.auth.signOut();
             } catch (e) {
