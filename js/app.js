@@ -1154,7 +1154,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function initApp() {
         initTheme();
-        applyAdminUIState(Security.isAdminLoggedIn());
         renderAuthHeader();
         
         try {
