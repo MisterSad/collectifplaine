@@ -76,12 +76,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const lightboxCaption = document.getElementById("lightbox-caption");
     const btnCloseLightbox = document.getElementById("btn-close-lightbox");
 
+    // Centre de Notifications (Cloche)
+    const notificationBellBtn = document.getElementById("notification-bell-btn");
+    const notificationBadge = document.getElementById("notification-badge");
+    const notificationDropdown = document.getElementById("notification-dropdown");
+    const btnClearNotifications = document.getElementById("btn-clear-notifications");
+    const notificationList = document.getElementById("notification-list");
+    const toastContainer = document.getElementById("toast-container");
+
     // Boutons de fermeture de modales
     const closeModalButtons = document.querySelectorAll(".btn-close-modal");
 
     // Variable pour suivre l'entrée actuellement sélectionnée dans la modale détails
     let activeDetailsEntranceId = null;
     let selectedPhotoData = null; // Stocke la photo compressée et horodatée (Base64 dataURL)
+    let notificationsList = []; // Historique de session des alertes reçues
+    let realtimeChannel = null; // Référence de connexion realtime
 
     // ---------------------------------------------------------
     // 2. UTILITAIRES DE FORMATTAGE (AFFICHAGE)
@@ -428,6 +438,189 @@ document.addEventListener("DOMContentLoaded", () => {
         lightboxImg.src = "";
         lightboxCaption.textContent = "";
     });
+
+    // ---------------------------------------------------------
+    // SYSTEME DE NOTIFICATIONS TEMPS REEL (SUPABASE REALTIME & TOASTS)
+    // ---------------------------------------------------------
+
+    function requestDesktopNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().then(permission => {
+                console.log(`Permission de notification système : ${permission}`);
+            });
+        }
+    }
+
+    function subscribeToRealtimeNotifications() {
+        // Se désabonner d'abord si un canal est actif
+        unsubscribeFromRealtimeNotifications();
+
+        const tenant = Security.getLoggedInTenant();
+        if (!tenant) return;
+
+        console.log(`📡 [Realtime] Abonnement aux alertes de pannes pour l'entrée ${tenant.entrance}...`);
+
+        realtimeChannel = supabase
+            .channel('public:reports')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'reports' }, payload => {
+                const report = payload.new;
+                console.log("📡 [Realtime] Nouveau signalement reçu en direct :", report);
+
+                // Filtrage d'immeuble (entrée choisie par le locataire)
+                if (String(report.entrance) === String(tenant.entrance)) {
+                    triggerNotification(report);
+                }
+            })
+            .subscribe((status) => {
+                console.log(`📡 [Realtime] Statut d'abonnement : ${status}`);
+            });
+    }
+
+    function unsubscribeFromRealtimeNotifications() {
+        if (realtimeChannel) {
+            console.log("📡 [Realtime] Désabonnement du canal temps réel...");
+            supabase.removeChannel(realtimeChannel);
+            realtimeChannel = null;
+        }
+    }
+
+    function triggerNotification(report) {
+        const notifId = report.id;
+        
+        // 1. Ajouter l'alerte à l'historique local
+        const newNotif = {
+            id: notifId,
+            type: report.type,
+            description: report.description,
+            entrance: report.entrance,
+            user: report.user_display,
+            timestamp: Date.now(),
+            unread: true
+        };
+        
+        notificationsList.unshift(newNotif);
+        renderNotificationsList();
+
+        // 2. Émettre un signal sonore de notification douce synthétisé par le Web Audio API
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // Note Ré5 (alerte douce)
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.35);
+            osc.stop(audioCtx.currentTime + 0.4);
+        } catch (e) {
+            console.warn("L'alerte sonore n'a pas pu être jouée", e);
+        }
+
+        // 3. Déclencher le Toast In-App
+        showInAppToast(report);
+
+        // 4. Déclencher la notification système (Bureau) si l'application est en arrière-plan
+        if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
+            try {
+                new Notification(`Collectif Plaine - Alerte Entrée ${report.entrance}`, {
+                    body: `Un incident de type "${formatIssueType(report.type)}" a été signalé par un voisin : ${report.description}`,
+                    tag: notifId,
+                    requireInteraction: false
+                });
+            } catch (err) {
+                console.error("Erreur d'envoi de la notification système", err);
+            }
+        }
+    }
+
+    function showInAppToast(report) {
+        const toast = document.createElement("div");
+        toast.className = "toast-alert";
+        toast.setAttribute("role", "alert");
+        toast.innerHTML = `
+            <div class="toast-icon">🚨</div>
+            <div class="toast-content" style="cursor: pointer;">
+                <div class="toast-title">Alerte Entrée ${report.entrance}</div>
+                <div class="toast-body">Nouveau signalement "<strong>${formatIssueType(report.type)}</strong>" par un voisin. Cliquez pour voir.</div>
+            </div>
+            <button class="toast-close" aria-label="Fermer la notification">&times;</button>
+        `;
+
+        // Le clic sur le corps du Toast ouvre directement les détails de la panne
+        toast.querySelector(".toast-content").addEventListener("click", () => {
+            openDetailsModal(report.entrance);
+            toast.remove();
+        });
+
+        // Clic sur la fermeture
+        toast.querySelector(".toast-close").addEventListener("click", (e) => {
+            e.stopPropagation();
+            // Animation de sortie
+            toast.style.opacity = "0";
+            toast.style.transform = "translateX(50px)";
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        });
+
+        toastContainer.appendChild(toast);
+
+        // Disparition automatique après 7 secondes
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateX(50px)";
+                setTimeout(() => {
+                    if (toast.parentNode) toast.remove();
+                }, 300);
+            }
+        }, 7000);
+    }
+
+    function renderNotificationsList() {
+        notificationList.innerHTML = "";
+        
+        const unreadCount = notificationsList.filter(n => n.unread).length;
+        
+        // Mettre à jour le badge de la cloche
+        if (unreadCount > 0) {
+            notificationBadge.textContent = unreadCount;
+            notificationBadge.classList.remove("hidden");
+        } else {
+            notificationBadge.classList.add("hidden");
+        }
+
+        if (notificationsList.length === 0) {
+            notificationList.innerHTML = `<div class="notification-empty">Aucune alerte active</div>`;
+            return;
+        }
+
+        notificationsList.forEach(notif => {
+            const item = document.createElement("div");
+            item.className = `notification-item ${notif.unread ? 'unread' : ''}`;
+            item.innerHTML = `
+                <div class="notification-item-icon">🚨</div>
+                <div class="notification-item-content">
+                    <div class="notification-item-title">Alerte Entrée ${notif.entrance}</div>
+                    <div class="notification-item-desc">Signalement de type "<strong>${formatIssueType(notif.type)}</strong>" : ${notif.description}</div>
+                    <span class="notification-item-time">${formatTimeAgo(notif.timestamp)} • Par ${notif.user}</span>
+                </div>
+            `;
+
+            // Clic sur une alerte : la marque comme lue et ouvre les détails de l'ascenseur
+            item.addEventListener("click", () => {
+                notif.unread = false;
+                openDetailsModal(notif.entrance);
+                renderNotificationsList();
+                notificationDropdown.classList.add("hidden");
+                notificationDropdown.setAttribute("aria-hidden", "true");
+            });
+
+            notificationList.appendChild(item);
+        });
+    }
 
     // ---------------------------------------------------------
     // MODALE : SIGNALEMENT DE PANNE
@@ -849,6 +1042,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitBtn.disabled = false;
                 renderAuthHeader();
                 renderDashboard();
+                
+                // Activer les notifications en temps réel
+                requestDesktopNotificationPermission();
+                subscribeToRealtimeNotifications();
+
                 if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
                     openDetailsModal(activeDetailsEntranceId);
                 }
@@ -884,6 +1082,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitBtn.disabled = false;
                 renderAuthHeader();
                 renderDashboard();
+                
+                // Activer les notifications en temps réel
+                requestDesktopNotificationPermission();
+                subscribeToRealtimeNotifications();
+
                 if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
                     openDetailsModal(activeDetailsEntranceId);
                 }
@@ -965,6 +1168,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------
+    // EVENEMENTS DU CENTRE DE NOTIFICATIONS
+    // ---------------------------------------------------------
+
+    notificationBellBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        
+        const isHidden = notificationDropdown.classList.contains("hidden");
+        
+        if (isHidden) {
+            notificationDropdown.classList.remove("hidden");
+            notificationDropdown.setAttribute("aria-hidden", "false");
+            
+            // Marquer toutes les alertes comme lues à l'ouverture
+            notificationsList.forEach(n => n.unread = false);
+            renderNotificationsList();
+        } else {
+            notificationDropdown.classList.add("hidden");
+            notificationDropdown.setAttribute("aria-hidden", "true");
+        }
+    });
+
+    btnClearNotifications.addEventListener("click", (e) => {
+        e.stopPropagation();
+        notificationsList = [];
+        renderNotificationsList();
+        notificationDropdown.classList.add("hidden");
+        notificationDropdown.setAttribute("aria-hidden", "true");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!notificationDropdown.classList.contains("hidden") && 
+            !notificationDropdown.contains(e.target) && 
+            !notificationBellBtn.contains(e.target)) {
+            notificationDropdown.classList.add("hidden");
+            notificationDropdown.setAttribute("aria-hidden", "true");
+        }
+    });
+
+    // ---------------------------------------------------------
     // 7. INITIALISATION & ABONNEMENTS ÉVÉNEMENTIELS
     // ---------------------------------------------------------
     
@@ -990,6 +1232,11 @@ document.addEventListener("DOMContentLoaded", () => {
             await Store.init();
             
             renderDashboard();
+
+            // S'abonner aux alertes temps réel si l'utilisateur est déjà connecté en session
+            if (Security.getLoggedInTenant()) {
+                subscribeToRealtimeNotifications();
+            }
         } catch (err) {
             console.error("Erreur d'initialisation Supabase", err);
             entrancesGrid.innerHTML = `

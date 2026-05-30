@@ -55,6 +55,26 @@
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                     </svg>
                 </button>
+
+                <!-- Cloche de Notifications -->
+                <div class="notification-wrapper">
+                    <button id="notification-bell-btn" class="btn-icon" aria-label="Notifications" title="Centre de notifications">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span id="notification-badge" class="notification-badge hidden"></span>
+                    </button>
+                    <div id="notification-dropdown" class="notification-dropdown glass hidden" aria-hidden="true">
+                        <div class="dropdown-header">
+                            <h4>Alertes de votre entrée</h4>
+                            <button id="btn-clear-notifications" class="btn-clear-notifications" title="Vider les alertes">Effacer tout</button>
+                        </div>
+                        <div id="notification-list" class="notification-list">
+                            <div class="notification-empty">Aucune alerte active</div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Zone d'authentification dynamique (locataires & admin) -->
                 <div id="auth-header-area" class="auth-header-area"></div>
@@ -513,6 +533,10 @@
             <div id="lightbox-caption" class="lightbox-caption">Photo horodatée</div>
         </div>
     </div>
+    
+    <!-- Conteneur flottant des notifications Toasts -->
+    <div id="toast-container" class="toast-container"></div>
+    
     <!-- SDK Supabase Client via CDN officiel -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
