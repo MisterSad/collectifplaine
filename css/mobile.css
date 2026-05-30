@@ -801,8 +801,7 @@ button, a, select, input, textarea, label {
 
 @media (max-width: 640px) {
     .app-footer-bar {
-        padding: 1rem 0;
-        /* La barre de nav est fixe, donc pas de conflit */
+        display: none;
     }
 
     .footer-content {
