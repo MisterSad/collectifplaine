@@ -1,4 +1,9 @@
 /* Base & Resets */
+html {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -16,6 +21,8 @@ body {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
 }
 
 .container {
