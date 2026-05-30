@@ -129,99 +129,158 @@
 }
 
 /* =========================================================
-   6. TABS NAV — Tuiles 2×2 sur mobile
+   6. TABS NAV — Bottom App Bar sur mobile, inchangée sur desktop
    ========================================================= */
 
-/* Sur desktop : on cache les éléments spécifiques au mode tuile */
-.tab-tile-emoji {
-    display: none;
-}
-
+/* Éléments visibles uniquement sur mobile (bottom bar) */
+.tab-tile-emoji,
 .tab-label {
     display: none;
 }
 
-/* Sur mobile < 640px : transformation en grille de tuiles */
+/* ---- MOBILE : Bottom Navigation Bar ---- */
 @media (max-width: 640px) {
-    /* La nav passe en grille 2×2 */
+
+    /* La nav sort du flux et se fixe en bas comme une app native */
     .app-tabs-nav {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.6rem;
-        padding: 0.6rem;
-        overflow: visible; /* Plus besoin de scroll horizontal */
-        margin-bottom: 1.25rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 90;
+
+        /* Glassmorphism */
+        background: rgba(10, 15, 29, 0.88);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+
+        /* Layout : 4 colonnes égales */
+        display: flex;
+        flex-direction: row;
+        gap: 0;
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+        overflow: visible;
+
+        /* Safe area iPhone home indicator */
+        padding-bottom: env(safe-area-inset-bottom);
     }
 
-    /* Chaque tab devient une tuile carrée */
+    [data-theme="light"] .app-tabs-nav {
+        background: rgba(248, 250, 252, 0.92);
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Chaque onglet = une cellule de la barre */
     .tab-link {
+        flex: 1;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.4rem;
-        padding: 0.85rem 0.5rem;
-        border-radius: var(--radius-md);
-        border: 1px solid var(--border-color);
-        background-color: rgba(255, 255, 255, 0.03);
-        min-height: 80px;
-        width: 100%;
+        gap: 0.25rem;
+        padding: 0.6rem 0.25rem 0.5rem;
+        border-radius: 0;
+        border: none;
+        background: transparent;
+        min-height: 56px;
+        font-size: 0;        /* Cacher le texte hérité */
         position: relative;
+        transition: background var(--transition-fast);
+        white-space: nowrap;
     }
 
-    [data-theme="light"] .tab-link {
-        background-color: rgba(0, 0, 0, 0.02);
+    .tab-link:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.04);
     }
 
-    /* Afficher l'emoji grande taille */
+    [data-theme="light"] .tab-link:hover:not(.active) {
+        background: rgba(0, 0, 0, 0.03);
+    }
+
+    /* Indicateur de sélection : trait en haut de la barre */
+    .tab-link.active::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 20%;
+        right: 20%;
+        height: 2px;
+        background: var(--accent-gradient);
+        border-radius: 0 0 2px 2px;
+    }
+
+    /* Supprimer l'ancien ::after de desktop sur mobile */
+    .tab-link.active {
+        background: transparent;
+        box-shadow: none;
+        color: var(--accent-hover);
+    }
+
+    /* Grand emoji affiché */
     .tab-tile-emoji {
         display: block;
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         line-height: 1;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        transition: transform var(--transition-fast);
     }
 
-    /* Masquer l'icône SVG sur mobile (on garde l'emoji) */
+    .tab-link.active .tab-tile-emoji {
+        transform: translateY(-2px);
+        filter: drop-shadow(0 2px 6px rgba(79, 70, 229, 0.5));
+    }
+
+    /* Label court sous l'emoji */
+    .tab-label {
+        display: block;
+        font-size: 0.6rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        letter-spacing: 0.01em;
+        text-align: center;
+        line-height: 1;
+    }
+
+    .tab-link.active .tab-label {
+        color: var(--accent-hover);
+        font-weight: 700;
+    }
+
+    /* Masquer le SVG et le texte long sur mobile */
     .tab-icon {
         display: none;
     }
 
-    /* Masquer le texte long, afficher le label court */
     .tab-text {
         display: none;
     }
 
-    .tab-label {
-        display: block;
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-align: center;
-        line-height: 1.2;
-        color: var(--text-secondary);
-    }
-
-    /* État actif de la tuile */
-    .tab-link.active {
-        background: var(--accent-gradient);
-        border-color: transparent;
-        box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
-    }
-
-    .tab-link.active .tab-label {
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    .tab-link.active .tab-tile-emoji {
-        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
-    }
-
-    /* Badge "Bientôt" repositionné en coin sur mobile */
+    /* Badge "Bientôt" en coin de l'emoji */
     .tab-link .badge-soon {
         position: absolute;
-        top: 6px;
-        right: 6px;
-        font-size: 0.55rem;
-        padding: 0.1rem 0.3rem;
+        top: 8px;
+        right: calc(50% - 22px); /* centré sur la colonne */
+        font-size: 0.5rem;
+        padding: 0.08rem 0.25rem;
         margin: 0;
+        background: rgba(79, 70, 229, 0.2);
+        color: var(--accent-hover);
+        border-radius: 3px;
+    }
+
+    /* Le contenu principal doit avoir un padding-bottom pour ne pas être
+       caché derrière la barre fixe (56px barre + safe-area) */
+    main.container {
+        padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    }
+
+    /* Cacher la nav dans le flux normal (elle est fixe) */
+    /* On lui laisse sa place dans le flux avec un spacer invisible */
+    .app-tabs-nav::after {
+        content: none;
     }
 }
 
