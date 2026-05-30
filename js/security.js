@@ -3,8 +3,8 @@
  * Gère l'assainissement XSS, la validation, le Rate Limiting, le RBAC et le hachage des mots de passe.
  */
 const Security = (() => {
-    // Hachage SHA-256 du code PIN administrateur par défaut "2026"
-    const ADMIN_PIN_HASH = "158a323a7ba44870f23d96f1516dd70aa48e9a72db4ebb026b0a89e212a208ab";
+    // Hachage SHA-256 du code PIN administrateur par défaut "1989"
+    const ADMIN_PIN_HASH = "9113b98df80f877c7a2ee5d865a04c9514b4e9bf25a49d315b0b15f115d2f0d2";
     
     // Clés de stockage sessionStorage / localStorage
     const ADMIN_SESSION_KEY = "leclerc_asc_admin_session";
