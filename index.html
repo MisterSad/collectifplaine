@@ -89,48 +89,32 @@
         <!-- NAVIGATION PAR ONGLETS (TABS) -->
         <!-- ============================================ -->
         <nav class="app-tabs-nav glass" role="tablist" aria-label="Navigation principale">
-            <button class="tab-link active" data-tab="tab-community" role="tab" aria-selected="true" aria-controls="tab-community">
-                <span class="tab-tile-emoji">📢</span>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span class="tab-text">📢 Infos &amp; Vie du Collectif</span>
-                <span class="tab-label">Infos &amp; Collectif</span>
-            </button>
-            <button class="tab-link" data-tab="tab-elevators" role="tab" aria-selected="false" aria-controls="tab-elevators">
+            <button class="tab-link active" data-tab="tab-elevators" role="tab" aria-selected="true" aria-controls="tab-elevators">
                 <span class="tab-tile-emoji">🛗</span>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <polyline points="9 9 12 6 15 9"/>
-                    <polyline points="9 15 12 18 15 15"/>
-                </svg>
-                <span class="tab-text">🛗 Ascenseurs</span>
+                <span class="tab-text">Ascenseurs</span>
                 <span class="tab-label">Ascenseurs</span>
             </button>
-            <button class="tab-link" data-tab="tab-commons" role="tab" aria-selected="false" aria-controls="tab-commons">
-                <span class="tab-tile-emoji">🧼</span>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-                <span class="tab-text">🧼 Communs</span>
-                <span class="tab-label">Communs</span>
-                <span class="badge-soon">Bientôt</span>
+            <button class="tab-link" data-tab="tab-incidents" role="tab" aria-selected="false" aria-controls="tab-incidents">
+                <span class="tab-tile-emoji">⚠️</span>
+                <span class="tab-text">Incidents</span>
+                <span class="tab-label">Incidents</span>
             </button>
-            <button class="tab-link" data-tab="tab-heating" role="tab" aria-selected="false" aria-controls="tab-heating">
-                <span class="tab-tile-emoji">🌡️</span>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tab-icon">
-                    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
-                </svg>
-                <span class="tab-text">🌡️ Chauffage &amp; Eau</span>
-                <span class="tab-label">Chauffage &amp; Eau</span>
-                <span class="badge-soon">Bientôt</span>
+            <button class="tab-link" data-tab="tab-entraide" role="tab" aria-selected="false" aria-controls="tab-entraide">
+                <span class="tab-tile-emoji">💬</span>
+                <span class="tab-text">Entraide</span>
+                <span class="tab-label">Entraide</span>
+            </button>
+            <button class="tab-link" data-tab="tab-charges" role="tab" aria-selected="false" aria-controls="tab-charges">
+                <span class="tab-tile-emoji">📄</span>
+                <span class="tab-text">Charges</span>
+                <span class="tab-label">Charges</span>
             </button>
         </nav>
 
         <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 1 : INFOS & VIE DU COLLECTIF (ACTIF) -->
+        <!-- CONTENU DE L'ONGLET 1 : ASCENSEURS (ACTIF) -->
         <!-- ============================================ -->
-        <div id="tab-community" class="tab-content-panel active" role="tabpanel" aria-labelledby="tab-community">
+        <div id="tab-elevators" class="tab-content-panel active" role="tabpanel" aria-labelledby="tab-elevators">
             <!-- Manifeste du Collectif Plaine -->
             <section class="welcome-association card glass">
                 <div class="assoc-header">
@@ -221,36 +205,70 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 3 : CHAUFFAGE & EAU (SOON) -->
+        <!-- CONTENU DE L'ONGLET 2 : INCIDENTS -->
         <!-- ============================================ -->
-        <div id="tab-heating" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-heating">
-            <section class="placeholder-section card glass center-text">
-                <div class="placeholder-icon color-warning">
-                    <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+        <div id="tab-incidents" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-incidents">
+            <section class="action-section">
+                <button id="quick-incident-btn" class="btn btn-primary btn-lg pulse-button">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
+                    Signaler un autre Incident
+                </button>
+            </section>
+            
+            <section class="incidents-list-section">
+                <div class="section-title-wrapper">
+                    <h2 class="section-title">Incidents Signalés</h2>
+                    <p class="section-desc">Portes, propreté, chauffage, éclairage, nuisances...</p>
                 </div>
-                <h3>Espace Chauffage & Distribution d'Eau</h3>
-                <p class="placeholder-desc">Cet espace permettra prochainement de centraliser les informations concernant la température moyenne des appartements, de signaler les baisses de pression d'eau chaude ou les coupures temporaires planifiées par le bailleur.</p>
-                <div class="soon-banner">🏗️ Module en cours de co-conception par le Collectif</div>
+                <div id="incidents-feed" class="incidents-feed">
+                    <div class="loading-placeholder">Chargement des incidents...</div>
+                </div>
             </section>
         </div>
 
         <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 4 : COMMUNS & TRAVAUX (SOON) -->
+        <!-- CONTENU DE L'ONGLET 3 : ENTRAIDE -->
         <!-- ============================================ -->
-        <div id="tab-commons" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-commons">
+        <div id="tab-entraide" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-entraide">
+            <section class="action-section">
+                <button id="quick-message-btn" class="btn btn-primary btn-lg">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    Publier un message
+                </button>
+            </section>
+
+            <section class="messages-list-section">
+                <div class="section-title-wrapper">
+                    <h2 class="section-title">Tableau d'Affichage</h2>
+                    <p class="section-desc">Petites annonces, alertes et entraide entre voisins.</p>
+                </div>
+                <div id="messages-feed" class="messages-feed">
+                    <div class="loading-placeholder">Chargement du tableau...</div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CONTENU DE L'ONGLET 4 : CHARGES (CONSTRUCTION) -->
+        <!-- ============================================ -->
+        <div id="tab-charges" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
             <section class="placeholder-section card glass center-text">
-                <div class="placeholder-icon color-info">
+                <div class="placeholder-icon color-warning">
                     <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
                 </div>
-                <h3>Suivi des Parties Communes</h3>
-                <p class="placeholder-desc">Suivez les interventions de nettoyage, signalez les ampoules défectueuses dans les couloirs ou les dégradations dans les halls d'immeuble pour un cadre de vie propre et partagé.</p>
-                <div class="soon-banner">🏗️ Module en cours de co-conception par le Collectif</div>
+                <h3>Analyse des Charges</h3>
+                <p class="placeholder-desc">Cet espace permettra de décortiquer et de suivre les régularisations de charges annuelles (nettoyage, entretien espaces verts, contrats ascenseurs...).</p>
+                <div class="soon-banner" style="background-color: var(--color-warning); color: #fff; padding: 0.5rem 1rem; border-radius: 8px; margin-top: 1rem; display: inline-block;">🚧 En construction</div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">Nous sommes actuellement dans l'attente des documents justificatifs de la part du bailleur pour alimenter cette rubrique.</p>
             </section>
         </div>
     </main>
@@ -502,7 +520,133 @@
     </div>
 
     <!-- ============================================ -->
+    <!-- MODALE : SIGNALER UN AUTRE INCIDENT -->
     <!-- ============================================ -->
+    <div id="incident-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
+        <div class="modal-card glass" tabindex="-1">
+            <div class="modal-header">
+                <h3>Signaler un Incident</h3>
+                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
+            </div>
+            <form id="incident-form">
+                <div class="modal-body">
+                    <div id="incident-error-msg" class="alert-box alert-danger hidden"></div>
+                    <div id="incident-success-msg" class="alert-box alert-success hidden"></div>
+                    
+                    <div class="form-group">
+                        <label for="incident-category">Catégorie <span class="required">*</span></label>
+                        <select id="incident-category" required>
+                            <option value="" disabled selected>Choisissez une catégorie...</option>
+                            <option value="porte">🚪 Porte bloquée / ne ferme plus</option>
+                            <option value="vigik">🔑 Lecteur VIGIK / Interphone en panne</option>
+                            <option value="proprete">🚮 Propreté / Encombrants</option>
+                            <option value="chauffage">🌡️ Chauffage / Eau Chaude</option>
+                            <option value="eclairage">💡 Éclairage défectueux</option>
+                            <option value="securite">⚠️ Sécurité / Nuisance (Squat, Bruit)</option>
+                            <option value="autre">❓ Autre incident</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incident-entrance">Bâtiment / Entrée concernée</label>
+                        <select id="incident-entrance" required>
+                            <option value="36">36 avenue Division Leclerc</option>
+                            <option value="38">38 avenue Division Leclerc</option>
+                            <option value="40">40 avenue Division Leclerc</option>
+                            <option value="42">42 avenue Division Leclerc</option>
+                            <option value="44">44 avenue Division Leclerc</option>
+                            <option value="46">46 avenue Division Leclerc</option>
+                            <option value="48">48 avenue Division Leclerc</option>
+                            <option value="tous">📍 Concerne tous les bâtiments / Espaces verts</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="incident-description">Description précise <span class="required">*</span></label>
+                        <textarea id="incident-description" rows="3" required placeholder="Ex: La porte du hall 40 reste bloquée ouverte, le pêne est tordu." maxlength="300"></textarea>
+                    </div>
+                    
+                    <!-- Formulaire Photo Optionnel -->
+                    <div class="form-group">
+                        <label>Ajouter une photo (recommandé)</label>
+                        <p class="field-hint" style="margin-bottom: 0.5rem;">Preuve indispensable pour faire bouger le bailleur.</p>
+                        
+                        <!-- Zone de dépôt / Bouton de sélection (Identique à ascenseur mais IDs différents) -->
+                        <div id="incident-photo-dropzone" class="photo-dropzone">
+                            <input type="file" id="incident-photo-input" accept="image/jpeg, image/png, image/webp" class="hidden">
+                            <button type="button" id="btn-incident-camera" class="btn btn-secondary btn-sm photo-upload-btn">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                    <circle cx="12" cy="13" r="4"/>
+                                </svg>
+                                Prendre / Choisir une photo
+                            </button>
+                        </div>
+                        
+                        <!-- Prévisualisation Photo Incident -->
+                        <div id="incident-photo-preview-container" class="photo-preview-container hidden">
+                            <img id="incident-photo-preview" src="" alt="Prévisualisation">
+                            <button type="button" id="btn-remove-incident-photo" class="btn-remove-photo" aria-label="Supprimer la photo">&times;</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary pulse-button">Signaler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODALE : PUBLIER UN MESSAGE (ENTRAIDE) -->
+    <!-- ============================================ -->
+    <div id="message-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
+        <div class="modal-card glass" tabindex="-1">
+            <div class="modal-header">
+                <h3>Publier un message</h3>
+                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
+            </div>
+            <form id="message-form">
+                <div class="modal-body">
+                    <div id="message-error-msg" class="alert-box alert-danger hidden"></div>
+                    <div id="message-success-msg" class="alert-box alert-success hidden"></div>
+                    
+                    <div class="form-group">
+                        <label for="message-type">Type de message <span class="required">*</span></label>
+                        <select id="message-type" required>
+                            <option value="annonce">📌 Information / Petite annonce</option>
+                            <option value="entraide">🤝 Entraide (Demande / Proposition d'aide)</option>
+                            <option value="alerte">🚨 Alerte urgente entre voisins</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message-entrance">Visibilité</label>
+                        <select id="message-entrance" required>
+                            <option value="tous">🌍 Visible par toute la résidence</option>
+                            <option value="36">🏢 Uniquement 36 avenue Division Leclerc</option>
+                            <option value="38">🏢 Uniquement 38 avenue Division Leclerc</option>
+                            <option value="40">🏢 Uniquement 40 avenue Division Leclerc</option>
+                            <option value="42">🏢 Uniquement 42 avenue Division Leclerc</option>
+                            <option value="44">🏢 Uniquement 44 avenue Division Leclerc</option>
+                            <option value="46">🏢 Uniquement 46 avenue Division Leclerc</option>
+                            <option value="48">🏢 Uniquement 48 avenue Division Leclerc</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message-content">Votre message <span class="required">*</span></label>
+                        <textarea id="message-content" rows="4" required placeholder="Ex: Bonjour, j'ai trouvé un trousseau de clés près des poubelles du 40. Ou 'Je propose de réceptionner vos colis demain matin'." maxlength="400"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Publier</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <!-- MODALE : ZOOM PHOTO (LIGHTBOX) -->
     <!-- ============================================ -->
     <div id="lightbox-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">

@@ -5,6 +5,8 @@
  */
 const Store = (() => {
     let _elevators = [];
+    let _incidents = [];
+    let _messages = [];
 
     /**
      * Vérifie de manière robuste si le client Supabase est initialisé.
@@ -57,7 +59,25 @@ const Store = (() => {
 
             if (histError) throw histError;
 
-            // 4. Assemblage au format de l'application
+            // 4. Récupérer les autres incidents
+            const { data: incidents, error: incError } = await supabase
+                .from('incidents')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (incError) throw incError;
+
+            // 5. Récupérer les messages du tableau d'affichage
+            const { data: messages, error: msgError } = await supabase
+                .from('community_messages')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (msgError) throw msgError;
+
+            // 6. Assemblage au format de l'application
+            _incidents = incidents || [];
+            _messages = messages || [];
             _elevators = elevators.map(el => {
                 const elReports = reports
                     ? reports.filter(r => String(r.entrance) === String(el.id)).map(r => ({
@@ -148,6 +168,14 @@ const Store = (() => {
 
         getElevators() {
             return JSON.parse(JSON.stringify(_elevators));
+        },
+
+        getIncidents() {
+            return JSON.parse(JSON.stringify(_incidents));
+        },
+
+        getMessages() {
+            return JSON.parse(JSON.stringify(_messages));
         },
 
         getElevatorById(id) {
@@ -255,6 +283,85 @@ const Store = (() => {
             if (error) throw error;
             await _fetchAndAssembleState();
             return true;
+        },
+
+        async addIncident(rawIncidentData) {
+            _ensureSupabase();
+            const loggedTenant = Security.getLoggedInTenant();
+            if (!loggedTenant) {
+                throw new Error("Accès refusé : Vous devez être connecté pour signaler un incident.");
+            }
+
+            const incidentId = "i_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+            let publicPhotoUrl = null;
+
+            if (rawIncidentData.photo) {
+                try {
+                    const response = await fetch(rawIncidentData.photo);
+                    const blob = await response.blob();
+                    const filePath = `incidents/${rawIncidentData.category}/${incidentId}.jpg`;
+
+                    const { error: uploadError } = await supabase.storage
+                        .from('elevator-photos') // On réutilise le même bucket de stockage pour l'instant
+                        .upload(filePath, blob, {
+                            contentType: 'image/jpeg',
+                            cacheControl: '3600',
+                            upsert: false
+                        });
+
+                    if (uploadError) throw uploadError;
+
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('elevator-photos')
+                        .getPublicUrl(filePath);
+                    
+                    publicPhotoUrl = publicUrl;
+                } catch (err) {
+                    console.error("Erreur de téléversement photo incident", err);
+                }
+            }
+
+            const userDisplay = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
+            const { error: insertError } = await supabase
+                .from('incidents')
+                .insert({
+                    id: incidentId,
+                    entrance: String(rawIncidentData.entrance),
+                    category: String(rawIncidentData.category),
+                    description: Security.sanitizeHTML(String(rawIncidentData.description).trim()),
+                    user_display: userDisplay,
+                    photo_url: publicPhotoUrl,
+                    status: 'nouveau'
+                });
+
+            if (insertError) throw insertError;
+            await _fetchAndAssembleState();
+            return { id: incidentId };
+        },
+
+        async addMessage(rawMessageData) {
+            _ensureSupabase();
+            const loggedTenant = Security.getLoggedInTenant();
+            if (!loggedTenant) {
+                throw new Error("Accès refusé : Vous devez être connecté pour publier un message.");
+            }
+
+            const messageId = "m_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+            const author = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
+
+            const { error: insertError } = await supabase
+                .from('community_messages')
+                .insert({
+                    id: messageId,
+                    entrance: rawMessageData.entrance === 'tous' ? null : String(rawMessageData.entrance),
+                    type: String(rawMessageData.type),
+                    content: Security.sanitizeHTML(String(rawMessageData.content).trim()),
+                    author: author
+                });
+
+            if (insertError) throw insertError;
+            await _fetchAndAssembleState();
+            return { id: messageId };
         },
 
         async updateStatus(entranceId, newStatus, technicalNotes) {

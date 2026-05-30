@@ -51,18 +51,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const tenantReportsList = document.getElementById("tenant-reports-list");
     const historyTimeline = document.getElementById("history-timeline");
     
-    // Modale : Détails - Section Admin
+    // Modale : Détails - Section Actions
     const adminActionsSection = document.getElementById("admin-actions-section");
     const adminStatusForm = document.getElementById("admin-status-form");
     const adminEntranceIdInput = document.getElementById("admin-entrance-id");
     const adminSelectStatus = document.getElementById("admin-select-status");
     const adminMaintenanceNotes = document.getElementById("admin-maintenance-notes");
     
-    // Modale : Login PIN
-    const loginModal = document.getElementById("login-modal");
-    const loginForm = document.getElementById("login-form");
-    const adminPinInput = document.getElementById("admin-pin");
-    const loginErrorMsg = document.getElementById("login-error-msg");
+    // Nouveaux Modules (Incidents & Entraide)
+    const quickIncidentBtn = document.getElementById("quick-incident-btn");
+    const quickMessageBtn = document.getElementById("quick-message-btn");
+    
+    const incidentModal = document.getElementById("incident-modal");
+    const incidentForm = document.getElementById("incident-form");
+    const incidentErrorMsg = document.getElementById("incident-error-msg");
+    const incidentSuccessMsg = document.getElementById("incident-success-msg");
+    const incidentsFeed = document.getElementById("incidents-feed");
+
+    const messageModal = document.getElementById("message-modal");
+    const messageForm = document.getElementById("message-form");
+    const messageErrorMsg = document.getElementById("message-error-msg");
+    const messageSuccessMsg = document.getElementById("message-success-msg");
+    const messagesFeed = document.getElementById("messages-feed");
     
     // Formulaire Signalement - Éléments Photo
     const reportPhotoInput = document.getElementById("report-photo");
@@ -234,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? `<div class="report-counter-tag">${reportCount} signalement${reportCount > 1 ? 's' : ''}</div>` 
                 : "";
 
-            // Structure interne de la carte (Zéro risque XSS car les variables sensibles sont déjà passées par un store assaini ou converties)
+            // Structure interne de la carte
             card.innerHTML = `
                 <div class="card-header">
                     <div class="entrance-label">
@@ -268,11 +278,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // Liaisons d'événements pour les boutons des cartes générées
-        document.querySelectorAll(".btn-view-details").forEach(btn => {
-            btn.addEventListener("click", () => {
-                openDetailsModal(btn.dataset.id);
-            });
         });
 
         document.querySelectorAll(".btn-report-card").forEach(btn => {
@@ -751,6 +756,110 @@ document.addEventListener("DOMContentLoaded", () => {
         reportErrorMsg.textContent = msg;
         reportErrorMsg.classList.remove("hidden");
         reportErrorMsg.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    // Nouveaux boutons pour ouvrir les modales
+    if (quickIncidentBtn) {
+        quickIncidentBtn.addEventListener("click", () => {
+            if (!Security.getLoggedInTenant()) {
+                authModal.classList.remove("hidden");
+                authModal.setAttribute("aria-hidden", "false");
+                return;
+            }
+            incidentModal.classList.remove("hidden");
+            incidentModal.setAttribute("aria-hidden", "false");
+            incidentForm.reset();
+            incidentErrorMsg.classList.add("hidden");
+            incidentSuccessMsg.classList.add("hidden");
+        });
+    }
+
+    if (quickMessageBtn) {
+        quickMessageBtn.addEventListener("click", () => {
+            if (!Security.getLoggedInTenant()) {
+                authModal.classList.remove("hidden");
+                authModal.setAttribute("aria-hidden", "false");
+                return;
+            }
+            messageModal.classList.remove("hidden");
+            messageModal.setAttribute("aria-hidden", "false");
+            messageForm.reset();
+            messageErrorMsg.classList.add("hidden");
+            messageSuccessMsg.classList.add("hidden");
+        });
+    }
+
+    // Soumission Formulaire Incident
+    if (incidentForm) {
+        incidentForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            incidentErrorMsg.classList.add("hidden");
+            incidentSuccessMsg.classList.add("hidden");
+
+            const category = document.getElementById("incident-category").value;
+            const entrance = document.getElementById("incident-entrance").value;
+            const description = document.getElementById("incident-description").value;
+
+            const submitBtn = incidentForm.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+
+            try {
+                await Store.addIncident({
+                    category,
+                    entrance,
+                    description,
+                    photo: null // Simplification: no photo for general incidents yet
+                });
+                
+                incidentSuccessMsg.textContent = "Incident signalé avec succès.";
+                incidentSuccessMsg.classList.remove("hidden");
+                
+                setTimeout(() => {
+                    closeModal(incidentModal);
+                    submitBtn.disabled = false;
+                }, 1500);
+            } catch (err) {
+                incidentErrorMsg.textContent = err.message;
+                incidentErrorMsg.classList.remove("hidden");
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    // Soumission Formulaire Message
+    if (messageForm) {
+        messageForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            messageErrorMsg.classList.add("hidden");
+            messageSuccessMsg.classList.add("hidden");
+
+            const type = document.getElementById("message-type").value;
+            const entrance = document.getElementById("message-entrance").value;
+            const content = document.getElementById("message-content").value;
+
+            const submitBtn = messageForm.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+
+            try {
+                await Store.addMessage({
+                    type,
+                    entrance,
+                    content
+                });
+                
+                messageSuccessMsg.textContent = "Message publié avec succès.";
+                messageSuccessMsg.classList.remove("hidden");
+                
+                setTimeout(() => {
+                    closeModal(messageModal);
+                    submitBtn.disabled = false;
+                }, 1500);
+            } catch (err) {
+                messageErrorMsg.textContent = err.message;
+                messageErrorMsg.classList.remove("hidden");
+                submitBtn.disabled = false;
+            }
+        });
     }
 
     // ---------------------------------------------------------
