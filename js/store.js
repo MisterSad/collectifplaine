@@ -13,7 +13,7 @@ const Store = (() => {
     function _ensureSupabase() {
         if (typeof supabase === 'undefined' || !supabase) {
             // Tentative d'initialisation tardive de secours (en cas de chargement asynchrone ou décalé du CDN/lib)
-            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+            if (window.supabase && window.supabase.createClient) {
                 try {
                     const supabaseUrl = "https://iblfurgquymrcyzefwzy.supabase.co";
                     const supabaseKey = "sb_publishable_yweP1a-OQKW3-IYNxz1Prg_1Eg7b-0B";

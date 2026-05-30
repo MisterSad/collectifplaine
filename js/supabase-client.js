@@ -9,7 +9,7 @@ const supabaseKey = "sb_publishable_yweP1a-OQKW3-IYNxz1Prg_1Eg7b-0B";
 var supabase = null;
 
 try {
-    if (typeof window.supabase !== "undefined" && window.supabase.createClient) {
+    if (window.supabase && window.supabase.createClient) {
         supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
     } else {
         console.error("Le SDK Supabase (window.supabase) n'est pas disponible. Cela est souvent causé par un bloqueur de publicités ou de scripts (AdBlock, uBlock, Brave Shields) bloquant le CDN Supabase.");
