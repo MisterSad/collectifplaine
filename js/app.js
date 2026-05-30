@@ -1,0 +1,969 @@
+/**
+ * Suivi pannes ascenseurs - Contrôleur d'interface utilisateur (UI)
+ * Orchestre les événements, manipule le DOM de manière sécurisée et gère les modales.
+ */
+document.addEventListener("DOMContentLoaded", () => {
+    // ---------------------------------------------------------
+    // 1. CACHE DES ELEMENTS DU DOM
+    // ---------------------------------------------------------
+    
+    // Éléments Globaux
+    const themeToggle = document.getElementById("theme-toggle");
+    const authHeaderArea = document.getElementById("auth-header-area");
+    const adminBanner = document.getElementById("admin-banner");
+    
+    // Modale : Auth Locataire
+    const authModal = document.getElementById("auth-modal");
+    const authLoginForm = document.getElementById("auth-login-form");
+    const authRegisterForm = document.getElementById("auth-register-form");
+    const modalTabLogin = document.getElementById("modal-tab-login");
+    const modalTabRegister = document.getElementById("modal-tab-register");
+    const authErrorMsg = document.getElementById("auth-error-msg");
+    const authSuccessMsg = document.getElementById("auth-success-msg");
+    const entrancesGrid = document.getElementById("entrances-grid");
+    
+    // Stats Widgets
+    const statFunctional = document.getElementById("stat-functional");
+    const statMaintenance = document.getElementById("stat-maintenance");
+    const statBroken = document.getElementById("stat-broken");
+    
+    // Boutons d'actions principaux
+    const quickReportBtn = document.getElementById("quick-report-btn");
+    
+    // Modale : Signalement
+    const reportModal = document.getElementById("report-modal");
+    const reportForm = document.getElementById("report-form");
+    const reportEntranceSelect = document.getElementById("report-entrance");
+    const reportDescriptionText = document.getElementById("report-desc");
+    const charCountSpan = document.getElementById("char-count");
+    const reportErrorMsg = document.getElementById("report-error-msg");
+    const reportSuccessMsg = document.getElementById("report-success-msg");
+    
+    // Modale : Détails
+    const detailsModal = document.getElementById("details-modal");
+    const detailsEntranceNum = document.getElementById("details-entrance-num");
+    const detailsStatusBox = document.getElementById("details-status-box");
+    const detailsStatusBadge = document.getElementById("details-status-badge");
+    const detailsStatusText = document.getElementById("details-status-text");
+    const detailsLastChange = document.getElementById("details-last-change");
+    const maintenanceInfoBox = document.getElementById("maintenance-info-box");
+    const maintenanceDetails = document.getElementById("maintenance-details");
+    const tenantReportsList = document.getElementById("tenant-reports-list");
+    const historyTimeline = document.getElementById("history-timeline");
+    
+    // Modale : Détails - Section Admin
+    const adminActionsSection = document.getElementById("admin-actions-section");
+    const adminStatusForm = document.getElementById("admin-status-form");
+    const adminEntranceIdInput = document.getElementById("admin-entrance-id");
+    const adminSelectStatus = document.getElementById("admin-select-status");
+    const adminMaintenanceNotes = document.getElementById("admin-maintenance-notes");
+    
+    // Modale : Login PIN
+    const loginModal = document.getElementById("login-modal");
+    const loginForm = document.getElementById("login-form");
+    const adminPinInput = document.getElementById("admin-pin");
+    const loginErrorMsg = document.getElementById("login-error-msg");
+    
+    // Formulaire Signalement - Éléments Photo
+    const reportPhotoInput = document.getElementById("report-photo");
+    const photoPreviewContainer = document.getElementById("report-photo-preview-container");
+    const photoPreviewImg = document.getElementById("report-photo-preview");
+    const btnRemovePhoto = document.getElementById("btn-remove-photo");
+
+    // Modale Zoom Photo (Lightbox)
+    const lightboxModal = document.getElementById("lightbox-modal");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const lightboxCaption = document.getElementById("lightbox-caption");
+    const btnCloseLightbox = document.getElementById("btn-close-lightbox");
+
+    // Boutons de fermeture de modales
+    const closeModalButtons = document.querySelectorAll(".btn-close-modal");
+
+    // Variable pour suivre l'entrée actuellement sélectionnée dans la modale détails
+    let activeDetailsEntranceId = null;
+    let selectedPhotoData = null; // Stocke la photo compressée et horodatée (Base64 dataURL)
+
+    // ---------------------------------------------------------
+    // 2. UTILITAIRES DE FORMATTAGE (AFFICHAGE)
+    // ---------------------------------------------------------
+
+    /**
+     * Calcule le temps écoulé depuis un timestamp pour un rendu lisible en français
+     */
+    function formatTimeAgo(timestamp) {
+        if (!timestamp) return "indéterminé";
+        const diff = Date.now() - timestamp;
+        const mins = Math.floor(diff / (60 * 1000));
+        const hours = Math.floor(diff / (60 * 60 * 1000));
+        const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+
+        if (mins < 1) return "à l'instant";
+        if (mins < 60) return `il y a ${mins} min`;
+        if (hours < 24) return `il y a ${hours} h`;
+        return `il y a ${days} jour${days > 1 ? 's' : ''}`;
+    }
+
+    /**
+     * Traduit le type de panne en libellé convivial
+     */
+    function formatIssueType(type) {
+        const types = {
+            "arrêt": "🔴 Arrêt complet",
+            "portes": "🚪 Problème de portes",
+            "boutons": "🎛️ Boutons inactifs",
+            "bruit": "🔊 Bruit ou vibration",
+            "autre": "❓ Autre problème"
+        };
+        return types[type] || type;
+    }
+
+    /**
+     * Traduit le statut interne en libellé d'affichage
+     */
+    function formatStatusLabel(status) {
+        const labels = {
+            "en_service": "En Service",
+            "en_maintenance": "En Maintenance",
+            "en_panne": "En Panne"
+        };
+        return labels[status] || status;
+    }
+
+    // ---------------------------------------------------------
+    // 3. LOGIQUE D'AFFICHAGE DU THEME (CLAIR/SOMBRE)
+    // ---------------------------------------------------------
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem("theme") || "dark";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+    }
+
+    themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+    });
+
+    // ---------------------------------------------------------
+    // 4. RENDU DYNAMIQUE DE L'INTERFACE PRINCIPALE
+    // ---------------------------------------------------------
+
+    /**
+     * Met à jour le tableau de bord : les statistiques et la grille d'ascenseurs
+     */
+    function renderDashboard() {
+        const elevators = Store.getElevators();
+        const stats = Store.getStats();
+        const isAdmin = Security.isAdminLoggedIn();
+
+        // 1. Remplissage des statistiques
+        statFunctional.textContent = stats.en_service;
+        statMaintenance.textContent = stats.en_maintenance;
+        statBroken.textContent = stats.en_panne;
+
+        // 2. Nettoyage de la grille
+        entrancesGrid.innerHTML = "";
+
+        if (elevators.length === 0) {
+            entrancesGrid.innerHTML = `<div class="loading-placeholder">Aucune entrée configurée.</div>`;
+            return;
+        }
+
+        // 3. Rendu de chaque ascenseur
+        elevators.forEach(elevator => {
+            const card = document.createElement("div");
+            card.className = "elevator-card glass";
+            card.setAttribute("role", "button");
+            card.setAttribute("aria-label", `Ascenseur entrée ${elevator.id}, statut actuel : ${formatStatusLabel(elevator.status)}`);
+            card.dataset.id = elevator.id;
+
+            // Déterminer la classe de badge de statut correspondante
+            let badgeClass = "badge-functional";
+            let statusText = "En Service";
+            
+            if (elevator.status === "en_maintenance") {
+                badgeClass = "badge-maintenance";
+                statusText = "Maintenance";
+            } else if (elevator.status === "en_panne") {
+                badgeClass = "badge-broken";
+                statusText = "En Panne";
+            }
+
+            // Nombre de signalements actifs des locataires
+            const reportCount = elevator.tenantReports.length;
+            let statusSummaryHtml = "";
+
+            if (elevator.status === "en_panne") {
+                statusSummaryHtml = `
+                    <div class="card-summary-msg color-danger">⚠️ Ascenseur à l'arrêt</div>
+                    <div class="card-summary-desc">${elevator.maintenanceNotes || "Panne en cours de diagnostic."}</div>
+                `;
+            } else if (elevator.status === "en_maintenance") {
+                statusSummaryHtml = `
+                    <div class="card-summary-msg color-warning">🛠️ Travaux en cours</div>
+                    <div class="card-summary-desc">${elevator.maintenanceNotes || "Opération de maintenance périodique."}</div>
+                `;
+            } else {
+                // En service
+                if (reportCount > 0) {
+                    statusSummaryHtml = `
+                        <div class="card-summary-msg color-warning">⚠️ Dysfonctionnements signalés</div>
+                        <div class="card-summary-desc">${reportCount} signalement${reportCount > 1 ? 's' : ''} actif${reportCount > 1 ? 's' : ''}.</div>
+                    `;
+                } else {
+                    statusSummaryHtml = `
+                        <div class="card-summary-msg color-success">🟢 Fonctionnement normal</div>
+                        <div class="card-summary-desc">Aucun incident signalé récemment.</div>
+                    `;
+                }
+            }
+
+            // Génération du badge de signalement (si applicable)
+            const reportBadgeHtml = (reportCount > 0 && elevator.status !== "en_panne") 
+                ? `<div class="report-counter-tag">${reportCount} signalement${reportCount > 1 ? 's' : ''}</div>` 
+                : "";
+
+            // Structure interne de la carte (Zéro risque XSS car les variables sensibles sont déjà passées par un store assaini ou converties)
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="entrance-label">
+                        <span class="title">N° ${elevator.id}</span>
+                        <span class="road">Avenue Division Leclerc</span>
+                    </div>
+                    <span class="status-badge ${badgeClass}">${statusText}</span>
+                </div>
+                <div class="card-content">
+                    ${statusSummaryHtml}
+                    ${reportBadgeHtml}
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-secondary btn-view-details" data-id="${elevator.id}">
+                        Détails & Historique
+                    </button>
+                    <button class="btn btn-primary btn-report-card" data-id="${elevator.id}">
+                        Signaler
+                    </button>
+                </div>
+            `;
+
+            // Ajout au DOM
+            entrancesGrid.appendChild(card);
+
+            // Événement clic sur la carte globale (ouvre les détails par défaut)
+            card.addEventListener("click", (e) => {
+                // Empêcher l'ouverture si on clique sur un bouton spécifique à l'intérieur
+                if (e.target.closest("button")) return;
+                openDetailsModal(elevator.id);
+            });
+        });
+
+        // Liaisons d'événements pour les boutons des cartes générées
+        document.querySelectorAll(".btn-view-details").forEach(btn => {
+            btn.addEventListener("click", () => {
+                openDetailsModal(btn.dataset.id);
+            });
+        });
+
+        document.querySelectorAll(".btn-report-card").forEach(btn => {
+            btn.addEventListener("click", () => {
+                openReportModal(btn.dataset.id);
+            });
+        });
+    }
+
+    // ---------------------------------------------------------
+    // 5. GESTION DES MODALES (OUVERTURE & FERMETURE)
+    // ---------------------------------------------------------
+
+    function openModal(modalElement) {
+        modalElement.classList.remove("hidden");
+        modalElement.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden"; // Empêcher le scroll sous-jacent
+        
+        // Focus sur le premier élément interactif ou de fermeture pour l'accessibilité
+        const focusable = modalElement.querySelector("input, select, textarea, button, [tabindex]");
+        if (focusable) focusable.focus();
+    }
+
+    function closeModal(modalElement) {
+        modalElement.classList.add("hidden");
+        modalElement.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = ""; // Rétablir le scroll
+        
+        // Vider les messages d'erreur et succès éventuels
+        const errorMsg = modalElement.querySelector(".alert-box.alert-danger");
+        const successMsg = modalElement.querySelector(".alert-box.alert-success");
+        if (errorMsg) errorMsg.classList.add("hidden");
+        if (successMsg) successMsg.classList.add("hidden");
+    }
+
+    // Associer la fermeture globale pour tous les boutons `.btn-close-modal`
+    closeModalButtons.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const modal = e.target.closest(".modal-backdrop");
+            if (modal) closeModal(modal);
+        });
+    });
+
+    // Clic sur l'arrière-plan d'une modale pour la fermer
+    document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+        backdrop.addEventListener("click", (e) => {
+            if (e.target === backdrop) {
+                closeModal(backdrop);
+            }
+        });
+    });
+
+    // Touche Echap pour fermer les modales ouvertes
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            const openModalElement = document.querySelector(".modal-backdrop:not(.hidden)");
+            if (openModalElement) {
+                closeModal(openModalElement);
+            }
+        }
+    });
+
+    // ---------------------------------------------------------
+    // HANDELEURS DE PHOTOS ET LIGHTBOX (HORODATAGE & SÉCURITÉ)
+    // ---------------------------------------------------------
+
+    function resetPhotoUpload() {
+        selectedPhotoData = null;
+        reportPhotoInput.value = "";
+        photoPreviewImg.src = "";
+        photoPreviewContainer.classList.add("hidden");
+    }
+
+    function processAndTimestampPhoto(file) {
+        const validation = Security.validateImageFile(file);
+        if (!validation.isValid) {
+            showReportError(validation.error);
+            resetPhotoUpload();
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+                // Redimensionnement proportionnel intelligent (max 1024px)
+                const maxDim = 1024;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxDim || height > maxDim) {
+                    if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                    } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                    }
+                }
+
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Incrustation de la barre d'horodatage indélébile
+                const barHeight = Math.max(32, Math.round(height * 0.06));
+                ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+                ctx.fillRect(0, height - barHeight, width, barHeight);
+
+                // Texte de l'horodatage
+                const fontSize = Math.max(11, Math.round(barHeight * 0.4));
+                ctx.font = `600 ${fontSize}px 'Inter', system-ui, -apple-system, sans-serif`;
+                ctx.fillStyle = "#ffffff";
+                
+                // Timestamp à droite
+                ctx.textAlign = "right";
+                ctx.textBaseline = "middle";
+                const dateStr = new Date().toLocaleString("fr-FR", {
+                    year: 'numeric', month: '2-digit', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                });
+                ctx.fillText(`Amicale Leclerc Cachan • ${dateStr}`, width - Math.max(10, Math.round(width * 0.02)), height - (barHeight / 2));
+
+                // Signature à gauche
+                ctx.textAlign = "left";
+                ctx.fillStyle = "#a78bfa"; // Couleur violette douce
+                ctx.fillText("📷 PREUVE CERTIFIÉE", Math.max(10, Math.round(width * 0.02)), height - (barHeight / 2));
+
+                // Compression JPEG (0.75) pour réduire la taille en localStorage
+                selectedPhotoData = canvas.toDataURL("image/jpeg", 0.75);
+
+                // Aperçu
+                photoPreviewImg.src = selectedPhotoData;
+                photoPreviewContainer.classList.remove("hidden");
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function openLightbox(src, caption) {
+        lightboxImg.src = src;
+        lightboxCaption.textContent = caption;
+        openModal(lightboxModal);
+    }
+
+    // Abonnements événementiels photos
+    reportPhotoInput.addEventListener("change", (e) => {
+        if (e.target.files && e.target.files[0]) {
+            processAndTimestampPhoto(e.target.files[0]);
+        }
+    });
+
+    btnRemovePhoto.addEventListener("click", () => {
+        resetPhotoUpload();
+    });
+
+    btnCloseLightbox.addEventListener("click", () => {
+        closeModal(lightboxModal);
+        lightboxImg.src = "";
+        lightboxCaption.textContent = "";
+    });
+
+    // ---------------------------------------------------------
+    // MODALE : SIGNALEMENT DE PANNE
+    // ---------------------------------------------------------
+
+    function openReportModal(entranceId = "") {
+        const tenant = Security.getLoggedInTenant();
+        
+        if (!tenant) {
+            openAuthModal();
+            authErrorMsg.textContent = "ℹ️ Veuillez vous connecter ou créer un compte résident pour pouvoir signaler une panne.";
+            authErrorMsg.classList.remove("hidden");
+            return;
+        }
+
+        reportForm.reset();
+        resetPhotoUpload();
+        charCountSpan.textContent = "0";
+        
+        const reportUserField = document.getElementById("report-user");
+        if (reportUserField) {
+            reportUserField.value = tenant.username;
+            reportUserField.disabled = true;
+        }
+
+        if (entranceId) {
+            reportEntranceSelect.value = entranceId;
+        } else {
+            reportEntranceSelect.value = tenant.entrance;
+        }
+        
+        reportErrorMsg.classList.add("hidden");
+        reportSuccessMsg.classList.add("hidden");
+        openModal(reportModal);
+    }
+
+    // Gestion du compteur de caractères temps réel
+    reportDescriptionText.addEventListener("input", () => {
+        const len = reportDescriptionText.value.length;
+        charCountSpan.textContent = len;
+        
+        if (len >= 250) {
+            charCountSpan.classList.add("color-danger");
+        } else {
+            charCountSpan.classList.remove("color-danger");
+        }
+    });
+
+    // Événement clic pour le bouton global de signalement
+    quickReportBtn.addEventListener("click", () => {
+        openReportModal();
+    });
+
+    // Traitement du formulaire de signalement
+    reportForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        reportErrorMsg.classList.add("hidden");
+        reportSuccessMsg.classList.add("hidden");
+
+        const entrance = reportEntranceSelect.value;
+        const type = document.getElementById("report-type").value;
+        const description = reportDescriptionText.value;
+        
+        // 1. Validation de premier niveau (côté client UX)
+        if (!entrance) {
+            showReportError("Veuillez sélectionner le numéro d'entrée concerné.");
+            return;
+        }
+        if (!type) {
+            showReportError("Veuillez sélectionner le type de problème constaté.");
+            return;
+        }
+        if (description.trim().length < 10) {
+            showReportError("La description du problème doit faire au moins 10 caractères.");
+            return;
+        }
+
+        // 2. Contrôle anti-spam (Rate Limiting)
+        const limiter = Security.checkRateLimit();
+        if (limiter.limited) {
+            showReportError(`⚠️ Trop de signalements consécutifs. Par sécurité contre le spam, veuillez patienter ${limiter.secondsToWait} secondes avant de soumettre un nouveau signalement.`);
+            return;
+        }
+
+        // 3. Soumission au store
+        try {
+            // Le pseudo de l'auteur est récupéré de manière sécurisée côté Store pour éviter toute usurpation
+            Store.addReport(entrance, { type, description, photo: selectedPhotoData });
+            
+            // Affichage succès
+            reportSuccessMsg.textContent = "Votre signalement a été enregistré avec succès. Merci pour votre aide !";
+            reportSuccessMsg.classList.remove("hidden");
+            
+            // Réinitialiser le formulaire photo
+            resetPhotoUpload();
+            
+            const submitBtn = reportForm.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                closeModal(reportModal);
+                submitBtn.disabled = false;
+            }, 1800);
+            
+        } catch (err) {
+            showReportError("Une erreur est survenue lors de l'enregistrement : " + err.message);
+        }
+    });
+
+    function showReportError(msg) {
+        reportErrorMsg.textContent = msg;
+        reportErrorMsg.classList.remove("hidden");
+        reportErrorMsg.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    // ---------------------------------------------------------
+    // MODALE : DÉTAILS DE L'ASCENSEUR
+    // ---------------------------------------------------------
+
+    function openDetailsModal(entranceId) {
+        activeDetailsEntranceId = entranceId;
+        const elevator = Store.getElevatorById(entranceId);
+        
+        if (!elevator) {
+            console.error("Aucune donnée trouvée pour l'ascenseur entrée :", entranceId);
+            return;
+        }
+
+        const isAdmin = Security.isAdminLoggedIn();
+
+        // 1. Renseigner l'en-tête
+        detailsEntranceNum.textContent = elevator.id;
+
+        // 2. Renseigner l'état actuel principal
+        detailsStatusBadge.className = "status-indicator-large";
+        let statusText = "En Service";
+
+        if (elevator.status === "en_maintenance") {
+            detailsStatusBadge.classList.add("bg-maintenance");
+            statusText = "En Maintenance";
+        } else if (elevator.status === "en_panne") {
+            detailsStatusBadge.classList.add("bg-broken");
+            statusText = "En Panne (Hors Service)";
+        } else {
+            detailsStatusBadge.classList.add("bg-functional");
+            statusText = "En Service (Opérationnel)";
+        }
+
+        detailsStatusText.textContent = statusText;
+        detailsLastChange.textContent = `Dernier changement de statut : ${formatTimeAgo(elevator.lastStatusChange)}`;
+
+        // 3. Bloc de maintenance active
+        if ((elevator.status === "en_maintenance" || elevator.status === "en_panne") && elevator.maintenanceNotes) {
+            maintenanceDetails.textContent = elevator.maintenanceNotes;
+            maintenanceInfoBox.classList.remove("hidden");
+        } else {
+            maintenanceInfoBox.classList.add("hidden");
+        }
+
+        // 4. Liste des signalements des locataires
+        tenantReportsList.innerHTML = "";
+        if (elevator.tenantReports.length === 0) {
+            tenantReportsList.innerHTML = `<p class="no-data-msg">Aucun signalement en cours pour cette entrée.</p>`;
+        } else {
+            elevator.tenantReports.forEach(report => {
+                const item = document.createElement("div");
+                item.className = "report-item";
+                
+                // Bouton de suppression pour l'administrateur
+                const deleteBtnHtml = isAdmin 
+                    ? `<button class="btn-delete-report" data-report-id="${report.id}">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-left">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Supprimer le signalement
+                       </button>` 
+                    : "";
+
+                const photoHtml = report.photo 
+                    ? `<div class="report-photo-thumb-container">
+                        <img class="report-thumbnail" src="${report.photo}" alt="Preuve de panne" title="Cliquer pour zoomer">
+                       </div>`
+                    : "";
+
+                item.innerHTML = `
+                    <div class="report-item-header">
+                        <span class="report-item-user">Par : ${report.user}</span>
+                        <span>${formatTimeAgo(report.timestamp)}</span>
+                    </div>
+                    <div class="report-item-body">
+                        <strong>${formatIssueType(report.type)}</strong> • ${report.description}
+                        ${photoHtml}
+                    </div>
+                    ${deleteBtnHtml}
+                `;
+
+                if (report.photo) {
+                    item.querySelector(".report-thumbnail").addEventListener("click", () => {
+                        const dateStr = new Date(report.timestamp).toLocaleString("fr-FR");
+                        openLightbox(report.photo, `${formatIssueType(report.type)} • Signalée par ${report.user} le ${dateStr}`);
+                    });
+                }
+
+                // Attacher l'action de modération (suppression de signalement)
+                if (isAdmin) {
+                    item.querySelector(".btn-delete-report").addEventListener("click", () => {
+                        if (confirm("Voulez-vous vraiment supprimer ce signalement locataire ?")) {
+                            try {
+                                Store.deleteReport(elevator.id, report.id);
+                                // Re-rendre le tableau de bord et réouvrir/actualiser la modale de détails
+                                openDetailsModal(elevator.id);
+                            } catch (err) {
+                                alert("Erreur d'autorisation : " + err.message);
+                            }
+                        }
+                    });
+                }
+
+                tenantReportsList.appendChild(item);
+            });
+        }
+
+        // 5. Ligne de vie / Historique (Timeline)
+        historyTimeline.innerHTML = "";
+        if (!elevator.history || elevator.history.length === 0) {
+            historyTimeline.innerHTML = `<p class="no-data-msg">Aucun historique disponible.</p>`;
+        } else {
+            elevator.history.forEach(log => {
+                const logItem = document.createElement("div");
+                logItem.className = "timeline-item";
+
+                let markerColor = "bg-functional";
+                if (log.status === "en_maintenance") markerColor = "bg-maintenance";
+                else if (log.status === "en_panne") markerColor = "bg-broken";
+
+                logItem.innerHTML = `
+                    <div class="timeline-marker ${markerColor}"></div>
+                    <div class="timeline-date">${new Date(log.timestamp).toLocaleString('fr-FR')}</div>
+                    <div class="timeline-title">${formatStatusLabel(log.status)}</div>
+                    <div class="timeline-desc">${log.notes}</div>
+                `;
+                historyTimeline.appendChild(logItem);
+            });
+        }
+
+        // 6. Section Administration Interne dans la modale
+        if (isAdmin) {
+            adminEntranceIdInput.value = elevator.id;
+            adminSelectStatus.value = elevator.status;
+            adminMaintenanceNotes.value = elevator.maintenanceNotes || "";
+            adminActionsSection.classList.remove("hidden");
+        } else {
+            adminActionsSection.classList.add("hidden");
+        }
+
+        // Enfin, afficher la modale détails
+        openModal(detailsModal);
+    }
+
+    // Traitement du formulaire d'administration de statut
+    adminStatusForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        
+        const id = adminEntranceIdInput.value;
+        const newStatus = adminSelectStatus.value;
+        const notes = adminMaintenanceNotes.value;
+
+        try {
+            Store.updateStatus(id, newStatus, notes);
+            
+            // Message flash de confirmation pro
+            alert(`Mise à jour effectuée avec succès pour l'entrée ${id}.`);
+            
+            // Actualiser l'affichage
+            openDetailsModal(id);
+        } catch (err) {
+            alert("Erreur de modification du statut : " + err.message);
+        }
+    });
+
+    // ---------------------------------------------------------
+    // 5.8 SYSTEME D'AUTHENTIFICATION DE L'AMICALE (LOCATAIRES & PRO)
+    // ---------------------------------------------------------
+
+    /**
+     * Rendu dynamique de la zone d'authentification dans l'en-tête (Header)
+     */
+    function renderAuthHeader() {
+        authHeaderArea.innerHTML = "";
+        
+        const adminLoggedIn = Security.isAdminLoggedIn();
+        const tenant = Security.getLoggedInTenant();
+
+        if (adminLoggedIn) {
+            authHeaderArea.innerHTML = `
+                <button id="admin-logout-btn" class="btn btn-danger btn-sm" aria-label="Quitter Mode Pro">
+                    <span>Quitter Mode Pro</span>
+                </button>
+            `;
+            
+            document.getElementById("admin-logout-btn").addEventListener("click", () => {
+                Security.logoutAdmin();
+                applyAdminUIState(false);
+                renderAuthHeader();
+                renderDashboard();
+                if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
+                    openDetailsModal(activeDetailsEntranceId);
+                }
+            });
+        } else if (tenant) {
+            const firstLetter = tenant.username.charAt(0).toUpperCase();
+            authHeaderArea.innerHTML = `
+                <div class="user-profile-badge" title="Connecté en tant que résident">
+                    <span class="user-avatar">${firstLetter}</span>
+                    <span>${tenant.username} (Appt ${tenant.apartment})</span>
+                </div>
+                <button id="tenant-logout-btn" class="btn btn-secondary btn-sm" aria-label="Se déconnecter">
+                    <span>Déconnexion</span>
+                </button>
+            `;
+            
+            document.getElementById("tenant-logout-btn").addEventListener("click", () => {
+                Security.logoutTenant();
+                renderAuthHeader();
+                renderDashboard();
+                if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
+                    openDetailsModal(activeDetailsEntranceId);
+                }
+            });
+        } else {
+            authHeaderArea.innerHTML = `
+                <button id="tenant-login-btn" class="btn btn-primary btn-sm" aria-label="Connexion Espace Locataire">
+                    <span>Connexion Résident</span>
+                </button>
+                <button id="admin-login-btn" class="btn btn-secondary btn-sm" aria-label="Espace Gestionnaire">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" class="btn-icon-left">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span>Espace Pro</span>
+                </button>
+            `;
+            
+            document.getElementById("tenant-login-btn").addEventListener("click", () => {
+                openAuthModal();
+            });
+            document.getElementById("admin-login-btn").addEventListener("click", () => {
+                loginForm.reset();
+                loginErrorMsg.classList.add("hidden");
+                openModal(loginModal);
+            });
+        }
+    }
+
+    /**
+     * Ouvre la modale d'authentification locataire
+     */
+    function openAuthModal() {
+        authLoginForm.reset();
+        authRegisterForm.reset();
+        authErrorMsg.classList.add("hidden");
+        authSuccessMsg.classList.add("hidden");
+        modalTabLogin.click(); // Par défaut sur Connexion
+        openModal(authModal);
+    }
+
+    // Basculement d'onglets Connexion / Inscription dans la modale
+    modalTabLogin.addEventListener("click", () => {
+        modalTabLogin.classList.add("active");
+        modalTabRegister.classList.remove("active");
+        authLoginForm.classList.remove("hidden");
+        authRegisterForm.classList.add("hidden");
+        authErrorMsg.classList.add("hidden");
+        authSuccessMsg.classList.add("hidden");
+    });
+
+    modalTabRegister.addEventListener("click", () => {
+        modalTabRegister.classList.add("active");
+        modalTabLogin.classList.remove("active");
+        authRegisterForm.classList.remove("hidden");
+        authLoginForm.classList.add("hidden");
+        authErrorMsg.classList.add("hidden");
+        authSuccessMsg.classList.add("hidden");
+    });
+
+    // Formulaire de Connexion Locataire
+    authLoginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        authErrorMsg.classList.add("hidden");
+        authSuccessMsg.classList.add("hidden");
+
+        const username = document.getElementById("auth-login-username").value;
+        const password = document.getElementById("auth-login-password").value;
+
+        try {
+            await Store.loginTenant(username, password);
+            
+            authSuccessMsg.textContent = `Ravi de vous revoir, ${username} ! Connexion réussie...`;
+            authSuccessMsg.classList.remove("hidden");
+            
+            const submitBtn = authLoginForm.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                closeModal(authModal);
+                submitBtn.disabled = false;
+                renderAuthHeader();
+                renderDashboard();
+                if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
+                    openDetailsModal(activeDetailsEntranceId);
+                }
+            }, 1500);
+        } catch (err) {
+            authErrorMsg.textContent = err.message;
+            authErrorMsg.classList.remove("hidden");
+        }
+    });
+
+    // Formulaire d'Inscription Locataire
+    authRegisterForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        authErrorMsg.classList.add("hidden");
+        authSuccessMsg.classList.add("hidden");
+
+        const username = document.getElementById("auth-register-username").value;
+        const entrance = document.getElementById("auth-register-entrance").value;
+        const apartment = document.getElementById("auth-register-apartment").value;
+        const password = document.getElementById("auth-register-password").value;
+
+        try {
+            await Store.registerTenant(username, password, entrance, apartment);
+            
+            authSuccessMsg.textContent = "Votre compte locataire a été créé avec succès ! Bienvenue...";
+            authSuccessMsg.classList.remove("hidden");
+            
+            const submitBtn = authRegisterForm.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                closeModal(authModal);
+                submitBtn.disabled = false;
+                renderAuthHeader();
+                renderDashboard();
+                if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
+                    openDetailsModal(activeDetailsEntranceId);
+                }
+            }, 1500);
+        } catch (err) {
+            authErrorMsg.textContent = err.message;
+            authErrorMsg.classList.remove("hidden");
+        }
+    });
+
+    // Formulaire Administration (Code PIN)
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        loginErrorMsg.classList.add("hidden");
+        
+        const pin = adminPinInput.value;
+        const success = await Security.verifyAdminPin(pin);
+        
+        if (success) {
+            applyAdminUIState(true);
+            closeModal(loginModal);
+            renderAuthHeader();
+            renderDashboard();
+            if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
+                openDetailsModal(activeDetailsEntranceId);
+            }
+        } else {
+            loginErrorMsg.textContent = "Code PIN administrateur incorrect.";
+            loginErrorMsg.classList.remove("hidden");
+            adminPinInput.value = "";
+            adminPinInput.focus();
+        }
+    });
+
+    /**
+     * Ajuste visuellement les éléments interactifs de l'application selon la connexion Admin
+     */
+    function applyAdminUIState(isAdmin) {
+        if (isAdmin) {
+            adminBanner.classList.remove("hidden");
+        } else {
+            adminBanner.classList.add("hidden");
+        }
+    }
+
+    // ---------------------------------------------------------
+    // 6. GESTION DE LA NAVIGATION PAR ONGLETS (TABS)
+    // ---------------------------------------------------------
+    const tabLinks = document.querySelectorAll(".tab-link");
+    const tabContentPanels = document.querySelectorAll(".tab-content-panel");
+
+    tabLinks.forEach(link => {
+        link.addEventListener("click", () => {
+            const targetTabId = link.dataset.tab;
+            
+            if (link.classList.contains("active")) return;
+
+            tabLinks.forEach(t => {
+                t.classList.remove("active");
+                t.setAttribute("aria-selected", "false");
+            });
+
+            link.classList.add("active");
+            link.setAttribute("aria-selected", "true");
+
+            tabContentPanels.forEach(panel => {
+                panel.classList.add("hidden");
+            });
+
+            const targetPanel = document.getElementById(targetTabId);
+            if (targetPanel) {
+                targetPanel.classList.remove("hidden");
+            }
+
+            if (targetTabId === "tab-elevators") {
+                renderDashboard();
+            }
+        });
+    });
+
+    // ---------------------------------------------------------
+    // 7. INITIALISATION & ABONNEMENTS ÉVÉNEMENTIELS
+    // ---------------------------------------------------------
+    
+    window.addEventListener("storeUpdated", () => {
+        renderDashboard();
+    });
+
+    // Démarrage initial de l'application
+    initTheme();
+    applyAdminUIState(Security.isAdminLoggedIn());
+    renderAuthHeader();
+    renderDashboard();
+});
