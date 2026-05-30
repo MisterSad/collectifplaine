@@ -129,38 +129,99 @@
 }
 
 /* =========================================================
-   6. TABS NAV — masquer texte sur xs, garder icône + label court
+   6. TABS NAV — Tuiles 2×2 sur mobile
    ========================================================= */
 
-@media (max-width: 480px) {
+/* Sur desktop : on cache les éléments spécifiques au mode tuile */
+.tab-tile-emoji {
+    display: none;
+}
+
+.tab-label {
+    display: none;
+}
+
+/* Sur mobile < 640px : transformation en grille de tuiles */
+@media (max-width: 640px) {
+    /* La nav passe en grille 2×2 */
     .app-tabs-nav {
-        gap: 0.25rem;
-        padding: 0.4rem;
-        margin-bottom: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+        padding: 0.6rem;
+        overflow: visible; /* Plus besoin de scroll horizontal */
+        margin-bottom: 1.25rem;
     }
 
+    /* Chaque tab devient une tuile carrée */
     .tab-link {
-        padding: 0.5rem 0.6rem;
-        font-size: 0.75rem;
-        gap: 0.3rem;
-        min-height: 38px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.85rem 0.5rem;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        background-color: rgba(255, 255, 255, 0.03);
+        min-height: 80px;
+        width: 100%;
+        position: relative;
     }
 
-    /* Masquer l'emoji des spans (on garde le SVG icône) */
-    .tab-link span:not(.badge-soon) {
+    [data-theme="light"] .tab-link {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    /* Afficher l'emoji grande taille */
+    .tab-tile-emoji {
+        display: block;
+        font-size: 1.6rem;
+        line-height: 1;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    }
+
+    /* Masquer l'icône SVG sur mobile (on garde l'emoji) */
+    .tab-icon {
         display: none;
     }
 
-    /* Sauf l'onglet actif qui affiche son texte court */
-    .tab-link.active span:not(.badge-soon) {
-        display: inline;
-        font-size: 0.7rem;
-        white-space: nowrap;
+    /* Masquer le texte long, afficher le label court */
+    .tab-text {
+        display: none;
     }
 
-    .tab-icon {
-        width: 16px;
-        height: 16px;
+    .tab-label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-align: center;
+        line-height: 1.2;
+        color: var(--text-secondary);
+    }
+
+    /* État actif de la tuile */
+    .tab-link.active {
+        background: var(--accent-gradient);
+        border-color: transparent;
+        box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+    }
+
+    .tab-link.active .tab-label {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .tab-link.active .tab-tile-emoji {
+        filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+    }
+
+    /* Badge "Bientôt" repositionné en coin sur mobile */
+    .tab-link .badge-soon {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        font-size: 0.55rem;
+        padding: 0.1rem 0.3rem;
+        margin: 0;
     }
 }
 
