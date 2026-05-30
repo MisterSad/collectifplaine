@@ -516,6 +516,12 @@ const Store = (() => {
                 apartment: normalizedApartment
             };
             Security.setTenantSession(tenant);
+            return tenant;
+        },
+
+        /**
+         * Authentifie un locataire existant avec Supabase Auth
+         */
         async loginTenant(username, password) {
             _ensureSupabase();
             const normalizedUser = String(username).trim();
