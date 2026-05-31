@@ -1044,7 +1044,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         <strong>${formatIssueType(report.type)}</strong> • ${report.description}
                         ${photoHtml}
                     </div>
-                    ${deleteBtnHtml}
+                    <div class="report-item-footer" style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                        <button class="btn btn-secondary btn-sm btn-upvote" data-report-id="${report.id}">
+                            👍 Moi aussi <span class="upvote-count" style="margin-left:4px; font-weight:bold;">0</span>
+                        </button>
+                        ${deleteBtnHtml}
+                    </div>
                 `;
 
                 if (report.photo) {
@@ -1069,12 +1074,90 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 }
 
+                // Gestion du bouton "Moi aussi" (Simulation locale en attendant la base de données)
+                const upvoteBtn = item.querySelector(".btn-upvote");
+                const countSpan = item.querySelector(".upvote-count");
+                const upvotesKey = `upvotes_${report.id}`;
+                let currentCount = parseInt(localStorage.getItem(upvotesKey) || "0", 10);
+                countSpan.textContent = currentCount > 0 ? currentCount : "";
+                
+                upvoteBtn.addEventListener("click", () => {
+                    const hasVoted = localStorage.getItem(`voted_${report.id}`);
+                    if (!hasVoted) {
+                        currentCount++;
+                        localStorage.setItem(upvotesKey, currentCount);
+                        localStorage.setItem(`voted_${report.id}`, "true");
+                        countSpan.textContent = currentCount;
+                        upvoteBtn.classList.add("color-primary");
+                    } else {
+                        alert("Vous avez déjà confirmé ce signalement.");
+                    }
+                });
+
                 tenantReportsList.appendChild(item);
             });
         }
 
-        // 5. Ligne de vie / Historique (Timeline)
+        // 5. Ligne de vie / Historique (Timeline) & Graphique
         historyTimeline.innerHTML = "";
+        
+        // Rendu du Graphique (Chart.js)
+        const ctx = document.getElementById('history-chart');
+        if (ctx) {
+            // Nettoyer l'ancien graphique s'il existe
+            if (window.elevatorChart) {
+                window.elevatorChart.destroy();
+            }
+
+            if (!elevator.history || elevator.history.length === 0) {
+                ctx.parentElement.style.display = 'none'; // Cacher le canvas si pas de données
+            } else {
+                ctx.parentElement.style.display = 'block';
+                
+                // Préparation des données pour le graphique : Taux de disponibilité (simplifié pour démo)
+                // On crée des points sur les 30 derniers jours
+                const labels = [];
+                const dataPoints = [];
+                const now = Date.now();
+                const oneDay = 24 * 60 * 60 * 1000;
+                
+                for(let i = 29; i >= 0; i--) {
+                    const d = new Date(now - i * oneDay);
+                    labels.push(d.getDate() + "/" + (d.getMonth() + 1));
+                    // Pour simplifier, on simule une disponibilité de 100% avec des chutes selon l'historique
+                    // Dans un vrai cas, on calculerait l'état exact pour chaque jour basé sur elevator.history
+                    let uptime = 100;
+                    elevator.history.forEach(h => {
+                        const hDate = new Date(h.timestamp);
+                        if (hDate.getDate() === d.getDate() && hDate.getMonth() === d.getMonth()) {
+                            if (h.status !== 'en_service') uptime = 0; // Panne ce jour-là
+                        }
+                    });
+                    dataPoints.push(uptime);
+                }
+
+                window.elevatorChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '% Disponibilité',
+                            data: dataPoints,
+                            borderColor: '#a78bfa',
+                            backgroundColor: 'rgba(167, 139, 250, 0.2)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, max: 100 } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+        }
         if (!elevator.history || elevator.history.length === 0) {
             historyTimeline.innerHTML = `<p class="no-data-msg">Aucun historique disponible.</p>`;
         } else {
@@ -1405,4 +1488,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Démarrage initial de l'application
     initApp();
+
+    // Enregistrement du Service Worker (PWA)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('[Service Worker] Enregistré avec succès. Scope:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('[Service Worker] Échec de l\'enregistrement:', error);
+                });
+        });
+    }
+
+    // Boutons d'export et générateur légal
+    const btnExportHistory = document.getElementById("btn-export-history");
+    if (btnExportHistory) {
+        btnExportHistory.addEventListener("click", () => {
+            if (activeDetailsEntranceId) {
+                window.LegalGenerator.exportElevatorHistory(activeDetailsEntranceId);
+            }
+        });
+    }
+
+    const btnGenerateLegal = document.getElementById("btn-generate-legal");
+    if (btnGenerateLegal) {
+        btnGenerateLegal.addEventListener("click", () => {
+            window.LegalGenerator.generateMiseEnDemeure();
+        });
+    }
 });
