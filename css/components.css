@@ -1543,9 +1543,9 @@ textarea:focus {
 }
 
 .contact-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
     margin-top: 1rem;
 }
 
