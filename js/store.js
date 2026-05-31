@@ -99,17 +99,35 @@ const Store = (() => {
                     }))
                     : [];
 
-                // Calculate cumulative downtime
-                let downtimeMs = 0;
+                // Calculate cumulative downtime in calendar days
                 let downSince = null;
                 const sortedHistory = [...elHistory].sort((a, b) => a.timestamp - b.timestamp);
                 
+                const downtimeDates = new Set();
+
+                function addDatesToSet(startMs, endMs) {
+                    const startDay = new Date(startMs);
+                    startDay.setHours(0, 0, 0, 0);
+                    const endDay = new Date(endMs);
+                    endDay.setHours(0, 0, 0, 0);
+                    
+                    let currentDay = new Date(startDay.getTime());
+                    while (currentDay <= endDay) {
+                        // local time date string format YYYY-MM-DD
+                        const year = currentDay.getFullYear();
+                        const month = String(currentDay.getMonth() + 1).padStart(2, '0');
+                        const day = String(currentDay.getDate()).padStart(2, '0');
+                        downtimeDates.add(`${year}-${month}-${day}`);
+                        currentDay.setDate(currentDay.getDate() + 1);
+                    }
+                }
+
                 for (const event of sortedHistory) {
                     if (event.status !== 'en_service') {
                         if (downSince === null) downSince = event.timestamp;
                     } else {
                         if (downSince !== null) {
-                            downtimeMs += (event.timestamp - downSince);
+                            addDatesToSet(downSince, event.timestamp);
                             downSince = null;
                         }
                     }
@@ -118,14 +136,14 @@ const Store = (() => {
                 // If currently down and we have a tracked downSince
                 if (el.status !== 'en_service') {
                     if (downSince !== null) {
-                        downtimeMs += (Date.now() - downSince);
+                        addDatesToSet(downSince, Date.now());
                     } else if (el.last_status_change) {
                         // Edge case: no prior history, but we know it's currently down since last_status_change
-                        downtimeMs += (Date.now() - new Date(el.last_status_change).getTime());
+                        addDatesToSet(new Date(el.last_status_change).getTime(), Date.now());
                     }
                 }
 
-                const downtimeDays = Math.floor(downtimeMs / (1000 * 60 * 60 * 24));
+                const downtimeDays = downtimeDates.size;
 
                 return {
                     id: el.id,
