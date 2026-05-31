@@ -1606,45 +1606,68 @@ textarea:focus {
     font-size: 1.05rem;
     color: var(--text-primary);
     margin-bottom: 0.15rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: break-word;
 }
 
 .contact-info p {
     font-size: 0.8rem;
     color: var(--text-secondary);
     margin-bottom: 0.15rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.3;
 }
 
 .contact-info .contact-address {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     font-style: italic;
     display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.3;
+    margin-top: 0.25rem;
 }
 
 .btn-call {
-    width: 2.75rem;
-    height: 2.75rem;
-    min-width: 2.75rem;
-    min-height: 2.75rem;
-    border-radius: 50%;
-    padding: 0;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 50px; /* Pill shape on desktop */
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
     background: var(--color-success-bg);
     color: var(--color-success);
     border: 1px solid var(--color-success-border);
     flex-shrink: 0;
     box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+    transition: all var(--transition-fast);
+}
+
+.desktop-phone-number {
+    display: inline;
+}
+
+@media (max-width: 640px) {
+    .btn-call {
+        width: 2.75rem;
+        height: 2.75rem;
+        min-width: 2.75rem;
+        min-height: 2.75rem;
+        border-radius: 50%;
+        padding: 0;
+    }
+    
+    .desktop-phone-number {
+        display: none;
+    }
+    
+    .contact-info h3, 
+    .contact-info p, 
+    .contact-info .contact-address {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 }
 
 .btn-call:hover {
