@@ -119,6 +119,11 @@
                 <span class="tab-text">Charges</span>
                 <span class="tab-label">Charges</span>
             </button>
+            <button class="tab-link" data-tab="tab-juridique" role="tab" aria-selected="false" aria-controls="tab-juridique">
+                <span class="tab-tile-emoji">⚖️</span>
+                <span class="tab-text">Juridique</span>
+                <span class="tab-label">Juridique</span>
+            </button>
         </nav>
 
         <!-- ============================================ -->
@@ -159,19 +164,6 @@
 
                     <h3>✊ Notre force, c'est le collectif !</h3>
                     <p>Isolés, nos appels et nos mails sont ignorés ou reçoivent des réponses automatiques. Unis, grâce à ces données communes, nous devenons un interlocuteur puissant capable de mener des mises en demeure collectives et d'exiger des réductions de loyer pour préjudice.</p>
-
-                    <div style="margin-top: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
-                        <button id="btn-generate-legal" class="btn btn-primary" style="background-color: var(--color-danger);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                            Générer une Mise en Demeure (PDF)
-                        </button>
-                    </div>
 
                     <p class="call-to-action-text">Rejoignez le Collectif Plaine : créez votre compte résident en un clic et commencez à signaler tout problème dès aujourd'hui !</p>
                 </div>
@@ -234,7 +226,7 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 2 : INCIDENTS -->
+        <!-- CONTENU DE L'ONGLET 3 : INCIDENTS -->
         <!-- ============================================ -->
         <div id="tab-incidents" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-incidents">
             <section class="action-section">
@@ -283,7 +275,7 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 4 : CHARGES (CONSTRUCTION) -->
+        <!-- CONTENU DE L'ONGLET 5 : CHARGES (CONSTRUCTION) -->
         <!-- ============================================ -->
         <div id="tab-charges" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
             <section class="placeholder-section card glass center-text">
@@ -299,6 +291,66 @@
                 <p class="placeholder-desc">Cet espace permettra de décortiquer et de suivre les régularisations de charges annuelles (nettoyage, entretien espaces verts, contrats ascenseurs...).</p>
                 <div class="soon-banner" style="background-color: var(--color-warning); color: #fff; padding: 0.5rem 1rem; border-radius: 8px; margin-top: 1rem; display: inline-block;">🚧 En construction</div>
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">Nous sommes actuellement dans l'attente des documents justificatifs de la part du bailleur pour alimenter cette rubrique.</p>
+            </section>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CONTENU DE L'ONGLET 6 : JURIDIQUE -->
+        <!-- ============================================ -->
+        <div id="tab-juridique" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-juridique">
+            <section class="section-header">
+                <h2 class="section-title">⚖️ Action Juridique</h2>
+                <p class="section-subtitle">Générez une mise en demeure formelle pour défaut d'entretien, prête à être envoyée en lettre recommandée.</p>
+            </section>
+
+            <section class="card glass" style="max-width: 600px; margin: 0 auto;">
+                <div style="padding: 1.5rem;">
+                    <h3 style="margin-top: 0;">Vos informations personnelles</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Ces informations apparaîtront sur le courrier. L'adresse de destination (Valdévy) sera automatiquement insérée.</p>
+                    
+                    <form id="legal-form" class="form-grid">
+                        <div class="form-group">
+                            <label for="legal-firstname">Prénom</label>
+                            <input type="text" id="legal-firstname" class="form-input" required placeholder="Ex: Jean">
+                        </div>
+                        <div class="form-group">
+                            <label for="legal-lastname">Nom</label>
+                            <input type="text" id="legal-lastname" class="form-input" required placeholder="Ex: Dupont">
+                        </div>
+                        <div class="form-group">
+                            <label for="legal-entrance">Bâtiment / Entrée</label>
+                            <select id="legal-entrance" class="form-input" required>
+                                <option value="" disabled selected>Sélectionner une entrée</option>
+                                <option value="36">36 avenue Division Leclerc</option>
+                                <option value="38">38 avenue Division Leclerc</option>
+                                <option value="40">40 avenue Division Leclerc</option>
+                                <option value="42">42 avenue Division Leclerc</option>
+                                <option value="44">44 avenue Division Leclerc</option>
+                                <option value="46">46 avenue Division Leclerc</option>
+                                <option value="48">48 avenue Division Leclerc</option>
+                                <option value="50">50 avenue Division Leclerc</option>
+                                <option value="52">52 avenue Division Leclerc</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="legal-apartment">Numéro d'appartement</label>
+                            <input type="text" id="legal-apartment" class="form-input" required placeholder="Ex: 42">
+                        </div>
+                        
+                        <div style="grid-column: 1 / -1; margin-top: 1rem; text-align: center;">
+                            <button type="submit" class="btn btn-primary btn-block" style="background-color: var(--color-danger);">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                Générer la Mise en Demeure (PDF)
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </section>
         </div>
     </main>

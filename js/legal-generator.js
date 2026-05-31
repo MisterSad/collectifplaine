@@ -82,13 +82,7 @@ window.LegalGenerator = (() => {
     /**
      * Génère une mise en demeure formelle pour le bailleur
      */
-    async function generateMiseEnDemeure() {
-        const tenant = Security.getLoggedInTenant();
-        if (!tenant) {
-            alert("Vous devez être connecté pour générer une lettre en votre nom.");
-            return;
-        }
-
+    async function generateMiseEnDemeure(formData) {
         if (!window.jspdf) {
             alert("La librairie d'export PDF n'est pas encore chargée.");
             return;
@@ -100,22 +94,25 @@ window.LegalGenerator = (() => {
         // Entête locataire
         doc.setFont("helvetica", "bold");
         doc.setFontSize(12);
-        doc.text(`${tenant.username}`, 15, 20);
+        doc.text(`${formData.firstname} ${formData.lastname}`, 15, 20);
         doc.setFont("helvetica", "normal");
-        doc.text(`Bâtiment ${tenant.entrance}, Appt ${tenant.apartment}`, 15, 26);
+        doc.text(`Bâtiment ${formData.entrance}, Appt ${formData.apartment}`, 15, 26);
         doc.text("Avenue de la Division Leclerc", 15, 32);
         doc.text("94230 CACHAN", 15, 38);
 
-        // Destinataire
-        doc.text("À l'attention de VALDÉVY (Bailleur Social)", 120, 50);
+        // Destinataire (Valdévy)
+        doc.text("À l'attention de VALDÉVY", 120, 50);
         doc.text("Direction du Patrimoine", 120, 56);
-        doc.text("Objet : MISE EN DEMEURE - Défaut d'entretien des ascenseurs", 15, 75);
+        doc.text("4 allée Pierre-de-Montreuil", 120, 62);
+        doc.text("94230 CACHAN", 120, 68);
+
+        doc.text("Objet : MISE EN DEMEURE - Défaut d'entretien des ascenseurs", 15, 85);
         
         doc.setFont("helvetica", "bold");
-        doc.text("Lettre recommandée avec avis de réception", 15, 85);
+        doc.text("Lettre recommandée avec avis de réception", 15, 95);
 
         doc.setFont("helvetica", "normal");
-        let yPos = 100;
+        let yPos = 110;
         const dateJour = new Date().toLocaleDateString('fr-FR');
         doc.text(`Fait à Cachan, le ${dateJour}`, 15, yPos);
         yPos += 15;
@@ -123,7 +120,7 @@ window.LegalGenerator = (() => {
         const bodyText = `
 Madame, Monsieur,
 
-En qualité de locataire au sein de la résidence de l'Avenue de la Division Leclerc (Bâtiment ${tenant.entrance}), je vous adresse la présente mise en demeure concernant le défaut d'entretien chronique de l'ascenseur de mon immeuble.
+En qualité de locataire au sein de la résidence de l'Avenue de la Division Leclerc (Bâtiment ${formData.entrance}), je vous adresse la présente mise en demeure concernant le défaut d'entretien chronique de l'ascenseur de mon immeuble.
 
 Conformément à l'article 6 de la loi n° 89-462 du 6 juillet 1989, il vous incombe en tant que bailleur d'entretenir les locaux et équipements d'usage commun afin de garantir une jouissance paisible des lieux loués. Or, nous subissons des pannes récurrentes qui entravent gravement notre quotidien.
 
@@ -139,7 +136,7 @@ Dans l'attente d'une intervention rapide de vos services, je vous prie d'agréer
         const lines = doc.splitTextToSize(bodyText.trim(), 180);
         doc.text(lines, 15, yPos);
 
-        doc.save(`Mise_En_Demeure_Valdevy_Bat${tenant.entrance}.pdf`);
+        doc.save(`Mise_En_Demeure_Valdevy_Bat${formData.entrance}_${formData.lastname}.pdf`);
     }
 
     return {

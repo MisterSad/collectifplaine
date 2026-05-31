@@ -1403,6 +1403,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (targetTabId === "tab-elevators") {
                 renderDashboard();
+            } else if (targetTabId === "tab-juridique") {
+                // Pré-remplissage du formulaire juridique si l'utilisateur est connecté
+                const tenant = Security.getLoggedInTenant();
+                if (tenant) {
+                    const entranceSelect = document.getElementById("legal-entrance");
+                    const apartmentInput = document.getElementById("legal-apartment");
+                    
+                    if (entranceSelect && !entranceSelect.value) {
+                        // Chercher l'option correspondant à l'entrée du locataire
+                        Array.from(entranceSelect.options).forEach(opt => {
+                            if (opt.value === String(tenant.entrance) || opt.text.includes(tenant.entrance)) {
+                                entranceSelect.value = opt.value;
+                            }
+                        });
+                    }
+                    if (apartmentInput && !apartmentInput.value) {
+                        apartmentInput.value = tenant.apartment || "";
+                    }
+                }
             }
         });
     });
@@ -1512,10 +1531,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const btnGenerateLegal = document.getElementById("btn-generate-legal");
-    if (btnGenerateLegal) {
-        btnGenerateLegal.addEventListener("click", () => {
-            window.LegalGenerator.generateMiseEnDemeure();
+    // Formulaire de génération légale
+    const legalForm = document.getElementById("legal-form");
+    if (legalForm) {
+        legalForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                firstname: document.getElementById("legal-firstname").value,
+                lastname: document.getElementById("legal-lastname").value,
+                entrance: document.getElementById("legal-entrance").value,
+                apartment: document.getElementById("legal-apartment").value
+            };
+            
+            window.LegalGenerator.generateMiseEnDemeure(formData);
         });
     }
 });
