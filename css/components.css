@@ -688,13 +688,12 @@ textarea:focus {
 
 .app-tabs-nav {
     display: flex;
-    overflow-x: auto;
+    flex-wrap: wrap;
     gap: 0.5rem;
     padding: 0.5rem;
     border-radius: var(--radius-md);
     margin-top: 1rem;
     margin-bottom: 1.5rem;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
 }
 
 .app-tabs-nav::-webkit-scrollbar {
