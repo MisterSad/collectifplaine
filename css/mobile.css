@@ -13,7 +13,6 @@
    ========================================================= */
 
 html {
-    overflow-x: hidden;
     -webkit-text-size-adjust: 100%; /* Empêche le zoom auto du texte iOS */
 }
 
