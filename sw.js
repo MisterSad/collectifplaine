@@ -1,4 +1,4 @@
-const CACHE_NAME = 'collectif-plaine-v1';
+const CACHE_NAME = 'collectif-plaine-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -12,6 +12,7 @@ const ASSETS_TO_CACHE = [
   '/js/db-lib.js',
   '/js/store.js',
   '/js/app.js',
+  '/js/legal-generator.js',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png'
 ];
