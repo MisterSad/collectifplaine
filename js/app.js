@@ -1552,17 +1552,43 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const recentOutages = (elevator.history || []).filter(h => h.status === "en_panne").sort((a, b) => b.timestamp - a.timestamp);
-        
         legalOutage.innerHTML = '<option value="general">Panne récurrente / Problème général</option>';
         
+        // 1. Ajouter la panne actuelle si l'ascenseur est en panne
+        if (elevator.status === "en_panne" && elevator.lastStatusChange) {
+            const dateObj = new Date(elevator.lastStatusChange);
+            const dateStr = dateObj.toLocaleDateString("fr-FR");
+            const opt = document.createElement("option");
+            opt.value = dateStr;
+            opt.textContent = `Panne actuelle (depuis le ${dateStr})`;
+            legalOutage.appendChild(opt);
+        }
+
+        // 2. Ajouter les pannes déclarées par les locataires
+        const reports = (elevator.tenantReports || []).sort((a, b) => b.timestamp - a.timestamp);
+        reports.forEach(report => {
+            const dateObj = new Date(report.timestamp);
+            const dateStr = dateObj.toLocaleDateString("fr-FR");
+            const opt = document.createElement("option");
+            opt.value = dateStr;
+            opt.textContent = `Panne déclarée le ${dateStr}`;
+            // Eviter les doublons exacts
+            if (!Array.from(legalOutage.options).some(o => o.value === dateStr)) {
+                legalOutage.appendChild(opt);
+            }
+        });
+
+        // 3. Ajouter l'historique officiel
+        const recentOutages = (elevator.history || []).filter(h => h.status === "en_panne").sort((a, b) => b.timestamp - a.timestamp);
         recentOutages.forEach(outage => {
             const dateObj = new Date(outage.timestamp);
             const dateStr = dateObj.toLocaleDateString("fr-FR");
             const opt = document.createElement("option");
             opt.value = dateStr;
-            opt.textContent = `Panne signalée le ${dateStr}`;
-            legalOutage.appendChild(opt);
+            opt.textContent = `Historique: Panne du ${dateStr}`;
+            if (!Array.from(legalOutage.options).some(o => o.value === dateStr)) {
+                legalOutage.appendChild(opt);
+            }
         });
 
         legalOutage.disabled = false;
