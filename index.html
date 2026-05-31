@@ -332,6 +332,13 @@
                                 <option value="52">52 avenue Division Leclerc</option>
                             </select>
                         </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="legal-outage">Panne concernée par la mise en demeure</label>
+                            <select id="legal-outage" class="form-input" required disabled>
+                                <option value="" disabled selected>Sélectionnez d'abord un bâtiment</option>
+                            </select>
+                            <p class="field-hint" style="margin-top: 4px;">Sélectionnez la panne prolongée dans l'historique récent de votre ascenseur.</p>
+                        </div>
                         <div class="form-group">
                             <label for="legal-apartment">Numéro d'appartement</label>
                             <input type="text" id="legal-apartment" class="form-input" required placeholder="Ex: 42">

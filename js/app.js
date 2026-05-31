@@ -1421,6 +1421,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (apartmentInput && !apartmentInput.value) {
                         apartmentInput.value = tenant.apartment || "";
                     }
+                    if (entranceSelect && entranceSelect.value) {
+                        populateOutagesForEntrance(entranceSelect.value);
+                    }
                 }
             }
         });
@@ -1533,6 +1536,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Formulaire de génération légale
     const legalForm = document.getElementById("legal-form");
+    const legalEntrance = document.getElementById("legal-entrance");
+    const legalOutage = document.getElementById("legal-outage");
+
+    window.populateOutagesForEntrance = function(entranceId) {
+        if (!legalOutage) return;
+        
+        legalOutage.innerHTML = '<option value="" disabled selected>Chargement...</option>';
+        legalOutage.disabled = true;
+
+        const elevator = Store.getElevatorById(entranceId);
+        
+        if (!elevator) {
+            legalOutage.innerHTML = '<option value="" disabled selected>Aucun ascenseur trouvé pour cette entrée</option>';
+            return;
+        }
+
+        const recentOutages = (elevator.history || []).filter(h => h.status === "en_panne").sort((a, b) => b.timestamp - a.timestamp);
+        
+        legalOutage.innerHTML = '<option value="general">Panne récurrente / Problème général</option>';
+        
+        recentOutages.forEach(outage => {
+            const dateObj = new Date(outage.timestamp);
+            const dateStr = dateObj.toLocaleDateString("fr-FR");
+            const opt = document.createElement("option");
+            opt.value = dateStr;
+            opt.textContent = `Panne signalée le ${dateStr}`;
+            legalOutage.appendChild(opt);
+        });
+
+        legalOutage.disabled = false;
+        legalOutage.value = "general";
+    };
+
+    if (legalEntrance) {
+        legalEntrance.addEventListener("change", (e) => {
+            populateOutagesForEntrance(e.target.value);
+        });
+    }
+
     if (legalForm) {
         legalForm.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -1541,7 +1583,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 firstname: document.getElementById("legal-firstname").value,
                 lastname: document.getElementById("legal-lastname").value,
                 entrance: document.getElementById("legal-entrance").value,
-                apartment: document.getElementById("legal-apartment").value
+                apartment: document.getElementById("legal-apartment").value,
+                outage: legalOutage ? legalOutage.value : "general"
             };
             
             window.LegalGenerator.generateMiseEnDemeure(formData);

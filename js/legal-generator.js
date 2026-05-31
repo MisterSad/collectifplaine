@@ -80,11 +80,33 @@ window.LegalGenerator = (() => {
     }
 
     /**
+     * Charge dynamiquement jsPDF si non présent
+     */
+    function loadJsPdf() {
+        return new Promise((resolve, reject) => {
+            if (window.jspdf) {
+                resolve(window.jspdf);
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = 'js/jspdf.umd.min.js';
+            script.onload = () => {
+                if (window.jspdf) resolve(window.jspdf);
+                else reject(new Error("jsPDF n'a pas pu être initialisé"));
+            };
+            script.onerror = () => reject(new Error("Erreur de chargement de jsPDF"));
+            document.head.appendChild(script);
+        });
+    }
+
+    /**
      * Génère une mise en demeure formelle pour le bailleur
      */
     async function generateMiseEnDemeure(formData) {
-        if (!window.jspdf) {
-            alert("La librairie d'export PDF n'est pas encore chargée.");
+        try {
+            await loadJsPdf();
+        } catch (e) {
+            alert("La librairie d'export PDF n'est pas encore chargée ou est bloquée.");
             return;
         }
 
@@ -117,10 +139,15 @@ window.LegalGenerator = (() => {
         doc.text(`Fait à Cachan, le ${dateJour}`, 15, yPos);
         yPos += 15;
 
+        let incidentText = "le défaut d'entretien chronique de l'ascenseur de mon immeuble";
+        if (formData.outage && formData.outage !== "general") {
+            incidentText = `la panne de l'ascenseur survenue le ${formData.outage} et qui perdure de manière inacceptable`;
+        }
+
         const bodyText = `
 Madame, Monsieur,
 
-En qualité de locataire au sein de la résidence de l'Avenue de la Division Leclerc (Bâtiment ${formData.entrance}), je vous adresse la présente mise en demeure concernant le défaut d'entretien chronique de l'ascenseur de mon immeuble.
+En qualité de locataire au sein de la résidence de l'Avenue de la Division Leclerc (Bâtiment ${formData.entrance}), je vous adresse la présente mise en demeure concernant ${incidentText}.
 
 Conformément à l'article 6 de la loi n° 89-462 du 6 juillet 1989, il vous incombe en tant que bailleur d'entretenir les locaux et équipements d'usage commun afin de garantir une jouissance paisible des lieux loués. Or, nous subissons des pannes récurrentes qui entravent gravement notre quotidien.
 
