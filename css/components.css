@@ -1531,6 +1531,37 @@ textarea:focus {
 /* CONTACTS — iOS Native Directory Style                    */
 /* ======================================================== */
 
+/* ─── EMERGENCY: SVG SIZE CONSTRAINTS ─── */
+/* Prevents SVGs from defaulting to 300x150px */
+svg.ios-chevron {
+    width: 8px !important;
+    height: 14px !important;
+    min-width: 8px;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+svg.ios-search-icon {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px;
+    flex-shrink: 0;
+}
+
+.ios-search-clear svg {
+    width: 8px !important;
+    height: 8px !important;
+    display: block;
+}
+
+.action-icon svg {
+    width: 24px !important;
+    height: 24px !important;
+    display: block;
+    flex-shrink: 0;
+}
+
+
 /* ─── Wrapper page contacts (supprime le max-width générique) ─── */
 #tab-contacts {
     max-width: 680px;
