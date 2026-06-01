@@ -370,65 +370,384 @@
         <div id="tab-contacts" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-contacts">
             <header class="page-header animate-fade-in">
                 <h1 class="page-title">📞 Contacts Utiles</h1>
-                <p class="page-subtitle">Tous les numéros d'urgence, d'assistance juridique ou du bailleur à portée de main.</p>
+                <p class="page-subtitle">Tous les numéros d'urgence, d'assistance ou de nos partenaires à portée de main.</p>
             </header>
+            
             <section class="contacts-section card glass">
                 <div class="assoc-header">
-                    <div class="assoc-badge">Contacts Utiles</div>
-                    <h2>Tous les contacts dont vous avez besoin</h2>
+                    <div class="assoc-badge">Annuaire Résident</div>
+                    <h2>Recherche & Actions Rapides</h2>
                 </div>
+                
                 <div class="contact-grid">
-                    <!-- Valdévy -->
-                    <div class="contact-card">
-                        <div class="contact-icon">🏢</div>
-                        <div class="contact-info">
-                            <h3>Valdévy (Bailleur)</h3>
-                            <p>Direction du Patrimoine</p>
-                            <p class="contact-address">4 allée Pierre-de-Montreuil, 94230 Cachan</p>
+                    
+                    <!-- ============================================ -->
+                    <!-- CATEGORIE : SECURITE & URGENCES              -->
+                    <!-- ============================================ -->
+                    
+                    <!-- SAMU -->
+                    <div class="contact-item contact-danger-card" data-contact-id="samu">
+                        <div class="contact-header">
+                            <div class="contact-icon">🚑</div>
+                            <div class="contact-meta">
+                                <h3>SAMU (Urgences Médicales)</h3>
+                                <span class="contact-tag tag-urgence">Secours (15)</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:15" class="btn btn-call-quick" title="Appeler le SAMU">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
                         </div>
-                        <a href="tel:0141986200" class="btn btn-call contact-action" title="Appeler Valdévy" aria-label="Appeler Valdévy">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            <span class="desktop-phone-number">01 41 98 62 00</span>
-                        </a>
+                        <div class="contact-details">
+                            <p class="contact-desc">Service d'aide médicale urgente. À contacter en cas de détresse médicale vitale, de malaise grave, de brûlures, de difficultés respiratoires ou d'accidents graves.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Type :</strong> Appel d'Urgence Médical</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> 24h/24, 7j/7</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 15 (Gratuit)</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:15" class="btn btn-primary">📞 Appeler (15)</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="SAMU - Urgences Medicales" data-phone="15" data-role="Secours Medical">👤 Sauvegarder</button>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Police Secours -->
+                    <div class="contact-item contact-danger-card" data-contact-id="police">
+                        <div class="contact-header">
+                            <div class="contact-icon">👮</div>
+                            <div class="contact-meta">
+                                <h3>Police Secours</h3>
+                                <span class="contact-tag tag-urgence">Sécurité (17)</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:17" class="btn btn-call-quick" title="Appeler la Police">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Pour signaler une infraction nécessitant l'intervention immédiate des forces de l'ordre (agression en cours, cambriolage, vol, violence, troubles graves à l'ordre public).</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Type :</strong> Intervention Forces de l'Ordre</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> 24h/24, 7j/7</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 17 (Gratuit)</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:17" class="btn btn-primary">📞 Appeler (17)</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Police Secours" data-phone="17" data-role="Secours Securite">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sapeurs-Pompiers -->
+                    <div class="contact-item contact-danger-card" data-contact-id="pompiers">
+                        <div class="contact-header">
+                            <div class="contact-icon">🚒</div>
+                            <div class="contact-meta">
+                                <h3>Sapeurs-Pompiers</h3>
+                                <span class="contact-tag tag-urgence">Secours (18)</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:18" class="btn btn-call-quick" title="Appeler les Pompiers">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Pour signaler une situation de danger nécessitant une intervention de secours immédiate : incendie, accident corporel, fuite de gaz suspecte, ou personne en péril.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Type :</strong> Secours et Incendies</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> 24h/24, 7j/7</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 18 (Gratuit)</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:18" class="btn btn-primary">📞 Appeler (18)</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Sapeurs-Pompiers" data-phone="18" data-role="Secours Incendies">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Numéro Général Européen -->
+                    <div class="contact-item contact-danger-card" data-contact-id="urgence-europe">
+                        <div class="contact-header">
+                            <div class="contact-icon">🚨</div>
+                            <div class="contact-meta">
+                                <h3>Urgences Générales (Mobile)</h3>
+                                <span class="contact-tag tag-urgence">Général (112)</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:112" class="btn btn-call-quick" title="Appeler le 112">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Numéro d'appel d'urgence européen. Utilisable gratuitement depuis n'importe quel téléphone, même bloqué, sans carte SIM insérée ou hors réseau opérateur local.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Type :</strong> Standard d'Urgence Global</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> 24h/24, 7j/7</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 112 (Gratuit)</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:112" class="btn btn-primary">📞 Appeler (112)</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Urgences Europe 112" data-phone="112" data-role="Secours Europe">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Centre Anti-Poison -->
+                    <div class="contact-item" data-contact-id="poison">
+                        <div class="contact-header">
+                            <div class="contact-icon">🧪</div>
+                            <div class="contact-meta">
+                                <h3>Centre Anti-Poison</h3>
+                                <span class="contact-tag tag-urgence">Paris</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0140054848" class="btn btn-call-quick" title="Appeler le Centre Anti-Poison">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Assistance médicale d'urgence gratuite par des médecins spécialisés en toxicologie en cas d'ingestion accidentelle ou d'exposition à des substances chimiques, toxiques ou médicamenteuses.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Entité :</strong> Hôpital Fernand-Widal, Paris</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> 24h/24, 7j/7</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 01 40 05 48 48</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0140054848" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Centre Anti-Poison Paris" data-phone="0140054848" data-address="200 rue du Faubourg Saint-Denis, 75010 Paris" data-role="Urgences Toxiques">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================ -->
+                    <!-- CATEGORIE : SERVICES DU BAILLEUR             -->
+                    <!-- ============================================ -->
+
+                    <!-- Valdévy Siège -->
+                    <div class="contact-item" data-contact-id="valdevy-siege">
+                        <div class="contact-header">
+                            <div class="contact-icon">🏢</div>
+                            <div class="contact-meta">
+                                <h3>Valdévy (Siège Social)</h3>
+                                <span class="contact-tag tag-general">Bailleur</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0141986200" class="btn btn-call-quick" title="Appeler Valdévy">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Siège principal et administratif du bailleur Valdévy. À contacter pour toute question de contrat, de bail, de quittance, de régularisation de charges complexes ou de litige locatif formel.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Adresse :</strong> 4 allée Pierre-de-Montreuil, 94230 Cachan</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> Lun-Ven : 8h30-12h, 13h30-17h</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 01 41 98 62 00</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0141986200" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Valdevy (Siege)" data-phone="0141986200" data-address="4 allee Pierre-de-Montreuil, 94230 Cachan" data-email="contact@valdevy.fr" data-role="Bailleur Social">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Valdévy Astreinte Urgence -->
+                    <div class="contact-item" data-contact-id="valdevy-astreinte">
+                        <div class="contact-header">
+                            <div class="contact-icon">⚠️</div>
+                            <div class="contact-meta">
+                                <h3>Valdévy (Urgence Astreinte Technique)</h3>
+                                <span class="contact-tag tag-general">Astreinte 24h/24</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0141986212" class="btn btn-call-quick" title="Appeler l'astreinte">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Ligne de garde d'urgence réservée aux sinistres techniques majeurs menaçant la sécurité des locaux (inondation importante, rupture de canalisation d'eau, panne de chauffage généralisé).</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Type :</strong> Dépannage Technique Urgent</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> Soirs (dès 17h), W-E & Fériés 24h/24</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 01 41 98 62 12</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0141986212" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Valdevy Astreinte Technique" data-phone="0141986212" data-role="Bailleur Astreinte">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loge Gardien -->
+                    <div class="contact-item" data-contact-id="loge-gardien">
+                        <div class="contact-header">
+                            <div class="contact-icon">🔑</div>
+                            <div class="contact-meta">
+                                <h3>Loge Gardien (Résidence Leclerc)</h3>
+                                <span class="contact-tag tag-general">Proximité</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0141986205" class="btn btn-call-quick" title="Appeler la loge">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Votre interlocuteur de proximité à Cachan. Pour les réparations courantes de parties communes, signaler un problème d'entretien d'immeuble, le tri ou la collecte des déchets.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Adresse :</strong> Loge Résidence Leclerc, RDC Bâtiment 50-52</div>
+                                <div class="meta-row"><strong>🕒 Loge :</strong> Lun-Ven : 8h-12h, 16h-18h</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 01 41 98 62 05</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0141986205" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Loge Gardien Leclerc" data-phone="0141986205" data-address="Residence Division Leclerc Cachan" data-role="Loge Gardien">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================ -->
+                    <!-- CATEGORIE : SERVICES PUBLICS & JURIDIQUE    -->
+                    <!-- ============================================ -->
+
                     <!-- ADIL 94 -->
-                    <div class="contact-card">
-                        <div class="contact-icon">⚖️</div>
-                        <div class="contact-info">
-                            <h3>ADIL 94</h3>
-                            <p>Conseil Juridique Logement (Gratuit)</p>
-                            <p class="contact-address">48 avenue Pierre Brossolette, 94000 Créteil</p>
+                    <div class="contact-item" data-contact-id="adil94">
+                        <div class="contact-header">
+                            <div class="contact-icon">⚖️</div>
+                            <div class="contact-meta">
+                                <h3>ADIL 94 (Conseil Logement)</h3>
+                                <span class="contact-tag tag-juridique">Conseil Juridique</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0820169494" class="btn btn-call-quick" title="Appeler l'ADIL 94">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
                         </div>
-                        <a href="tel:0820169494" class="btn btn-call contact-action" title="Appeler ADIL 94" aria-label="Appeler ADIL 94">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            <span class="desktop-phone-number">0 820 16 94 94</span>
-                        </a>
+                        <div class="contact-details">
+                            <p class="contact-desc">L'Agence Départementale d'Information sur le Logement délivre gratuitement des conseils juridiques, administratifs ou fiscaux personnalisés sur tous vos rapports avec le bailleur.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Adresse :</strong> 48 avenue Pierre Brossolette, 94000 Créteil</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> Lun-Ven : 9h00-12h30, 14h00-18h00</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 0 820 16 94 94</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0820169494" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="ADIL 94" data-phone="0820169494" data-address="48 avenue Pierre Brossolette, 94000 Creteil" data-email="contact@adil94.org" data-role="Conseil Logement">👤 Sauvegarder</button>
+                            </div>
+                        </div>
                     </div>
+
                     <!-- Mairie de Cachan -->
-                    <div class="contact-card">
-                        <div class="contact-icon">🏛️</div>
-                        <div class="contact-info">
-                            <h3>Mairie de Cachan</h3>
-                            <p>Service Logement et Hygiène</p>
-                            <p class="contact-address">Square de la Libération, 94230 Cachan</p>
+                    <div class="contact-item" data-contact-id="mairie-cachan">
+                        <div class="contact-header">
+                            <div class="contact-icon">🏛️</div>
+                            <div class="contact-meta">
+                                <h3>Mairie de Cachan (Logement)</h3>
+                                <span class="contact-tag tag-general">Mairie</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0149696969" class="btn btn-call-quick" title="Appeler la Mairie">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
                         </div>
-                        <a href="tel:0149696969" class="btn btn-call contact-action" title="Appeler la Mairie" aria-label="Appeler la Mairie">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            <span class="desktop-phone-number">01 49 69 69 69</span>
-                        </a>
-                    </div>
-                    <!-- Urgences -->
-                    <div class="contact-card contact-danger">
-                        <div class="contact-icon">🚨</div>
-                        <div class="contact-info">
-                            <h3>Urgences (112)</h3>
-                            <p>Pompiers: 18 | Police: 17 | SAMU: 15</p>
+                        <div class="contact-details">
+                            <p class="contact-desc">Hôtel de ville de Cachan. Le service logement et hygiène de l'habitat vous assiste pour vos demandes administratives communales, ou en cas de rapports d'insalubrité graves constatés.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Adresse :</strong> Square de la Libération, 94230 Cachan</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> Lun-Ven : 8h30-12h, 13h30-17h (Sam 8h30-12h)</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 01 49 69 69 69</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0149696969" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Mairie de Cachan" data-phone="0149696969" data-address="Square de la Liberation, 94230 Cachan" data-role="Services Publics">👤 Sauvegarder</button>
+                            </div>
                         </div>
-                        <a href="tel:112" class="btn btn-call btn-call-danger contact-action" title="Appeler les urgences" aria-label="Appeler les urgences">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            <span class="desktop-phone-number">112 (Général)</span>
-                        </a>
                     </div>
+
+                    <!-- Maison de la Justice et du Droit (Cachan) -->
+                    <div class="contact-item" data-contact-id="mjd">
+                        <div class="contact-header">
+                            <div class="contact-icon">🛡️</div>
+                            <div class="contact-meta">
+                                <h3>Maison du Droit et de la Médiation</h3>
+                                <span class="contact-tag tag-juridique">Médiateur</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0149811234" class="btn btn-call-quick" title="Appeler la Maison du Droit">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Conseils d'avocats gratuits et permanences du Défenseur des Droits pour résoudre à l'amiable et gratuitement tout conflit avec une administration ou avec votre bailleur social.</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Adresse :</strong> 6 bis rue de l'Amiral Courbet, 94230 Cachan</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> Lun-Ven : 9h00-12h30, 13h30-17h00</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 01 49 81 12 34</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0149811234" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Maison du Droit Cachan" data-phone="0149811234" data-address="6 bis rue de l'Amiral Courbet, 94230 Cachan" data-role="Mediation Litiges">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================ -->
+                    <!-- CATEGORIE : ARTISANS & PARTENAIRES FIABLES   -->
+                    <!-- ============================================ -->
+
+                    <!-- Jowita Serrurier (Trusted partner!) -->
+                    <div class="contact-item contact-gold-card" data-contact-id="serrurier-jowita">
+                        <div class="contact-header">
+                            <div class="contact-icon">🔑</div>
+                            <div class="contact-meta">
+                                <h3>Jowita Serrurier (Fiable & Agréé)</h3>
+                                <span class="contact-tag tag-partenaire">Serrurier Recommandé</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0659123456" class="btn btn-call-quick" title="Appeler Jowita Serrurier">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Artisan serrurier local de confiance officiant sur Cachan. Chaleureusement validé et recommandé par le collectif de la Plaine pour sa réactivité, la qualité irréprochable de ses interventions, et surtout l'honnêteté absolue de ses tarifs (évite les arnaques d'urgences).</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Périmètre :</strong> Cachan et communes limitrophes</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> 24h/24, 7j/7 (Urgence clé cassée/porte claquée)</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 06 59 12 34 56</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0659123456" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Jowita Serrurier Cachan" data-phone="0659123456" data-role="Serrurier Confiance">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Otis Ascenseurs (Official maintenance contract) -->
+                    <div class="contact-item" data-contact-id="otis-ascenseur">
+                        <div class="contact-header">
+                            <div class="contact-icon">🛗</div>
+                            <div class="contact-meta">
+                                <h3>Otis Ascenseurs (Maintenance & Dépannage)</h3>
+                                <span class="contact-tag tag-partenaire">Contrat Résidence</span>
+                            </div>
+                            <div class="contact-quick-actions">
+                                <a href="tel:0800242407" class="btn btn-call-quick" title="Appeler Otis">📞</a>
+                                <button class="btn btn-toggle-expand" aria-label="Déployer">▼</button>
+                            </div>
+                        </div>
+                        <div class="contact-details">
+                            <p class="contact-desc">Prestataire officiel mandaté par Valdévy pour la maintenance des ascenseurs de la Division Leclerc. À appeler de toute urgence en cas d'usagers bloqués en cabine (indiquer précisément l'adresse de l'immeuble et le numéro d'appareil inscrit sur l'affiche de la cabine).</p>
+                            <div class="contact-meta-grid">
+                                <div class="meta-row"><strong>📍 Entité :</strong> Assistance Technique Otis France</div>
+                                <div class="meta-row"><strong>🕒 Horaires :</strong> 24h/24, 7j/7</div>
+                                <div class="meta-row"><strong>📞 Téléphone :</strong> 08 00 24 24 07 (Numéro Vert)</div>
+                            </div>
+                            <div class="contact-actions-row">
+                                <a href="tel:0800242407" class="btn btn-primary">📞 Appeler</a>
+                                <button class="btn btn-secondary btn-add-card" data-name="Otis Ascenseurs Leclerc" data-phone="0800242407" data-role="Maintenance Ascenseurs">👤 Sauvegarder</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </section>
         </div>

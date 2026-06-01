@@ -1537,6 +1537,72 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------
+    // EVENT LISTENERS POUR LA PAGE CONTACTS DYNAMIQUE
+    // ---------------------------------------------------------
+    
+    const tabContactsElement = document.getElementById("tab-contacts");
+    if (tabContactsElement) {
+        tabContactsElement.addEventListener("click", (e) => {
+            // 1. Déploiement/fermeture des cartes de contact
+            const header = e.target.closest(".contact-header");
+            const quickCall = e.target.closest(".btn-call-quick");
+            
+            if (header && !quickCall) {
+                const item = header.closest(".contact-item");
+                if (item) {
+                    // Fermer les autres cartes ouvertes pour un effet accordéon soigné
+                    document.querySelectorAll(".contact-item").forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains("expanded")) {
+                            otherItem.classList.remove("expanded");
+                        }
+                    });
+                    
+                    // Basculer la carte actuelle
+                    item.classList.toggle("expanded");
+                }
+                return;
+            }
+            
+            // 2. Clic sur "Ajouter au carnet d'adresses"
+            const addCardBtn = e.target.closest(".btn-add-card");
+            if (addCardBtn) {
+                e.preventDefault();
+                const name = addCardBtn.dataset.name || "";
+                const phone = addCardBtn.dataset.phone || "";
+                const address = addCardBtn.dataset.address || "";
+                const email = addCardBtn.dataset.email || "";
+                const role = addCardBtn.dataset.role || "";
+                
+                downloadVCard(name, phone, address, email, role);
+            }
+        });
+    }
+
+    // Helper de téléchargement de vCard (.vcf)
+    function downloadVCard(name, phone, address, email, role) {
+        const vcard = [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            `FN:${name}`,
+            `TEL;TYPE=CELL,VOICE:${phone}`,
+            address ? `ADR;TYPE=WORK:;;${address.replace(/,/g, '\\;')};;;` : "",
+            email ? `EMAIL;TYPE=PREF,INTERNET:${email}` : "",
+            role ? `TITLE:${role}` : "",
+            "END:VCARD"
+        ].filter(Boolean).join("\r\n");
+
+        const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${name.replace(/\s+/g, "_")}.vcf`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    // ---------------------------------------------------------
     // 7. INITIALISATION & ABONNEMENTS ÉVÉNEMENTIELS
     // ---------------------------------------------------------
     
