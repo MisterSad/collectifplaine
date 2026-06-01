@@ -2023,4 +2023,56 @@ textarea:focus {
     }
 }
 
+/* ─── SVG ICONS DIMENSIONING ─── */
+.ios-search-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+}
 
+.ios-search-clear svg {
+    width: 8px;
+    height: 8px;
+}
+
+.action-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* ─── CURSOR POINTER (uipro checklist) ─── */
+.ios-contact-header {
+    cursor: pointer;
+}
+
+.ios-action-circle {
+    cursor: pointer;
+}
+
+.btn-add-card {
+    cursor: pointer;
+}
+
+/* ─── PREFERS-REDUCED-MOTION (uipro accessibility) ─── */
+@media (prefers-reduced-motion: reduce) {
+    .ios-contact-details {
+        transition: none;
+    }
+
+    .ios-chevron {
+        transition: none;
+    }
+
+    .ios-action-circle {
+        transition: none;
+    }
+
+    .animate-fade-in {
+        animation: none;
+    }
+
+    .ios-contact-header {
+        transition: none;
+    }
+}
