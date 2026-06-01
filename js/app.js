@@ -326,18 +326,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="report-header">
                     <div class="report-meta">
                         <strong>${categoryIcons[incident.category] || "❓"} ${incident.entrance !== 'tous' ? 'Bâtiment ' + incident.entrance : 'Espaces Communs'}</strong>
-                        <span class="report-author">${incident.user_display}</span>
+                        <span class="report-author"></span>
                     </div>
                     <span class="report-time">${formatTimeAgo(new Date(incident.created_at).getTime())}</span>
                 </div>
                 <div class="report-content">
-                    <p>${incident.description}</p>
+                    <p></p>
                 </div>
                 ${incident.photo_url ? `<div class="report-photo-thumb" style="background-image: url('${incident.photo_url}'); cursor:pointer;" onclick="window.openLightbox('${incident.photo_url}')" title="Agrandir la photo"></div>` : ""}
                 <div style="margin-top:0.75rem; display:flex; justify-content:space-between; align-items:center;">
                     <span class="status-badge ${badgeClass}" style="font-size:0.7rem; padding:2px 6px;">${badgeText}</span>
                 </div>
             `;
+            el.querySelector(".report-author").textContent = incident.user_display;
+            el.querySelector(".report-content p").textContent = incident.description;
             incidentsFeed.appendChild(el);
         });
     }
@@ -371,12 +373,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
                     <div>
                         <span class="status-badge" style="background-color:rgba(255,255,255,0.1); color:var(--text-primary); margin-bottom:0.5rem; display:inline-block; font-size:0.75rem;">${typeLabels[msg.type]}</span>
-                        <h4 style="margin:0; font-size:1rem;">${msg.author}</h4>
+                        <h4 style="margin:0; font-size:1rem;" class="msg-author"></h4>
                         <span class="report-time" style="font-size:0.75rem;">${formatTimeAgo(new Date(msg.created_at).getTime())} ${msg.entrance ? '• Bât. ' + msg.entrance : ''}</span>
                     </div>
                 </div>
-                <p style="margin:0; line-height:1.5; color:var(--text-secondary);">${msg.content}</p>
+                <p style="margin:0; line-height:1.5; color:var(--text-secondary);" class="msg-content"></p>
             `;
+            el.querySelector(".msg-author").textContent = msg.author;
+            el.querySelector(".msg-content").textContent = msg.content;
             messagesFeed.appendChild(el);
         });
     }
@@ -1037,11 +1041,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 item.innerHTML = `
                     <div class="report-item-header">
-                        <span class="report-item-user">Par : ${report.user}</span>
+                        <span class="report-item-user"></span>
                         <span>${formatTimeAgo(report.timestamp)}</span>
                     </div>
                     <div class="report-item-body">
-                        <strong>${formatIssueType(report.type)}</strong> • ${report.description}
+                        <strong>${formatIssueType(report.type)}</strong> • <span class="report-desc-text"></span>
                         ${photoHtml}
                     </div>
                     <div class="report-item-footer" style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
@@ -1051,6 +1055,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         ${deleteBtnHtml}
                     </div>
                 `;
+
+                item.querySelector(".report-item-user").textContent = `Par : ${report.user}`;
+                item.querySelector(".report-desc-text").textContent = report.description;
 
                 if (report.photo) {
                     item.querySelector(".report-thumbnail").addEventListener("click", () => {
@@ -1478,6 +1485,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function initApp() {
         initTheme();
+        populateAllEntrancesDropdowns();
         renderAuthHeader();
         
         try {
@@ -1614,6 +1622,49 @@ document.addEventListener("DOMContentLoaded", () => {
             };
             
             window.LegalGenerator.generateMiseEnDemeure(formData);
+        });
+    }
+
+    /**
+     * Génère dynamiquement les options de toutes les listes déroulantes de bâtiments
+     */
+    function populateAllEntrancesDropdowns() {
+        if (typeof CONFIG === "undefined" || !CONFIG.entrances) {
+            console.error("CONFIG ou CONFIG.entrances est introuvable.");
+            return;
+        }
+
+        const dropdowns = [
+            { id: "legal-entrance", prefix: "", suffix: "" },
+            { id: "report-entrance", prefix: "N° ", suffix: " - Leclerc" },
+            { id: "auth-register-entrance", prefix: "", suffix: "" },
+            { id: "incident-entrance", prefix: "", suffix: "" },
+            { id: "message-entrance", prefix: "🏢 Uniquement ", suffix: "" }
+        ];
+
+        dropdowns.forEach(cfg => {
+            const select = document.getElementById(cfg.id);
+            if (!select) return;
+
+            // Conserver les options par défaut ou spéciales (value vide ou 'tous')
+            const defaultOption = select.querySelector("option[disabled]");
+            const globalOption = select.querySelector("option[value='tous']");
+
+            select.innerHTML = "";
+            if (defaultOption) {
+                select.appendChild(defaultOption);
+            }
+
+            CONFIG.entrances.forEach(ent => {
+                const opt = document.createElement("option");
+                opt.value = ent.id;
+                opt.textContent = `${cfg.prefix}${ent.label || ent.id}${cfg.suffix}`;
+                select.appendChild(opt);
+            });
+
+            if (globalOption) {
+                select.appendChild(globalOption);
+            }
         });
     }
 });

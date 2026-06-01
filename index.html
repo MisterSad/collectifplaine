@@ -326,15 +326,6 @@
                             <label for="legal-entrance">Bâtiment / Entrée</label>
                             <select id="legal-entrance" class="form-input" required>
                                 <option value="" disabled selected>Sélectionner une entrée</option>
-                                <option value="36">36 avenue Division Leclerc</option>
-                                <option value="38">38 avenue Division Leclerc</option>
-                                <option value="40">40 avenue Division Leclerc</option>
-                                <option value="42">42 avenue Division Leclerc</option>
-                                <option value="44">44 avenue Division Leclerc</option>
-                                <option value="46">46 avenue Division Leclerc</option>
-                                <option value="48">48 avenue Division Leclerc</option>
-                                <option value="50">50 avenue Division Leclerc</option>
-                                <option value="52">52 avenue Division Leclerc</option>
                             </select>
                         </div>
                         <div class="form-group" style="grid-column: 1 / -1;">
@@ -467,15 +458,6 @@
                         <label for="report-entrance">Numéro d'Entrée <span class="required">*</span></label>
                         <select id="report-entrance" name="entrance" required>
                             <option value="" disabled selected>Choisir l'entrée concernée...</option>
-                            <option value="36">N° 36 - Leclerc</option>
-                            <option value="38">N° 38 - Leclerc</option>
-                            <option value="40">N° 40 - Leclerc</option>
-                            <option value="42">N° 42 - Leclerc</option>
-                            <option value="44">N° 44 - Leclerc</option>
-                            <option value="46">N° 46 - Leclerc</option>
-                            <option value="48">N° 48 - Leclerc</option>
-                            <option value="50">N° 50 - Leclerc</option>
-                            <option value="52">N° 52 - Leclerc</option>
                         </select>
                     </div>
 
@@ -663,15 +645,6 @@
                         <label for="auth-register-entrance">Numéro d'Entrée <span class="required">*</span></label>
                         <select id="auth-register-entrance" required>
                             <option value="" disabled selected>Sélectionner votre entrée...</option>
-                            <option value="36">36 avenue Division Leclerc</option>
-                            <option value="38">38 avenue Division Leclerc</option>
-                            <option value="40">40 avenue Division Leclerc</option>
-                            <option value="42">42 avenue Division Leclerc</option>
-                            <option value="44">44 avenue Division Leclerc</option>
-                            <option value="46">46 avenue Division Leclerc</option>
-                            <option value="48">48 avenue Division Leclerc</option>
-                            <option value="50">50 avenue Division Leclerc</option>
-                            <option value="52">52 avenue Division Leclerc</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -720,23 +693,13 @@
                             <option value="autre">❓ Autre incident</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="incident-entrance">Bâtiment / Entrée concernée</label>
                         <select id="incident-entrance" required>
-                            <option value="36">36 avenue Division Leclerc</option>
-                            <option value="38">38 avenue Division Leclerc</option>
-                            <option value="40">40 avenue Division Leclerc</option>
-                            <option value="42">42 avenue Division Leclerc</option>
-                            <option value="44">44 avenue Division Leclerc</option>
-                            <option value="46">46 avenue Division Leclerc</option>
-                            <option value="48">48 avenue Division Leclerc</option>
-                            <option value="50">50 avenue Division Leclerc</option>
-                            <option value="52">52 avenue Division Leclerc</option>
+                            <option value="" disabled selected>Sélectionner le bâtiment...</option>
                             <option value="tous">📍 Concerne tous les bâtiments / Espaces verts</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label for="incident-description">Description précise <span class="required">*</span></label>
                         <textarea id="incident-description" rows="3" required placeholder="Ex: La porte du hall 40 reste bloquée ouverte, le pêne est tordu." maxlength="300"></textarea>
@@ -801,15 +764,6 @@
                         <label for="message-entrance">Visibilité</label>
                         <select id="message-entrance" required>
                             <option value="tous">🌍 Visible par toute la résidence</option>
-                            <option value="36">🏢 Uniquement 36 avenue Division Leclerc</option>
-                            <option value="38">🏢 Uniquement 38 avenue Division Leclerc</option>
-                            <option value="40">🏢 Uniquement 40 avenue Division Leclerc</option>
-                            <option value="42">🏢 Uniquement 42 avenue Division Leclerc</option>
-                            <option value="44">🏢 Uniquement 44 avenue Division Leclerc</option>
-                            <option value="46">🏢 Uniquement 46 avenue Division Leclerc</option>
-                            <option value="48">🏢 Uniquement 48 avenue Division Leclerc</option>
-                            <option value="50">🏢 Uniquement 50 avenue Division Leclerc</option>
-                            <option value="52">🏢 Uniquement 52 avenue Division Leclerc</option>
                         </select>
                     </div>
                     
@@ -845,6 +799,7 @@
     <script src="js/jspdf.umd.min.js"></script>
  
     <!-- Scripts Javascript Applicatifs (Modulaires) -->
+    <script src="js/config.js"></script>
     <script src="js/security.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/db-client.js"></script>

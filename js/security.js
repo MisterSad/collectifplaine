@@ -56,9 +56,11 @@ const Security = (() => {
         validateReportInput(data) {
             const errors = [];
             
-            // Validation de l'entrée (doit être un nombre entre 36 et 52 pair)
+            // Validation de l'entrée (doit être un numéro d'entrée valide de la configuration)
             const entranceNum = parseInt(data.entrance, 10);
-            const validEntrances = [36, 38, 40, 42, 44, 46, 48, 50, 52];
+            const validEntrances = (typeof CONFIG !== 'undefined' && CONFIG.entrances)
+                ? CONFIG.entrances.map(e => parseInt(e.id, 10))
+                : [36, 38, 40, 42, 44, 46, 48, 50, 52]; // Repli de sécurité robuste
             if (!validEntrances.includes(entranceNum)) {
                 errors.push("Le numéro d'entrée est invalide.");
             }
@@ -112,7 +114,9 @@ const Security = (() => {
 
             // Entrée
             const entranceNum = parseInt(data.entrance, 10);
-            const validEntrances = [36, 38, 40, 42, 44, 46, 48, 50, 52];
+            const validEntrances = (typeof CONFIG !== 'undefined' && CONFIG.entrances)
+                ? CONFIG.entrances.map(e => parseInt(e.id, 10))
+                : [36, 38, 40, 42, 44, 46, 48, 50, 52]; // Repli de sécurité robuste
             if (!validEntrances.includes(entranceNum)) {
                 errors.push("Le numéro d'entrée est incorrect.");
             }
