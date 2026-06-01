@@ -1528,476 +1528,499 @@ textarea:focus {
         max-width: calc(100% - 20px);
     }
 /* ======================================================== */
-/* STYLES : ONGLET CONTACTS UTILES                          */
+/* CONTACTS — iOS Native Directory Style                    */
 /* ======================================================== */
 
+/* ─── Wrapper page contacts (supprime le max-width générique) ─── */
+#tab-contacts {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+/* ─── BARRE DE RECHERCHE ─── */
 .ios-search-container {
-    margin: 0.5rem 0 1.5rem 0;
-    padding: 0 0.5rem;
+    margin-bottom: 1.75rem;
 }
 
 .ios-search-wrapper {
-    position: relative;
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 10px;
-    padding: 0.45rem 0.75rem;
-    backdrop-filter: blur(10px);
-    transition: background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    gap: 0.5rem;
+    background: rgba(118, 118, 128, 0.12);
+    border-radius: 12px;
+    padding: 0.5rem 0.85rem;
+    transition: background var(--transition-fast);
 }
 
 [data-theme="light"] .ios-search-wrapper {
-    background: rgba(0, 0, 0, 0.04);
-    border-color: rgba(0, 0, 0, 0.04);
-}
-
-.ios-search-wrapper:focus-within {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-}
-
-[data-theme="light"] .ios-search-wrapper:focus-within {
-    background: rgba(255, 255, 255, 1);
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background: rgba(118, 118, 128, 0.12);
 }
 
 .ios-search-icon {
     font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-right: 0.5rem;
+    opacity: 0.5;
+    flex-shrink: 0;
     user-select: none;
 }
 
 #contact-search {
-    width: 100%;
-    background: none;
+    flex: 1;
+    background: transparent;
     border: none;
     outline: none;
+    font-size: 1rem;
     color: var(--text-primary);
-    font-size: 0.95rem;
     font-family: inherit;
-    padding: 0;
+    line-height: 1.4;
 }
 
 #contact-search::placeholder {
     color: var(--text-muted);
-    opacity: 0.85;
 }
 
 .ios-search-clear {
-    background: rgba(255, 255, 255, 0.1);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(118, 118, 128, 0.35);
     border: none;
-    color: var(--text-muted);
-    width: 18px;
-    height: 18px;
-    border-radius: var(--radius-circle);
+    color: var(--text-primary);
+    font-size: 0.7rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.65rem;
     cursor: pointer;
-    padding: 0;
-    transition: background var(--transition-fast), color var(--transition-fast);
-}
-
-[data-theme="light"] .ios-search-clear {
-    background: rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
 }
 
 .ios-search-clear:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--text-primary);
-}
-
-[data-theme="light"] .ios-search-clear:hover {
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(118, 118, 128, 0.55);
 }
 
 .ios-search-clear.hidden {
     display: none;
 }
 
-/* LISTE DES CONTACTS STYLE GROUPÉ iOS */
+/* ─── LISTE CONTACTS GROUPÉE ─── */
 .ios-contacts-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
+/* Section avec son titre */
 .ios-contact-section {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    transition: opacity var(--transition-normal);
 }
 
 .ios-contact-section.hidden {
     display: none !important;
 }
 
+/* Titre de groupe façon iOS Settings */
 .ios-section-header {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 400;
     color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding-left: 0.75rem;
+    padding: 0 1rem 0.5rem 1rem;
     margin: 0;
-    user-select: none;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
+/* Bloc arrondi qui enveloppe les lignes */
 .ios-contact-block {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.035);
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-color);
 }
 
 [data-theme="light"] .ios-contact-block {
     background: #ffffff;
-    box-shadow: 0 4px 16px rgba(148, 163, 184, 0.05);
+    border: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 4px 20px rgba(0, 0, 0, 0.04);
 }
 
-/* Ligne de contact individuelle */
+/* ─── LIGNE DE CONTACT ─── */
 .ios-contact-row {
-    border-bottom: 1px solid var(--border-color);
-    transition: background-color var(--transition-fast);
-}
-
-.ios-contact-row:last-child {
-    border-bottom: none;
+    position: relative;
 }
 
 .ios-contact-row.hidden {
     display: none !important;
 }
 
+/* Séparateur inset (indented iOS style — part after avatar) */
+.ios-contact-row:not(:last-child) .ios-contact-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 4.5rem; /* = avatar width + margin-right */
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
+}
+
+/* Supprimer le séparateur si la ligne est expanded (la fiche vient à la place) */
+.ios-contact-row.expanded .ios-contact-header::after {
+    display: none;
+}
+
 .ios-contact-header {
     display: flex;
     align-items: center;
-    padding: 0.85rem 1rem;
+    padding: 0.7rem 1rem 0.7rem 1rem;
     cursor: pointer;
     user-select: none;
     position: relative;
+    transition: background var(--transition-fast);
 }
 
-.ios-contact-header:hover {
-    background-color: rgba(255, 255, 255, 0.02);
+.ios-contact-header:active {
+    background: rgba(255, 255, 255, 0.04);
 }
 
-[data-theme="light"] .ios-contact-header:hover {
-    background-color: rgba(0, 0, 0, 0.01);
+[data-theme="light"] .ios-contact-header:active {
+    background: rgba(0, 0, 0, 0.04);
 }
 
-/* Avatars Style iOS */
+/* ─── AVATAR CIRCULAIRE ─── */
 .ios-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-circle);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-right: 0.85rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'SF Pro Display', 'Inter', sans-serif;
+    color: #fff;
     flex-shrink: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    margin-right: 0.85rem;
+    letter-spacing: -0.02em;
 }
 
-/* Palettes de couleurs iOS */
-.bg-red { background: linear-gradient(135deg, #ff453a 0%, #ff3b30 100%); }
-.bg-blue-ios { background: linear-gradient(135deg, #0a84ff 0%, #007aff 100%); }
-.bg-orange-ios { background: linear-gradient(135deg, #ff9f0a 0%, #ff9500 100%); }
-.bg-red-light { background: linear-gradient(135deg, #ff6b6b 0%, #ff453a 100%); }
-.bg-purple-ios { background: linear-gradient(135deg, #bf5af2 0%, #af52de 100%); }
-.bg-slate-ios { background: linear-gradient(135deg, #8e8e93 0%, #636366 100%); }
-.bg-amber-ios { background: linear-gradient(135deg, #ffd60a 0%, #ffcc00 100%); color: #000000 !important; }
-.bg-teal-ios { background: linear-gradient(135deg, #64d2ff 0%, #5ac8fa 100%); color: #000000 !important; }
-.bg-gold-ios { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-.bg-blue-kone { background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); }
-.bg-purple-dark { background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); }
-.bg-indigo-ios { background: linear-gradient(135deg, #5e5ce6 0%, #3634a9 100%); }
-.bg-violet-ios { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); }
+/* Palettes iOS précises */
+.bg-red         { background: #ff3b30; }
+.bg-blue-ios    { background: #007aff; }
+.bg-orange-ios  { background: #ff9500; }
+.bg-red-light   { background: #ff6961; }
+.bg-purple-ios  { background: #af52de; }
+.bg-slate-ios   { background: #636366; }
+.bg-amber-ios   { background: #ffcc00; color: #3d2c00 !important; }
+.bg-teal-ios    { background: #5ac8fa; color: #003f5c !important; }
+.bg-gold-ios    { background: linear-gradient(135deg, #f5a623 0%, #d4890a 100%); }
+.bg-blue-kone   { background: #0071c2; }
+.bg-purple-dark { background: #9b59b6; }
+.bg-indigo-ios  { background: #5856d6; }
+.bg-violet-ios  { background: #6e5494; }
 
+/* ─── INFO CONTACT (nom + sous-titre) ─── */
 .ios-contact-info {
-    flex-grow: 1;
+    flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
 }
 
 .ios-contact-info h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 400;
     color: var(--text-primary);
-    margin: 0 0 0.15rem 0;
+    margin: 0;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0;
 }
 
 .ios-contact-info p {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
     margin: 0;
+    line-height: 1.25;
 }
 
+/* Badge de confiance (Jowita) */
+.trust-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #f59e0b;
+    display: inline-block;
+    line-height: 1.2;
+}
+
+/* ─── CHEVRON ─── */
 .ios-chevron {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    opacity: 0.6;
+    width: 8px;
+    height: 14px;
+    flex-shrink: 0;
     margin-left: 0.5rem;
-    transition: transform var(--transition-normal);
+    opacity: 0.28;
+    transition: transform var(--transition-normal), opacity var(--transition-fast);
+    /* Chevron SVG inline */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 14'%3E%3Cpath d='M1 1l6 6-6 6' stroke='%238e8e93' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    font-size: 0; /* hide the text › */
+    color: transparent;
+}
+
+[data-theme="light"] .ios-chevron {
+    opacity: 0.3;
 }
 
 .ios-contact-row.expanded .ios-chevron {
+    opacity: 0.6;
     transform: rotate(90deg);
 }
 
-/* Trusted Artisan Gilded Styling */
-.ios-gold-row {
-    position: relative;
-}
-
-.ios-gold-row::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: linear-gradient(to bottom, #ffd60a, #f59e0b);
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-}
-
-.ios-gold-row.expanded::before {
-    opacity: 1;
-}
-
-.trust-badge {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: #ffd60a;
-    background: rgba(253, 224, 71, 0.08);
-    padding: 0.1rem 0.35rem;
-    border-radius: 4px;
-    border: 1px solid rgba(253, 224, 71, 0.15);
-    display: inline-block;
-    margin-top: 0.1rem;
-}
-
-[data-theme="light"] .trust-badge {
-    color: #d97706;
-    background: rgba(245, 158, 11, 0.06);
-    border-color: rgba(245, 158, 11, 0.15);
-}
-
-/* SECTION DÉPLOYABLE : FICHE CONTACT iOS */
+/* ─── SECTION DÉPLOYABLE ─── */
 .ios-contact-details {
     max-height: 0;
-    opacity: 0;
     overflow: hidden;
-    transition: max-height var(--transition-slow) cubic-bezier(0.25, 1, 0.5, 1), opacity var(--transition-slow) ease;
-    background-color: rgba(0, 0, 0, 0.12);
-}
-
-[data-theme="light"] .ios-contact-details {
-    background-color: rgba(0, 0, 0, 0.015);
+    transition: max-height 0.42s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .ios-contact-row.expanded .ios-contact-details {
-    max-height: 800px;
-    opacity: 1;
+    max-height: 900px;
 }
 
+/* ─── FICHE INTÉRIEURE iOS ─── */
 .ios-details-sheet {
-    padding: 1.5rem 1rem;
+    padding: 1.75rem 1.25rem 1.5rem;
+    border-top: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-top: 1px solid var(--border-color);
+    gap: 1.5rem;
+    background: rgba(0, 0, 0, 0.08);
 }
 
+[data-theme="light"] .ios-details-sheet {
+    background: rgba(242, 242, 247, 0.7);
+}
+
+/* ─── EN-TÊTE FICHE (grand avatar + nom) ─── */
 .ios-sheet-header {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: 1.25rem;
+    gap: 0.65rem;
 }
 
 .ios-large-avatar {
-    width: 68px;
-    height: 68px;
-    border-radius: var(--radius-circle);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 0.75rem;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    font-size: 2rem;
+    font-weight: 400;
+    font-family: 'SF Pro Display', 'Inter', sans-serif;
+    color: #fff;
+    letter-spacing: -0.02em;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
 }
 
 .ios-sheet-header h2 {
-    font-size: 1.2rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin: 0 0 0.25rem 0;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
 }
 
 .ios-sheet-subtitle {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
     margin: 0;
+    font-weight: 400;
 }
 
-/* BANDEAU DES ACTIONS RAPIDES iOS */
+/* ─── BOUTONS D'ACTIONS RAPIDES ─── */
 .ios-actions-strip {
     display: flex;
+    gap: 1rem;
     justify-content: center;
-    gap: 1.75rem;
     width: 100%;
-    margin-bottom: 1.5rem;
+    max-width: 360px;
 }
 
 .ios-action-circle {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 0.45rem;
     background: none;
     border: none;
     cursor: pointer;
     text-decoration: none;
     padding: 0;
-    width: 56px;
-    transition: transform var(--transition-fast);
+    transition: opacity var(--transition-fast);
 }
 
 .ios-action-circle:active {
-    transform: scale(0.92);
+    opacity: 0.6;
 }
 
-.ios-action-circle .action-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: var(--radius-circle);
+.action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    margin-bottom: 0.35rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: background-color var(--transition-fast), color var(--transition-fast);
+    font-size: 1.5rem;
+    transition: filter var(--transition-fast);
 }
 
-/* Action: Appeler (Vert) */
 .ios-action-circle.call-btn .action-icon {
-    background-color: rgba(16, 185, 129, 0.08);
-    color: var(--color-success);
-    border: 1px solid rgba(16, 185, 129, 0.15);
+    background: #34c759;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(52, 199, 89, 0.35);
 }
 
-.ios-action-circle.call-btn:hover .action-icon {
-    background-color: var(--color-success);
-    color: #ffffff;
-}
-
-/* Action: Ajouter (Bleu) */
 .ios-action-circle.add-btn .action-icon {
-    background-color: rgba(14, 165, 233, 0.08);
-    color: var(--color-info);
-    border: 1px solid rgba(14, 165, 233, 0.15);
+    background: #007aff;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
 }
 
-.ios-action-circle.add-btn:hover .action-icon {
-    background-color: var(--color-info);
-    color: #ffffff;
+.ios-action-circle:active .action-icon {
+    filter: brightness(0.85);
 }
 
-.ios-action-circle .action-label {
-    font-size: 0.65rem;
+.action-label {
+    font-size: 0.72rem;
+    font-weight: 400;
     color: var(--text-muted);
-    text-transform: capitalize;
-    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0;
+    line-height: 1;
 }
 
-/* DÉTAILS EMPILÉS STYLE iOS (Boxed stack) */
+/* ─── SECTIONS D'INFO EMPILÉES ─── */
 .ios-detail-sections {
     width: 100%;
-    max-width: 480px;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .ios-detail-sections {
+    border-color: rgba(0, 0, 0, 0.1);
 }
 
 .ios-detail-box {
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 0.65rem 0.85rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.75rem 1rem;
+    position: relative;
+}
+
+.ios-detail-box:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 0;
+    height: 1px;
+    background: var(--border-color);
 }
 
 [data-theme="light"] .ios-detail-box {
-    background-color: rgba(0, 0, 0, 0.015);
+    background: #ffffff;
+}
+
+[data-theme="light"] .ios-detail-box:not(:last-child)::after {
+    background: rgba(0, 0, 0, 0.08);
 }
 
 .ios-detail-field {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
 }
 
 .field-label {
-    font-size: 0.62rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 500;
     color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
 .field-value {
-    font-size: 0.88rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 400;
     color: var(--text-primary);
+    line-height: 1.4;
     word-break: break-word;
-    line-height: 1.35;
 }
 
 .field-value.phone-link {
-    color: var(--color-info);
+    color: #007aff;
     text-decoration: none;
-    transition: color var(--transition-fast);
+    font-weight: 400;
+    transition: opacity var(--transition-fast);
 }
 
 .field-value.phone-link:hover {
-    color: var(--accent-primary);
-    text-decoration: underline;
+    opacity: 0.75;
+    text-decoration: none;
 }
 
-/* Gilded theme link for Jowita */
+.field-value.text-normal {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+/* Lien doré Jowita */
 .gold-link {
     color: #f59e0b !important;
 }
 
-.gold-link:hover {
-    color: #ffd60a !important;
+/* ─── RESPONSIVE MOBILE ─── */
+@media (max-width: 600px) {
+    #tab-contacts {
+        max-width: 100%;
+    }
+
+    .ios-actions-strip {
+        gap: 0.75rem;
+    }
+
+    .action-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        font-size: 1.3rem;
+    }
+
+    .ios-large-avatar {
+        width: 68px;
+        height: 68px;
+        font-size: 1.6rem;
+    }
+
+    .ios-details-sheet {
+        padding: 1.25rem 1rem 1.25rem;
+    }
 }
 
-@media (max-width: 480px) {
-    .ios-details-sheet {
-        padding: 1.25rem 0.75rem;
-    }
-    
-    .ios-actions-strip {
-        gap: 1.25rem;
-    }
-    
-    .ios-detail-box {
-        padding: 0.55rem 0.75rem;
-    }
-}
 
