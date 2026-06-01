@@ -1528,47 +1528,22 @@ textarea:focus {
         max-width: calc(100% - 20px);
     }
 /* ======================================================== */
-/* CONTACTS — iOS Native Directory Style                    */
+/* CONTACTS — iOS Directory Style (v-clean, no conflicts)   */
 /* ======================================================== */
 
-/* ─── EMERGENCY: SVG SIZE CONSTRAINTS ─── */
-/* Prevents SVGs from defaulting to 300x150px */
-svg.ios-chevron {
-    width: 8px !important;
-    height: 14px !important;
-    min-width: 8px;
-    flex-shrink: 0;
+/* Tout SVG dans le bloc contacts est contraint dès ici */
+#tab-contacts svg {
+    display: block;
     overflow: visible;
 }
 
-svg.ios-search-icon {
-    width: 16px !important;
-    height: 16px !important;
-    min-width: 16px;
-    flex-shrink: 0;
-}
-
-.ios-search-clear svg {
-    width: 8px !important;
-    height: 8px !important;
-    display: block;
-}
-
-.action-icon svg {
-    width: 24px !important;
-    height: 24px !important;
-    display: block;
-    flex-shrink: 0;
-}
-
-
-/* ─── Wrapper page contacts (supprime le max-width générique) ─── */
+/* ─── Wrapper centré ─── */
 #tab-contacts {
     max-width: 680px;
     margin: 0 auto;
 }
 
-/* ─── BARRE DE RECHERCHE ─── */
+/* ─── RECHERCHE ─── */
 .ios-search-container {
     margin-bottom: 1.75rem;
 }
@@ -1580,18 +1555,17 @@ svg.ios-search-icon {
     background: rgba(118, 118, 128, 0.12);
     border-radius: 12px;
     padding: 0.5rem 0.85rem;
-    transition: background var(--transition-fast);
 }
 
-[data-theme="light"] .ios-search-wrapper {
-    background: rgba(118, 118, 128, 0.12);
-}
-
+/* L'icône loupe est un SVG — dimensions forcées */
 .ios-search-icon {
-    font-size: 0.9rem;
-    opacity: 0.5;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
     flex-shrink: 0;
-    user-select: none;
+    color: var(--text-muted);
+    opacity: 0.6;
 }
 
 #contact-search {
@@ -1612,56 +1586,50 @@ svg.ios-search-icon {
 .ios-search-clear {
     width: 20px;
     height: 20px;
+    min-width: 20px;
     border-radius: 50%;
     background: rgba(118, 118, 128, 0.35);
     border: none;
     color: var(--text-primary);
-    font-size: 0.7rem;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background var(--transition-fast);
 }
 
-.ios-search-clear:hover {
-    background: rgba(118, 118, 128, 0.55);
+.ios-search-clear svg {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    min-height: 8px;
 }
 
-.ios-search-clear.hidden {
-    display: none;
-}
+.ios-search-clear.hidden { display: none; }
 
-/* ─── LISTE CONTACTS GROUPÉE ─── */
+/* ─── GROUPES ─── */
 .ios-contacts-container {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
-/* Section avec son titre */
 .ios-contact-section {
     display: flex;
     flex-direction: column;
 }
 
-.ios-contact-section.hidden {
-    display: none !important;
-}
+.ios-contact-section.hidden { display: none !important; }
 
-/* Titre de groupe façon iOS Settings */
 .ios-section-header {
     font-size: 0.8rem;
     font-weight: 400;
     color: var(--text-muted);
     padding: 0 1rem 0.5rem 1rem;
     margin: 0;
-    letter-spacing: 0;
-    text-transform: none;
 }
 
-/* Bloc arrondi qui enveloppe les lignes */
+/* ─── BLOC ARRONDI ─── */
 .ios-contact-block {
     background: rgba(255, 255, 255, 0.035);
     border-radius: 14px;
@@ -1672,85 +1640,69 @@ svg.ios-search-icon {
 [data-theme="light"] .ios-contact-block {
     background: #ffffff;
     border: none;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 4px 20px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 20px rgba(0,0,0,0.04);
 }
 
 /* ─── LIGNE DE CONTACT ─── */
-.ios-contact-row {
-    position: relative;
-}
+.ios-contact-row { position: relative; }
+.ios-contact-row.hidden { display: none !important; }
 
-.ios-contact-row.hidden {
-    display: none !important;
-}
-
-/* Séparateur inset (indented iOS style — part after avatar) */
+/* Séparateur inset iOS */
 .ios-contact-row:not(:last-child) .ios-contact-header::after {
     content: "";
     position: absolute;
     bottom: 0;
-    left: 4.5rem; /* = avatar width + margin-right */
+    left: 4.5rem;
     right: 0;
     height: 1px;
     background: var(--border-color);
 }
-
-/* Supprimer le séparateur si la ligne est expanded (la fiche vient à la place) */
-.ios-contact-row.expanded .ios-contact-header::after {
-    display: none;
-}
+.ios-contact-row.expanded .ios-contact-header::after { display: none; }
 
 .ios-contact-header {
     display: flex;
     align-items: center;
-    padding: 0.7rem 1rem 0.7rem 1rem;
+    padding: 0.7rem 1rem;
     cursor: pointer;
     user-select: none;
     position: relative;
-    transition: background var(--transition-fast);
+    transition: background 200ms ease-out;
 }
+.ios-contact-header:active { background: rgba(255,255,255,0.04); }
+[data-theme="light"] .ios-contact-header:active { background: rgba(0,0,0,0.04); }
 
-.ios-contact-header:active {
-    background: rgba(255, 255, 255, 0.04);
-}
-
-[data-theme="light"] .ios-contact-header:active {
-    background: rgba(0, 0, 0, 0.04);
-}
-
-/* ─── AVATAR CIRCULAIRE ─── */
+/* ─── AVATAR ─── */
 .ios-avatar {
     width: 44px;
     height: 44px;
+    min-width: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    font-family: 'SF Pro Display', 'Inter', sans-serif;
     color: #fff;
     flex-shrink: 0;
     margin-right: 0.85rem;
-    letter-spacing: -0.02em;
 }
 
-/* Palettes iOS précises */
-.bg-red         { background: #ff3b30; }
-.bg-blue-ios    { background: #007aff; }
-.bg-orange-ios  { background: #ff9500; }
-.bg-red-light   { background: #ff6961; }
-.bg-purple-ios  { background: #af52de; }
-.bg-slate-ios   { background: #636366; }
-.bg-amber-ios   { background: #ffcc00; color: #3d2c00 !important; }
-.bg-teal-ios    { background: #5ac8fa; color: #003f5c !important; }
-.bg-gold-ios    { background: linear-gradient(135deg, #f5a623 0%, #d4890a 100%); }
-.bg-blue-kone   { background: #0071c2; }
-.bg-purple-dark { background: #9b59b6; }
-.bg-indigo-ios  { background: #5856d6; }
-.bg-violet-ios  { background: #6e5494; }
+/* Palettes */
+.bg-red          { background: #ff3b30; }
+.bg-blue-ios     { background: #007aff; }
+.bg-orange-ios   { background: #ff9500; }
+.bg-red-light    { background: #ff6961; }
+.bg-purple-ios   { background: #af52de; }
+.bg-slate-ios    { background: #636366; }
+.bg-amber-ios    { background: #ffcc00; color: #3d2c00 !important; }
+.bg-teal-ios     { background: #5ac8fa; color: #003f5c !important; }
+.bg-gold-ios     { background: linear-gradient(135deg, #f5a623, #d4890a); }
+.bg-blue-kone    { background: #0071c2; }
+.bg-purple-dark  { background: #9b59b6; }
+.bg-indigo-ios   { background: #5856d6; }
+.bg-violet-ios   { background: #6e5494; }
 
-/* ─── INFO CONTACT (nom + sous-titre) ─── */
+/* ─── INFO CONTACT ─── */
 .ios-contact-info {
     flex: 1;
     min-width: 0;
@@ -1758,73 +1710,53 @@ svg.ios-search-icon {
     flex-direction: column;
     gap: 0.1rem;
 }
-
 .ios-contact-info h3 {
     font-size: 1rem;
     font-weight: 400;
     color: var(--text-primary);
     margin: 0;
-    line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    letter-spacing: 0;
 }
-
 .ios-contact-info p {
     font-size: 0.8rem;
     color: var(--text-muted);
     margin: 0;
-    line-height: 1.25;
 }
 
-/* Badge de confiance (Jowita) */
 .trust-badge {
     font-size: 0.7rem;
     font-weight: 600;
     color: #f59e0b;
-    display: inline-block;
-    line-height: 1.2;
 }
 
-/* ─── CHEVRON ─── */
+/* ─── CHEVRON SVG ─── */
 .ios-chevron {
     width: 8px;
     height: 14px;
+    min-width: 8px;
+    min-height: 14px;
     flex-shrink: 0;
     margin-left: 0.5rem;
     opacity: 0.28;
-    transition: transform var(--transition-normal), opacity var(--transition-fast);
-    /* Chevron SVG inline */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 14'%3E%3Cpath d='M1 1l6 6-6 6' stroke='%238e8e93' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    font-size: 0; /* hide the text › */
-    color: transparent;
+    /* AUCUNE background-image — c'est un vrai SVG maintenant */
+    stroke: currentColor;
+    color: var(--text-muted);
+    transition: transform 200ms ease-out, opacity 200ms ease-out;
 }
-
-[data-theme="light"] .ios-chevron {
-    opacity: 0.3;
-}
-
-.ios-contact-row.expanded .ios-chevron {
-    opacity: 0.6;
-    transform: rotate(90deg);
-}
+[data-theme="light"] .ios-chevron { opacity: 0.3; }
+.ios-contact-row.expanded .ios-chevron { opacity: 0.6; transform: rotate(90deg); }
 
 /* ─── SECTION DÉPLOYABLE ─── */
 .ios-contact-details {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: max-height 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+.ios-contact-row.expanded .ios-contact-details { max-height: 900px; }
 
-.ios-contact-row.expanded .ios-contact-details {
-    max-height: 900px;
-}
-
-/* ─── FICHE INTÉRIEURE iOS ─── */
+/* ─── FICHE DÉPLOYÉE ─── */
 .ios-details-sheet {
     padding: 1.75rem 1.25rem 1.5rem;
     border-top: 1px solid var(--border-color);
@@ -1832,14 +1764,11 @@ svg.ios-search-icon {
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
-    background: rgba(0, 0, 0, 0.08);
+    background: rgba(0,0,0,0.08);
 }
+[data-theme="light"] .ios-details-sheet { background: rgba(242,242,247,0.7); }
 
-[data-theme="light"] .ios-details-sheet {
-    background: rgba(242, 242, 247, 0.7);
-}
-
-/* ─── EN-TÊTE FICHE (grand avatar + nom) ─── */
+/* Grand avatar */
 .ios-sheet-header {
     display: flex;
     flex-direction: column;
@@ -1847,39 +1776,29 @@ svg.ios-search-icon {
     text-align: center;
     gap: 0.65rem;
 }
-
 .ios-large-avatar {
     width: 80px;
     height: 80px;
+    min-width: 80px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 400;
-    font-family: 'SF Pro Display', 'Inter', sans-serif;
     color: #fff;
-    letter-spacing: -0.02em;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.22);
 }
-
 .ios-sheet-header h2 {
     font-size: 1.35rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.02em;
-    line-height: 1.2;
 }
+.ios-sheet-subtitle { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
 
-.ios-sheet-subtitle {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin: 0;
-    font-weight: 400;
-}
-
-/* ─── BOUTONS D'ACTIONS RAPIDES ─── */
+/* ─── BOUTONS D'ACTION ─── */
 .ios-actions-strip {
     display: flex;
     gap: 1rem;
@@ -1887,7 +1806,6 @@ svg.ios-search-icon {
     width: 100%;
     max-width: 360px;
 }
-
 .ios-action-circle {
     flex: 1;
     display: flex;
@@ -1899,38 +1817,39 @@ svg.ios-search-icon {
     cursor: pointer;
     text-decoration: none;
     padding: 0;
-    transition: opacity var(--transition-fast);
+    transition: opacity 200ms ease-out;
 }
-
-.ios-action-circle:active {
-    opacity: 0.6;
-}
+.ios-action-circle:active { opacity: 0.6; }
 
 .action-icon {
     width: 60px;
     height: 60px;
+    min-width: 60px;
+    min-height: 60px;
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    transition: filter var(--transition-fast);
+}
+
+/* Taille des SVG à l'intérieur des boutons action */
+.action-icon svg {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    flex-shrink: 0;
 }
 
 .ios-action-circle.call-btn .action-icon {
     background: #34c759;
     color: #fff;
-    box-shadow: 0 4px 14px rgba(52, 199, 89, 0.35);
+    box-shadow: 0 4px 14px rgba(52,199,89,0.35);
 }
-
 .ios-action-circle.add-btn .action-icon {
     background: #007aff;
     color: #fff;
-    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
-}
-
-.ios-action-circle:active .action-icon {
-    filter: brightness(0.85);
+    box-shadow: 0 4px 14px rgba(0,122,255,0.35);
 }
 
 .action-label {
@@ -1938,11 +1857,9 @@ svg.ios-search-icon {
     font-weight: 400;
     color: var(--text-muted);
     text-align: center;
-    letter-spacing: 0;
-    line-height: 1;
 }
 
-/* ─── SECTIONS D'INFO EMPILÉES ─── */
+/* ─── DÉTAILS EMPILÉS ─── */
 .ios-detail-sections {
     width: 100%;
     display: flex;
@@ -1952,49 +1869,30 @@ svg.ios-search-icon {
     overflow: hidden;
     border: 1px solid var(--border-color);
 }
-
-[data-theme="light"] .ios-detail-sections {
-    border-color: rgba(0, 0, 0, 0.1);
-}
+[data-theme="light"] .ios-detail-sections { border-color: rgba(0,0,0,0.1); }
 
 .ios-detail-box {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255,255,255,0.03);
     padding: 0.75rem 1rem;
     position: relative;
 }
-
 .ios-detail-box:not(:last-child)::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    left: 1rem;
-    right: 0;
+    bottom: 0; left: 1rem; right: 0;
     height: 1px;
     background: var(--border-color);
 }
+[data-theme="light"] .ios-detail-box { background: #ffffff; }
+[data-theme="light"] .ios-detail-box:not(:last-child)::after { background: rgba(0,0,0,0.08); }
 
-[data-theme="light"] .ios-detail-box {
-    background: #ffffff;
-}
-
-[data-theme="light"] .ios-detail-box:not(:last-child)::after {
-    background: rgba(0, 0, 0, 0.08);
-}
-
-.ios-detail-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-}
+.ios-detail-field { display: flex; flex-direction: column; gap: 0.1rem; }
 
 .field-label {
     font-size: 0.7rem;
     font-weight: 500;
     color: var(--text-muted);
-    text-transform: none;
-    letter-spacing: 0;
 }
-
 .field-value {
     font-size: 0.95rem;
     font-weight: 400;
@@ -2002,108 +1900,30 @@ svg.ios-search-icon {
     line-height: 1.4;
     word-break: break-word;
 }
-
 .field-value.phone-link {
     color: #007aff;
     text-decoration: none;
-    font-weight: 400;
-    transition: opacity var(--transition-fast);
+    transition: opacity 200ms ease-out;
 }
+.field-value.phone-link:hover { opacity: 0.75; }
+.field-value.text-normal { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.45; }
 
-.field-value.phone-link:hover {
-    opacity: 0.75;
-    text-decoration: none;
-}
+.gold-link { color: #f59e0b !important; }
 
-.field-value.text-normal {
-    color: var(--text-secondary);
-    font-size: 0.88rem;
-    line-height: 1.45;
-}
-
-/* Lien doré Jowita */
-.gold-link {
-    color: #f59e0b !important;
-}
-
-/* ─── RESPONSIVE MOBILE ─── */
+/* ─── RESPONSIVE ─── */
 @media (max-width: 600px) {
-    #tab-contacts {
-        max-width: 100%;
-    }
-
-    .ios-actions-strip {
-        gap: 0.75rem;
-    }
-
-    .action-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 14px;
-        font-size: 1.3rem;
-    }
-
-    .ios-large-avatar {
-        width: 68px;
-        height: 68px;
-        font-size: 1.6rem;
-    }
-
-    .ios-details-sheet {
-        padding: 1.25rem 1rem 1.25rem;
-    }
+    #tab-contacts { max-width: 100%; }
+    .action-icon { width: 52px; height: 52px; min-width: 52px; border-radius: 14px; }
+    .ios-large-avatar { width: 68px; height: 68px; font-size: 1.5rem; }
+    .ios-details-sheet { padding: 1.25rem 1rem; }
+    .ios-actions-strip { gap: 0.75rem; }
 }
 
-/* ─── SVG ICONS DIMENSIONING ─── */
-.ios-search-icon {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    color: var(--text-muted);
-}
-
-.ios-search-clear svg {
-    width: 8px;
-    height: 8px;
-}
-
-.action-icon svg {
-    width: 24px;
-    height: 24px;
-}
-
-/* ─── CURSOR POINTER (uipro checklist) ─── */
-.ios-contact-header {
-    cursor: pointer;
-}
-
-.ios-action-circle {
-    cursor: pointer;
-}
-
-.btn-add-card {
-    cursor: pointer;
-}
-
-/* ─── PREFERS-REDUCED-MOTION (uipro accessibility) ─── */
+/* ─── PREFERS-REDUCED-MOTION ─── */
 @media (prefers-reduced-motion: reduce) {
-    .ios-contact-details {
-        transition: none;
-    }
-
-    .ios-chevron {
-        transition: none;
-    }
-
-    .ios-action-circle {
-        transition: none;
-    }
-
-    .animate-fade-in {
-        animation: none;
-    }
-
-    .ios-contact-header {
-        transition: none;
-    }
+    .ios-contact-details,
+    .ios-chevron,
+    .ios-action-circle,
+    .ios-contact-header,
+    .animate-fade-in { transition: none; animation: none; }
 }
