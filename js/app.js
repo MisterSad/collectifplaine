@@ -1537,33 +1537,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------
-    // EVENT LISTENERS POUR LA PAGE CONTACTS DYNAMIQUE
+    // LOGIQUE DE LA PAGE CONTACTS DYNAMIQUE (STYLE iOS)
     // ---------------------------------------------------------
     
     const tabContactsElement = document.getElementById("tab-contacts");
     if (tabContactsElement) {
+        // 1. Gestion de l'accordéon au clic sur une ligne
         tabContactsElement.addEventListener("click", (e) => {
-            // 1. Déploiement/fermeture des cartes de contact
-            const header = e.target.closest(".contact-header");
-            const quickCall = e.target.closest(".btn-call-quick");
+            const header = e.target.closest(".ios-contact-header");
+            const callBtn = e.target.closest(".call-btn");
+            const addBtn = e.target.closest(".add-btn");
             
-            if (header && !quickCall) {
-                const item = header.closest(".contact-item");
-                if (item) {
-                    // Fermer les autres cartes ouvertes pour un effet accordéon soigné
-                    document.querySelectorAll(".contact-item").forEach(otherItem => {
-                        if (otherItem !== item && otherItem.classList.contains("expanded")) {
-                            otherItem.classList.remove("expanded");
-                        }
-                    });
-                    
-                    // Basculer la carte actuelle
-                    item.classList.toggle("expanded");
-                }
+            // Empêcher le clic de propager si on clique sur un bouton d'action
+            if (callBtn || addBtn) {
                 return;
             }
             
-            // 2. Clic sur "Ajouter au carnet d'adresses"
+            if (header) {
+                const row = header.closest(".ios-contact-row");
+                if (row) {
+                    // Fermer les autres contacts pour un effet accordéon propre
+                    document.querySelectorAll(".ios-contact-row").forEach(otherRow => {
+                        if (otherRow !== row && otherRow.classList.contains("expanded")) {
+                            otherRow.classList.remove("expanded");
+                        }
+                    });
+                    
+                    // Basculer l'état déployé de la ligne cliquée
+                    row.classList.toggle("expanded");
+                }
+            }
+        });
+
+        // 2. Clic sur le bouton de vCard "ajouter"
+        tabContactsElement.addEventListener("click", (e) => {
             const addCardBtn = e.target.closest(".btn-add-card");
             if (addCardBtn) {
                 e.preventDefault();
@@ -1576,7 +1583,76 @@ document.addEventListener("DOMContentLoaded", () => {
                 downloadVCard(name, phone, address, email, role);
             }
         });
+
+        // 3. Logique de Recherche en Temps Réel iOS
+        const contactSearch = document.getElementById("contact-search");
+        const contactSearchClear = document.getElementById("contact-search-clear");
+        
+        if (contactSearch) {
+            contactSearch.addEventListener("input", () => {
+                const query = contactSearch.value.trim().toLowerCase();
+                
+                // Afficher/masquer le bouton effacer (✕)
+                if (query.length > 0) {
+                    contactSearchClear.classList.remove("hidden");
+                } else {
+                    contactSearchClear.classList.add("hidden");
+                }
+                
+                filterContactsList(query);
+            });
+        }
+        
+        if (contactSearchClear) {
+            contactSearchClear.addEventListener("click", () => {
+                contactSearch.value = "";
+                contactSearchClear.classList.add("hidden");
+                filterContactsList("");
+                contactSearch.focus();
+            });
+        }
     }
+
+    // Fonction de filtrage des contacts
+    function filterContactsList(query) {
+        const sections = document.querySelectorAll(".ios-contact-section");
+        
+        sections.forEach(section => {
+            const rows = section.querySelectorAll(".ios-contact-row");
+            let sectionHasVisibleRows = false;
+            
+            rows.forEach(row => {
+                const name = row.querySelector("h3") ? row.querySelector("h3").textContent.toLowerCase() : "";
+                const role = row.querySelector(".ios-contact-info p") ? row.querySelector(".ios-contact-info p").textContent.toLowerCase() : "";
+                
+                // Recherche également dans les notes/description détaillées
+                const noteBox = row.querySelector(".ios-detail-box:last-child .field-value");
+                const notes = noteBox ? noteBox.textContent.toLowerCase() : "";
+                
+                // Recherche dans le numéro de téléphone
+                const phoneBox = row.querySelector(".phone-link");
+                const phone = phoneBox ? phoneBox.textContent.toLowerCase() : "";
+                
+                const isMatch = name.includes(query) || role.includes(query) || notes.includes(query) || phone.includes(query);
+                
+                if (isMatch) {
+                    row.classList.remove("hidden");
+                    sectionHasVisibleRows = true;
+                } else {
+                    row.classList.add("hidden");
+                    row.classList.remove("expanded"); // Refermer si caché
+                }
+            });
+            
+            // Afficher ou masquer la section selon la présence de lignes correspondantes
+            if (sectionHasVisibleRows) {
+                section.classList.remove("hidden");
+            } else {
+                section.classList.add("hidden");
+            }
+        });
+    }
+
 
     // Helper de téléchargement de vCard (.vcf)
     function downloadVCard(name, phone, address, email, role) {
