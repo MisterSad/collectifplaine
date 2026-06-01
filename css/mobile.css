@@ -177,7 +177,7 @@ button, a, select, input, textarea, label {
         left: 0;
         right: 0;
         z-index: 95;
-        display: flex;
+        display: flex !important;
         flex-direction: row;
         padding-bottom: env(safe-area-inset-bottom);
         background: rgba(11, 15, 25, 0.9);
