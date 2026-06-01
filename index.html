@@ -26,115 +26,111 @@
     <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
-    <!-- En-tête de l'application -->
-    <header class="app-header">
-        <div class="header-container container">
-            <div class="logo-area">
-                <div class="logo-icon" aria-hidden="true">
-                    <!-- Icone SVG Communauté / Solidarité (Trois maisons reliées) -->
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <div class="app-layout">
+        <!-- Barre latérale de navigation (Sidebar) - Desktop -->
+        <aside class="app-sidebar glass">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                 </div>
-                <div class="logo-text">
-                    <h1>Collectif Plaine</h1>
-                    <span class="subtitle">Résidence Division Leclerc, Cachan</span>
+                <div class="brand-text">
+                    <h2>Collectif Plaine</h2>
+                    <span>Hub Locataires</span>
                 </div>
             </div>
-            
-            <div class="header-actions">
-                <!-- Toggle Thème -->
-                <button id="theme-toggle" class="btn-icon" aria-label="Changer de thème" title="Changer de thème">
-                    <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"/>
-                        <line x1="12" y1="1" x2="12" y2="3"/>
-                        <line x1="12" y1="21" x2="12" y2="23"/>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                        <line x1="1" y1="12" x2="3" y2="12"/>
-                        <line x1="21" y1="12" x2="23" y2="12"/>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                    </svg>
-                    <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                    </svg>
-                </button>
+            <nav class="sidebar-menu">
+                <a href="#/accueil" class="menu-link active" data-page="page-accueil">
+                    <span class="menu-icon">🏠</span> <span class="menu-text">Accueil</span>
+                </a>
+                <a href="#/ascenseurs" class="menu-link" data-page="page-elevators">
+                    <span class="menu-icon">🛗</span> <span class="menu-text">Ascenseurs</span>
+                </a>
+                <a href="#/incidents" class="menu-link" data-page="page-incidents">
+                    <span class="menu-icon">⚠️</span> <span class="menu-text">Incidents</span>
+                </a>
+                <a href="#/entraide" class="menu-link" data-page="page-entraide">
+                    <span class="menu-icon">💬</span> <span class="menu-text">Entraide</span>
+                </a>
+                <a href="#/charges" class="menu-link" data-page="page-charges">
+                    <span class="menu-icon">📄</span> <span class="menu-text">Charges</span>
+                </a>
+                <a href="#/juridique" class="menu-link" data-page="page-juridique">
+                    <span class="menu-icon">⚖️</span> <span class="menu-text">Juridique</span>
+                </a>
+                <a href="#/contacts" class="menu-link" data-page="page-contacts">
+                    <span class="menu-icon">📞</span> <span class="menu-text">Contacts</span>
+                </a>
+            </nav>
+        </aside>
 
-                <!-- Cloche de Notifications -->
-                <div class="notification-wrapper">
-                    <button id="notification-bell-btn" class="btn-icon" aria-label="Notifications" title="Centre de notifications">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                        </svg>
-                        <span id="notification-badge" class="notification-badge hidden"></span>
-                    </button>
-                    <div id="notification-dropdown" class="notification-dropdown glass hidden" aria-hidden="true">
-                        <div class="dropdown-header">
-                            <h4>Alertes de votre entrée</h4>
-                            <button id="btn-clear-notifications" class="btn-clear-notifications" title="Vider les alertes">Effacer tout</button>
+        <!-- Zone de contenu principal -->
+        <div class="app-main">
+            <!-- Top Header Barre de Contrôles -->
+            <header class="app-top-bar glass">
+                <div class="top-bar-container">
+                    <div class="top-bar-title-section">
+                        <h2 id="current-page-title">Accueil</h2>
+                    </div>
+                    
+                    <div class="top-bar-actions">
+                        <!-- Bouton Thème -->
+                        <button id="theme-toggle" class="btn-icon" aria-label="Changer de thème" title="Changer de thème">
+                            <svg class="sun-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"/>
+                                <line x1="12" y1="1" x2="12" y2="3"/>
+                                <line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/>
+                                <line x1="21" y1="12" x2="23" y2="12"/>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                            </svg>
+                            <svg class="moon-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </button>
+
+                        <!-- Cloche de Notifications -->
+                        <div class="notification-wrapper">
+                            <button id="notification-bell-btn" class="btn-icon" aria-label="Notifications" title="Centre de notifications">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                                </svg>
+                                <span id="notification-badge" class="notification-badge hidden"></span>
+                            </button>
+                            <div id="notification-dropdown" class="notification-dropdown glass hidden" aria-hidden="true">
+                                <div class="dropdown-header">
+                                    <h4>Alertes de votre entrée</h4>
+                                    <button id="btn-clear-notifications" class="btn-clear-notifications" title="Vider les alertes">Effacer tout</button>
+                                </div>
+                                <div id="notification-list" class="notification-list">
+                                    <div class="notification-empty">Aucune alerte active</div>
+                                </div>
+                            </div>
                         </div>
-                        <div id="notification-list" class="notification-list">
-                            <div class="notification-empty">Aucune alerte active</div>
-                        </div>
+                        
+                        <!-- Zone d'authentification dynamique -->
+                        <div id="auth-header-area" class="auth-header-area"></div>
                     </div>
                 </div>
-                
-                <!-- Zone d'authentification dynamique (locataires & admin) -->
-                <div id="auth-header-area" class="auth-header-area"></div>
-            </div>
-        </div>
-    </header>
+            </header>
 
-    <!-- Contenu Principal -->
-    <main class="container">
-        <!-- ============================================ -->
-        <!-- NAVIGATION PAR ONGLETS (TABS) -->
-        <!-- ============================================ -->
-        <nav class="app-tabs-nav glass" role="tablist" aria-label="Navigation principale">
-            <button class="tab-link active" data-tab="tab-accueil" role="tab" aria-selected="true" aria-controls="tab-accueil">
-                <span class="tab-tile-emoji">🏠</span>
-                <span class="tab-text">Accueil</span>
-                <span class="tab-label">Accueil</span>
-            </button>
-            <button class="tab-link" data-tab="tab-elevators" role="tab" aria-selected="false" aria-controls="tab-elevators">
-                <span class="tab-tile-emoji">🛗</span>
-                <span class="tab-text">Ascenseurs</span>
-                <span class="tab-label">Ascenseurs</span>
-            </button>
-            <button class="tab-link" data-tab="tab-incidents" role="tab" aria-selected="false" aria-controls="tab-incidents">
-                <span class="tab-tile-emoji">⚠️</span>
-                <span class="tab-text">Incidents</span>
-                <span class="tab-label">Incidents</span>
-            </button>
-            <button class="tab-link" data-tab="tab-entraide" role="tab" aria-selected="false" aria-controls="tab-entraide">
-                <span class="tab-tile-emoji">💬</span>
-                <span class="tab-text">Entraide</span>
-                <span class="tab-label">Entraide</span>
-            </button>
-            <button class="tab-link" data-tab="tab-charges" role="tab" aria-selected="false" aria-controls="tab-charges">
-                <span class="tab-tile-emoji">📄</span>
-                <span class="tab-text">Charges</span>
-                <span class="tab-label">Charges</span>
-            </button>
-            <button class="tab-link" data-tab="tab-juridique" role="tab" aria-selected="false" aria-controls="tab-juridique">
-                <span class="tab-tile-emoji">⚖️</span>
-                <span class="tab-text">Juridique</span>
-                <span class="tab-label">Juridique</span>
-            </button>
-            <button class="tab-link" data-tab="tab-contacts" role="tab" aria-selected="false" aria-controls="tab-contacts">
-                <span class="tab-tile-emoji">📞</span>
-                <span class="tab-text">Contacts</span>
-                <span class="tab-label">Contacts</span>
-            </button>
-        </nav>
+            <!-- Container Principal des Pages -->
+            <main class="page-container container">
 
         <!-- ============================================ -->
         <!-- CONTENU DE L'ONGLET 1 : ACCUEIL (ACTIF) -->
         <!-- ============================================ -->
-        <div id="tab-accueil" class="tab-content-panel active" role="tabpanel" aria-labelledby="tab-accueil">
+        <div id="tab-accueil" class="page-panel active" role="tabpanel" aria-labelledby="tab-accueil">
+            <header class="page-header animate-fade-in">
+                <h1 class="page-title">🏠 Accueil</h1>
+                <p class="page-subtitle">Manifeste et hub locataire du Collectif de la Division Leclerc à Cachan.</p>
+            </header>
             <!-- Manifeste du Collectif Plaine -->
             <section class="welcome-association card glass">
                 <div class="assoc-header">
@@ -178,9 +174,11 @@
         <!-- ============================================ -->
         <!-- CONTENU DE L'ONGLET 2 : ASCENSEURS -->
         <!-- ============================================ -->
-        <div id="tab-elevators" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-elevators">
-            <!-- Section Statistiques -->
-            <section id="stats-section" class="stats-section card glass">
+        <div id="tab-elevators" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-elevators">
+            <header class="page-header animate-fade-in">
+                <h1 class="page-title">🛗 Suivi des Ascenseurs</h1>
+                <p class="page-subtitle">État général, signalements de pannes et registre de maintenance en temps réel.</p>
+            </header>
                 <h2>État Général de la Barre d'Immeubles</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -233,7 +231,11 @@
         <!-- ============================================ -->
         <!-- CONTENU DE L'ONGLET 3 : INCIDENTS -->
         <!-- ============================================ -->
-        <div id="tab-incidents" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-incidents">
+        <div id="tab-incidents" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-incidents">
+            <header class="page-header animate-fade-in">
+                <h1 class="page-title">⚠️ Signalement d'Incidents</h1>
+                <p class="page-subtitle">Déclarations et suivi des problèmes constatés dans les parties communes de la résidence.</p>
+            </header>
             <section class="action-section">
                 <button id="quick-incident-btn" class="btn btn-primary btn-lg pulse-button">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
@@ -257,7 +259,11 @@
         <!-- ============================================ -->
         <!-- CONTENU DE L'ONGLET 4 : ENTRAIDE -->
         <!-- ============================================ -->
-        <div id="tab-entraide" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-entraide">
+        <div id="tab-entraide" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-entraide">
+            <header class="page-header animate-fade-in">
+                <h1 class="page-title">💬 Espace d'Entraide</h1>
+                <p class="page-subtitle">Tableau d'affichage communautaire, propositions de services et alertes de voisinage.</p>
+            </header>
 
             <section class="action-section">
                 <button id="quick-message-btn" class="btn btn-primary btn-lg">
@@ -282,7 +288,11 @@
         <!-- ============================================ -->
         <!-- CONTENU DE L'ONGLET 5 : CHARGES (CONSTRUCTION) -->
         <!-- ============================================ -->
-        <div id="tab-charges" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
+        <div id="tab-charges" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
+            <header class="page-header animate-fade-in">
+                <h1 class="page-title">📄 Analyse des Charges</h1>
+                <p class="page-subtitle">Transparence, contrôle des dépenses et contestation des comptes réclamés par Valdévy.</p>
+            </header>
             <section class="placeholder-section card glass center-text">
                 <div class="placeholder-icon color-warning">
                     <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -299,14 +309,11 @@
             </section>
         </div>
 
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 6 : JURIDIQUE -->
-        <!-- ============================================ -->
-        <div id="tab-juridique" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-juridique">
-            <section class="section-header">
-                <h2 class="section-title">⚖️ Action Juridique</h2>
-                <p class="section-subtitle">Générez une mise en demeure formelle pour défaut d'entretien, prête à être envoyée en lettre recommandée.</p>
-            </section>
+        <div id="tab-juridique" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-juridique">
+            <header class="page-header animate-fade-in">
+                <h1 class="page-title">⚖️ Action Juridique</h1>
+                <p class="page-subtitle">Générez une mise en demeure formelle pour défaut d'entretien, prête à être envoyée au bailleur.</p>
+            </header>
 
             <section class="card glass" style="max-width: 600px; margin: 0 auto;">
                 <div style="padding: 1.5rem;">
@@ -360,7 +367,11 @@
         <!-- ============================================ -->
         <!-- CONTENU DE L'ONGLET 5 : CONTACTS UTILES -->
         <!-- ============================================ -->
-        <div id="tab-contacts" class="tab-content-panel hidden" role="tabpanel" aria-labelledby="tab-contacts">
+        <div id="tab-contacts" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-contacts">
+            <header class="page-header animate-fade-in">
+                <h1 class="page-title">📞 Contacts Utiles</h1>
+                <p class="page-subtitle">Tous les numéros d'urgence, d'assistance juridique ou du bailleur à portée de main.</p>
+            </header>
             <section class="contacts-section card glass">
                 <div class="assoc-header">
                     <div class="assoc-badge">Contacts Utiles</div>
@@ -421,23 +432,51 @@
                 </div>
             </section>
         </div>
-    </main>    <!-- Pied de page -->
-    <footer class="app-footer-bar">
-        <div class="container footer-content">
-            <div class="footer-legal">
-                <p>&copy; 2026 Collectif Plaine - Cachan.</p>
-                <p class="gdpr-tag">
-                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="icon-inline">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    <strong>Sécurité & RGPD</strong> : Données anonymisées, sans traçage ni cookies publicitaires.
-                </p>
-            </div>
-            <div class="security-badge" title="Sécurité intégrée par conception">
-                Security by Design Certified
-            </div>
+            </main>
+
+            <!-- Pied de page -->
+            <footer class="app-footer-bar">
+                <div class="container footer-content">
+                    <div class="footer-legal">
+                        <p>&copy; 2026 Collectif Plaine - Cachan.</p>
+                        <p class="gdpr-tag">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" class="icon-inline">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                            <strong>Sécurité & RGPD</strong> : Données anonymisées, sans traçage ni cookies de ciblage.
+                        </p>
+                    </div>
+                    <div class="security-badge" title="Sécurité intégrée par conception">
+                        Security by Design Certified
+                    </div>
+                </div>
+            </footer>
         </div>
-    </footer>
+
+        <!-- Navigation mobile inférieure flottante (Bottom Bar) -->
+        <nav class="mobile-bottom-nav glass">
+            <a href="#/accueil" class="mobile-link active" data-page="page-accueil">
+                <span class="mobile-icon">🏠</span>
+                <span class="mobile-text">Accueil</span>
+            </a>
+            <a href="#/ascenseurs" class="mobile-link" data-page="page-elevators">
+                <span class="mobile-icon">🛗</span>
+                <span class="mobile-text">Ascenseurs</span>
+            </a>
+            <a href="#/incidents" class="mobile-link" data-page="page-incidents">
+                <span class="mobile-icon">⚠️</span>
+                <span class="mobile-text">Incidents</span>
+            </a>
+            <a href="#/entraide" class="mobile-link" data-page="page-entraide">
+                <span class="mobile-icon">💬</span>
+                <span class="mobile-text">Entraide</span>
+            </a>
+            <a href="#/juridique" class="mobile-link" data-page="page-juridique">
+                <span class="mobile-icon">⚖️</span>
+                <span class="mobile-text">Courrier</span>
+            </a>
+        </nav>
+    </div>
 
     <!-- ============================================ -->
     <!-- MODALE : SIGNALEMENT DE PANNE -->

@@ -14,11 +14,8 @@ body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.5;
-    padding-bottom: 80px; /* Space for sticky footer */
     transition: background-color var(--transition-normal), color var(--transition-normal);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
     overflow-x: hidden;
     max-width: 100%;
     width: 100%;
@@ -29,8 +26,8 @@ body {
     max-width: var(--max-width);
     margin-right: auto;
     margin-left: auto;
-    padding-right: 1.25rem;
-    padding-left: 1.25rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
 }
 
 /* Typography */
@@ -41,32 +38,41 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1.2;
 }
 
-/* Header */
-.app-header {
-    background-color: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur));
-    -webkit-backdrop-filter: blur(var(--glass-blur));
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    padding: 0.85rem 0;
-    transition: background-color var(--transition-normal), border-color var(--transition-normal);
-}
+/* ======================================================== */
+/* LAYOUT FRAMEWORK & ADAPTIVE NAVIGATION                   */
+/* ======================================================== */
 
-.header-container {
+.app-layout {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
 }
 
-.logo-area {
+/* Sidebar Navigation (Desktop) */
+.app-sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 40;
+    border-right: 1px solid var(--border-color);
+    padding: 2rem 1.5rem;
+    background-color: var(--bg-tertiary);
+}
+
+.sidebar-brand {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-bottom: 3rem;
+    padding-left: 0.5rem;
 }
 
-.logo-icon {
+.brand-icon {
     background: var(--accent-gradient);
     color: #ffffff;
     width: 40px;
@@ -75,26 +81,104 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
 }
 
-.logo-text h1 {
-    font-size: 1.25rem;
+.brand-text h2 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+}
+
+.brand-text span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    display: block;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    color: var(--text-secondary);
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.menu-link:hover:not(.active) {
+    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="light"] .menu-link:hover:not(.active) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.menu-link.active {
+    color: #ffffff;
+    background: var(--accent-gradient);
+    border-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+}
+
+.menu-icon {
+    font-size: 1.1rem;
+}
+
+/* Zone principale de contenu */
+.app-main {
+    flex: 1;
+    margin-left: 280px; /* Espace pour la sidebar */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+/* Barre de Contrôles supérieure */
+.app-top-bar {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    padding: 1.15rem 0;
+    transition: background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+.top-bar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2.5rem;
+}
+
+.top-bar-title-section h2 {
+    font-size: 1.4rem;
     font-weight: 800;
     color: var(--text-primary);
 }
 
-.logo-text .subtitle {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    display: block;
-    margin-top: -2px;
-}
-
-.header-actions {
+.top-bar-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
 }
 
 /* Theme Toggle Button */
@@ -288,3 +372,47 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Responsive overrides → voir css/mobile.css */
+
+/* ======================================================== */
+/* UNIFORM PAGE BANNERS & PAGE TRANSITIONS                  */
+/* ======================================================== */
+
+.page-container {
+    padding-top: 2rem;
+    flex: 1;
+}
+
+.page-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1), transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.page-panel.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-header {
+    margin-bottom: 2.25rem;
+    padding-left: 0.25rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.03em;
+}
+
+.page-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.animate-fade-in {
+    animation: fadeIn var(--transition-slow);
+}

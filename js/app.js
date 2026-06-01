@@ -1380,61 +1380,122 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // ---------------------------------------------------------
-    // 6. GESTION DE LA NAVIGATION PAR ONGLETS (TABS)
+    // 6. SPA ROUTER & FLUID PAGE TRANSITIONS
     // ---------------------------------------------------------
-    const tabLinks = document.querySelectorAll(".tab-link");
-    const tabContentPanels = document.querySelectorAll(".tab-content-panel");
+    
+    const pageRouteMap = {
+        "#/accueil": "tab-accueil",
+        "#/ascenseurs": "tab-elevators",
+        "#/incidents": "tab-incidents",
+        "#/entraide": "tab-entraide",
+        "#/charges": "tab-charges",
+        "#/juridique": "tab-juridique",
+        "#/contacts": "tab-contacts"
+    };
 
-    tabLinks.forEach(link => {
-        link.addEventListener("click", () => {
-            const targetTabId = link.dataset.tab;
-            
-            if (link.classList.contains("active")) return;
+    const pageTitles = {
+        "#/accueil": "Accueil",
+        "#/ascenseurs": "Ascenseurs",
+        "#/incidents": "Incidents",
+        "#/entraide": "Entraide",
+        "#/charges": "Charges",
+        "#/juridique": "Juridique",
+        "#/contacts": "Contacts"
+    };
 
-            tabLinks.forEach(t => {
-                t.classList.remove("active");
-                t.setAttribute("aria-selected", "false");
-            });
+    function handleRouting() {
+        const hash = window.location.hash || "#/accueil";
+        const targetPanelId = pageRouteMap[hash];
 
-            link.classList.add("active");
-            link.setAttribute("aria-selected", "true");
+        if (!targetPanelId) {
+            // Redirection vers l'accueil si le hash est inconnu
+            window.location.hash = "#/accueil";
+            return;
+        }
 
-            tabContentPanels.forEach(panel => {
-                panel.classList.add("hidden");
-            });
+        const targetPanel = document.getElementById(targetPanelId);
+        if (!targetPanel) return;
 
-            const targetPanel = document.getElementById(targetTabId);
-            if (targetPanel) {
-                targetPanel.classList.remove("hidden");
-            }
-
-            if (targetTabId === "tab-elevators") {
-                renderDashboard();
-            } else if (targetTabId === "tab-juridique") {
-                // Pré-remplissage du formulaire juridique si l'utilisateur est connecté
-                const tenant = Security.getLoggedInTenant();
-                if (tenant) {
-                    const entranceSelect = document.getElementById("legal-entrance");
-                    const apartmentInput = document.getElementById("legal-apartment");
-                    
-                    if (entranceSelect && !entranceSelect.value) {
-                        // Chercher l'option correspondant à l'entrée du locataire
-                        Array.from(entranceSelect.options).forEach(opt => {
-                            if (opt.value === String(tenant.entrance) || opt.text.includes(tenant.entrance)) {
-                                entranceSelect.value = opt.value;
-                            }
-                        });
-                    }
-                    if (apartmentInput && !apartmentInput.value) {
-                        apartmentInput.value = tenant.apartment || "";
-                    }
-                    if (entranceSelect && entranceSelect.value) {
-                        populateOutagesForEntrance(entranceSelect.value);
-                    }
-                }
+        // 1. Mettre à jour les classes actives sur les menus (Sidebar et Bottom Bar)
+        const allLinks = document.querySelectorAll(".menu-link, .mobile-link");
+        allLinks.forEach(link => {
+            const linkHash = link.getAttribute("href");
+            if (linkHash === hash) {
+                link.classList.add("active");
+                link.setAttribute("aria-selected", "true");
+            } else {
+                link.classList.remove("active");
+                link.setAttribute("aria-selected", "false");
             }
         });
-    });
+
+        // 2. Mettre à jour le titre dans la barre supérieure
+        const currentPageTitleEl = document.getElementById("current-page-title");
+        if (currentPageTitleEl) {
+            currentPageTitleEl.textContent = pageTitles[hash] || "Collectif Plaine";
+        }
+
+        // 3. Fluid Page Transition Animation
+        const allPanels = document.querySelectorAll(".page-panel");
+        let activePanel = null;
+
+        allPanels.forEach(panel => {
+            if (panel.classList.contains("active")) {
+                activePanel = panel;
+            }
+        });
+
+        if (activePanel && activePanel !== targetPanel) {
+            // Effet de fondu sortant du panneau actif actuel
+            activePanel.classList.remove("active");
+            
+            // Masquage retardé pour permettre la fin de l'effet d'opacité
+            setTimeout(() => {
+                activePanel.classList.add("hidden");
+                targetPanel.classList.remove("hidden");
+                // Déclencher l'entrée du nouveau panneau
+                setTimeout(() => {
+                    targetPanel.classList.add("active");
+                }, 20);
+            }, 150);
+        } else {
+            // Premier chargement ou aucun panneau actif préalable
+            allPanels.forEach(panel => {
+                panel.classList.remove("active");
+                panel.classList.add("hidden");
+            });
+            targetPanel.classList.remove("hidden");
+            setTimeout(() => {
+                targetPanel.classList.add("active");
+            }, 20);
+        }
+
+        // 4. Initialisations et rafraîchissements spécifiques aux pages
+        if (targetPanelId === "tab-elevators") {
+            renderDashboard();
+        } else if (targetPanelId === "tab-juridique") {
+            // Pré-remplissage automatique pour le locataire connecté
+            const tenant = Security.getLoggedInTenant();
+            if (tenant) {
+                const entranceSelect = document.getElementById("legal-entrance");
+                const apartmentInput = document.getElementById("legal-apartment");
+                
+                if (entranceSelect && !entranceSelect.value) {
+                    entranceSelect.value = tenant.entrance;
+                    // Déclencher le peuplement des pannes
+                    if (typeof populateOutagesForEntrance === "function") {
+                        populateOutagesForEntrance(tenant.entrance);
+                    }
+                }
+                if (apartmentInput && !apartmentInput.value) {
+                    apartmentInput.value = tenant.apartment;
+                }
+            }
+        }
+    }
+
+    // Écouter les changements de hash du navigateur
+    window.addEventListener("hashchange", handleRouting);
 
     // ---------------------------------------------------------
     // EVENEMENTS DU CENTRE DE NOTIFICATIONS
@@ -1486,6 +1547,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function initApp() {
         initTheme();
         populateAllEntrancesDropdowns();
+        handleRouting();
         renderAuthHeader();
         
         try {

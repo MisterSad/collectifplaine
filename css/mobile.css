@@ -144,135 +144,102 @@ button, a, select, input, textarea, label {
 }
 
 /* =========================================================
-   3. BOTTOM NAVIGATION BAR (remplace les onglets horizontaux)
+   3. ADAPTIVE LAYOUT & FLOATING BOTTOM BAR
    ========================================================= */
 
-/* Éléments exclusifs à la bottom bar (cachés sur desktop) */
-.tab-tile-emoji,
-.tab-label {
-    display: none;
-}
+@media (max-width: 768px) {
+    /* Masquer la Sidebar Desktop */
+    .app-sidebar {
+        display: none !important;
+    }
 
-@media (max-width: 640px) {
-    /* La nav sort du flux et se fixe en bas */
-    .app-tabs-nav {
+    /* Remettre la zone principale en pleine largeur */
+    .app-main {
+        margin-left: 0 !important;
+        padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+    }
+
+    .top-bar-container {
+        padding: 0 1.25rem !important;
+    }
+
+    /* Container de pages */
+    .page-container {
+        padding-top: 1.5rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    /* Barre de navigation mobile inférieure flottante */
+    .mobile-bottom-nav {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 90;
+        z-index: 95;
         display: flex;
         flex-direction: row;
-        gap: 0;
-        padding: 0;
         padding-bottom: env(safe-area-inset-bottom);
-        margin: 0;
-        border-radius: 0;
-        overflow: visible;
-        background: rgba(10, 15, 29, 0.92);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
-        scrollbar-width: none;
+        background: rgba(11, 15, 25, 0.9);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
     }
 
-    [data-theme="light"] .app-tabs-nav {
-        background: rgba(248, 250, 252, 0.94);
-        border-top: 1px solid rgba(0, 0, 0, 0.09);
-        box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.07);
+    [data-theme="light"] .mobile-bottom-nav {
+        background: rgba(255, 255, 255, 0.9);
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 -4px 30px rgba(148, 163, 184, 0.08);
     }
 
-    .tab-link {
+    .mobile-link {
         flex: 1;
+        display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 0.2rem;
-        padding: 0.55rem 0.25rem 0.5rem;
-        border-radius: 0;
-        border: none;
+        gap: 0.15rem;
+        padding: 0.65rem 0.25rem 0.55rem;
         background: transparent;
-        min-height: 54px;
+        text-decoration: none;
+        color: var(--text-secondary);
+        min-height: 56px;
         position: relative;
-        transition: background var(--transition-fast);
-        white-space: normal;
+        transition: color var(--transition-fast);
     }
 
-    /* Indicateur actif : trait indigo en haut */
-    .tab-link.active::before {
+    .mobile-link.active {
+        color: var(--accent-primary);
+    }
+
+    /* Trait indicateur actif en haut de la bottom bar */
+    .mobile-link.active::before {
         content: "";
         position: absolute;
         top: 0;
-        left: 15%;
-        right: 15%;
+        left: 20%;
+        right: 20%;
         height: 2px;
         background: var(--accent-gradient);
         border-radius: 0 0 3px 3px;
     }
 
-    .tab-link.active {
-        background: transparent;
-        box-shadow: none;
-        color: var(--accent-hover);
-    }
-
-    .tab-link:hover:not(.active) {
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    /* Afficher l'emoji */
-    .tab-tile-emoji {
-        display: block;
-        font-size: 1.4rem;
+    .mobile-icon {
+        font-size: 1.3rem;
         line-height: 1;
         transition: transform var(--transition-fast);
     }
 
-    .tab-link.active .tab-tile-emoji {
+    .mobile-link.active .mobile-icon {
         transform: translateY(-2px);
-        filter: drop-shadow(0 2px 5px rgba(99, 102, 241, 0.6));
     }
 
-    /* Label court */
-    .tab-label {
-        display: block;
-        font-size: 0.58rem;
-        font-weight: 600;
-        color: var(--text-muted);
-        text-align: center;
-        line-height: 1;
-        letter-spacing: 0.01em;
-    }
-
-    .tab-link.active .tab-label {
-        color: var(--accent-hover);
+    .mobile-text {
+        font-size: 0.62rem;
         font-weight: 700;
-    }
-
-    /* Masquer SVG et texte long */
-    .tab-icon,
-    .tab-text {
-        display: none;
-    }
-
-    /* Badge "Bientôt" */
-    .tab-link .badge-soon {
-        position: absolute;
-        top: 7px;
-        right: calc(50% - 24px);
-        font-size: 0.48rem;
-        padding: 0.07rem 0.22rem;
-        margin: 0;
-        background: rgba(79, 70, 229, 0.18);
-        color: var(--accent-hover);
-        border-radius: 3px;
-        border: none;
-    }
-
-    /* Compensation : le contenu principal recule de la hauteur de la barre */
-    main.container {
-        padding-bottom: calc(70px + env(safe-area-inset-bottom));
+        line-height: 1;
+        letter-spacing: 0.02em;
     }
 }
 
