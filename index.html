@@ -54,29 +54,14 @@
                 <a href="#/charges" class="menu-link" data-page="page-charges">
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> <span class="menu-text">Charges</span>
                 </a>
+                <a href="#/compte" class="menu-link" data-page="page-profile" id="sidebar-account-link">
+                    <span class="menu-icon" id="sidebar-account-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="menu-text" id="sidebar-account-text">Mon Compte</span>
+                </a>
             </nav>
         </aside>
 
         <!-- Zone de contenu principal -->
         <div class="app-main">
-            <!-- Top Header Barre de Contrôles -->
-            <header class="app-top-bar glass">
-                <div class="top-bar-container">
-                    <div class="top-bar-title-section">
-                        <h2 id="current-page-title">Accueil</h2>
-                    </div>
-                    
-                    <div class="top-bar-actions">
-                        <!-- Theme toggle hidden — OLED only -->
-
-
-                        
-                        <!-- Zone d'authentification dynamique -->
-                        <div id="auth-header-area" class="auth-header-area"></div>
-                    </div>
-                </div>
-            </header>
-
             <!-- Container Principal des Pages -->
             <main class="page-container container">
 
@@ -224,6 +209,98 @@
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">Nous sommes actuellement dans l'attente des documents justificatifs de la part du bailleur pour alimenter cette rubrique.</p>
             </section>
         </div>
+
+        <!-- ============================================ -->
+        <!-- CONTENU DE L'ONGLET : MON COMPTE -->
+        <!-- ============================================ -->
+        <div id="tab-compte" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-compte">
+            <div id="account-unauthenticated-section" class="card glass" style="max-width: 500px; margin: 2rem auto; padding: 2rem;">
+                <!-- Section Connexion / Inscription -->
+                <div class="modal-tabs" style="display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; padding-bottom: 0.5rem;">
+                    <button class="modal-tab-btn active" id="account-tab-login" type="button" style="background: none; border: none; color: inherit; font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Connexion</button>
+                    <button class="modal-tab-btn" id="account-tab-register" type="button" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Créer un compte</button>
+                </div>
+                
+                <div id="account-auth-error" class="alert-box alert-danger hidden" style="margin-bottom: 1rem;"></div>
+                <div id="account-auth-success" class="alert-box alert-success hidden" style="margin-bottom: 1rem;"></div>
+
+                <!-- Formulaire de Connexion -->
+                <form id="account-login-form">
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="account-login-username">Votre Pseudo <span class="required">*</span></label>
+                        <input type="text" id="account-login-username" required placeholder="Ex: Marc40" autocomplete="username">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="account-login-password">Votre Mot de passe <span class="required">*</span></label>
+                        <input type="password" id="account-login-password" required placeholder="Saisir votre mot de passe" autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                </form>
+
+                <!-- Formulaire d'Inscription (Masqué par défaut) -->
+                <form id="account-register-form" class="hidden">
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="account-register-username">Choisir un Pseudo <span class="required">*</span></label>
+                        <input type="text" id="account-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
+                        <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="account-register-password">Mot de passe de sécurité <span class="required">*</span></label>
+                        <input type="password" id="account-register-password" required placeholder="Créer votre mot de passe (min 8 car.)" autocomplete="new-password">
+                        <span class="field-hint">Minimum 8 caractères, au moins une lettre et un chiffre.</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
+                </form>
+            </div>
+
+            <div id="account-authenticated-section" class="card glass hidden" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                    <div id="account-avatar" class="user-avatar" style="width: 48px; height: 48px; font-size: 1.2rem;"></div>
+                    <div>
+                        <h2 id="account-username-title" style="margin: 0; font-size: 1.3rem;">Pseudo</h2>
+                        <span style="font-size: 0.8rem; color: var(--accent-primary);">Résident Connecté</span>
+                    </div>
+                </div>
+
+                <div id="account-profile-error" class="alert-box alert-danger hidden" style="margin-bottom: 1rem;"></div>
+                <div id="account-profile-success" class="alert-box alert-success hidden" style="margin-bottom: 1rem;"></div>
+
+                <form id="account-profile-form">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                        <div class="form-group">
+                            <label for="account-firstname">Prénom</label>
+                            <input type="text" id="account-firstname" placeholder="Ex: Jean">
+                        </div>
+                        <div class="form-group">
+                            <label for="account-lastname">Nom</label>
+                            <input type="text" id="account-lastname" placeholder="Ex: Dupont">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="account-entrance">Bâtiment / Entrée <span class="required">*</span></label>
+                        <select id="account-entrance" required>
+                            <option value="" disabled selected>Sélectionner votre entrée...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="account-apartment">Numéro de Logement / Appartement <span class="required">*</span></label>
+                        <input type="text" id="account-apartment" required placeholder="Ex: Appt 14" maxlength="10">
+                    </div>
+
+                    <div class="form-group checkbox-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1.5rem; margin-bottom: 2rem;">
+                        <input type="checkbox" id="account-notifications" style="width: auto; margin: 0; cursor: pointer;">
+                        <label for="account-notifications" style="margin: 0; cursor: pointer; font-size: 0.85rem;">Recevoir des notifications en temps réel pour mon bâtiment</label>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                        <button type="button" id="account-logout-btn" class="btn btn-danger">Se déconnecter</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    </div>
+                </form>
+            </div>
+        </div>
             </main>
 
             <!-- Pied de page -->
@@ -262,6 +339,10 @@
             <a href="#/charges" class="mobile-link" data-page="page-charges">
                 <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
                 <span class="mobile-text">Charges</span>
+            </a>
+            <a href="#/compte" class="mobile-link" data-page="page-profile" id="mobile-account-link">
+                <span class="mobile-icon" id="mobile-account-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <span class="mobile-text" id="mobile-account-text">Compte</span>
             </a>
         </nav>
     </div>
@@ -423,120 +504,7 @@
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- MODALE : COMPTE LOCATAIRE (CONNEXION & INSCRIPTION) -->
-    <!-- ============================================ -->
-    <div id="auth-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" tabindex="-1">
-            <div class="modal-header auth-modal-header">
-                <div class="modal-tabs">
-                    <button class="modal-tab-btn active" id="modal-tab-login" type="button">Connexion</button>
-                    <button class="modal-tab-btn" id="modal-tab-register" type="button">Créer un compte</button>
-                </div>
-                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
-            </div>
-            
-            <!-- Messages d'erreur et succès -->
-            <div class="modal-alerts-container">
-                <div id="auth-error-msg" class="alert-box alert-danger hidden"></div>
-                <div id="auth-success-msg" class="alert-box alert-success hidden"></div>
-            </div>
 
-            <!-- Formulaire de Connexion -->
-            <form id="auth-login-form">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="auth-login-username">Votre Pseudo <span class="required">*</span></label>
-                        <input type="text" id="auth-login-username" required placeholder="Ex: Marc40" autocomplete="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="auth-login-password">Votre Mot de passe <span class="required">*</span></label>
-                        <input type="password" id="auth-login-password" required placeholder="Saisir votre mot de passe" autocomplete="current-password">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Se connecter</button>
-                </div>
-            </form>
-
-            <!-- Formulaire d'Inscription (Masqué par défaut) -->
-            <form id="auth-register-form" class="hidden">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="auth-register-username">Choisir un Pseudo <span class="required">*</span></label>
-                        <input type="text" id="auth-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
-                        <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="auth-register-password">Mot de passe de sécurité <span class="required">*</span></label>
-                        <input type="password" id="auth-register-password" required placeholder="Créer votre mot de passe (min 8 car.)" autocomplete="new-password">
-                        <span class="field-hint">Minimum 8 caractères, au moins une lettre et un chiffre.</span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Créer mon compte</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- MODALE : PROFIL LOCATAIRE -->
-    <!-- ============================================ -->
-    <div id="profile-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" tabindex="-1">
-            <div class="modal-header">
-                <h3>Mon Profil Locataire</h3>
-                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
-            </div>
-            
-            <div class="modal-alerts-container">
-                <div id="profile-error-msg" class="alert-box alert-danger hidden"></div>
-                <div id="profile-success-msg" class="alert-box alert-success hidden"></div>
-            </div>
-
-            <form id="profile-form">
-                <div class="modal-body">
-                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <div class="form-group">
-                            <label for="profile-firstname">Prénom</label>
-                            <input type="text" id="profile-firstname" placeholder="Ex: Jean">
-                        </div>
-                        <div class="form-group">
-                            <label for="profile-lastname">Nom</label>
-                            <input type="text" id="profile-lastname" placeholder="Ex: Dupont">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="profile-entrance">Bâtiment / Entrée <span class="required">*</span></label>
-                        <select id="profile-entrance" required>
-                            <option value="" disabled selected>Sélectionner votre entrée...</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="profile-apartment">Numéro de Logement / Appartement <span class="required">*</span></label>
-                        <input type="text" id="profile-apartment" required placeholder="Ex: Appt 14" maxlength="10">
-                    </div>
-
-                    <div class="form-group checkbox-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1.25rem;">
-                        <input type="checkbox" id="profile-notifications" style="width: auto; margin: 0; cursor: pointer;">
-                        <label for="profile-notifications" style="margin: 0; cursor: pointer; font-size: 0.85rem; color: var(--text-secondary);">Recevoir des notifications en temps réel pour mon bâtiment</label>
-                    </div>
-                </div>
-                <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1rem;">
-                    <button type="button" id="profile-logout-btn" class="btn btn-danger">Se déconnecter</button>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <!-- ============================================ -->
     <!-- MODALE : SIGNALER UN AUTRE INCIDENT -->
