@@ -8,9 +8,20 @@
    md: < 768px  (tablet portrait)
    ============================================================ */
 
-/* ── GLOBAL ANTI-OVERFLOW ── */
 html {
     -webkit-text-size-adjust: 100%;
+}
+
+/* Cache les barres de défilement sur mobile pour un rendu type app native */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        display: none !important;
+    }
+    
+    html, body, * {
+        scrollbar-width: none !important; /* Firefox */
+        -ms-overflow-style: none !important; /* IE/Edge */
+    }
 }
 
 @media (max-width: 640px) {
