@@ -1,4 +1,4 @@
-const CACHE_NAME = 'collectif-plaine-v18';
+const CACHE_NAME = 'collectif-plaine-v19';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -45,28 +45,52 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignore les requêtes vers Supabase (API) pour ne pas cacher les requêtes dynamiques POST/GET
+  // Ignore les requêtes vers Supabase (API) pour ne pas interférer avec les données temps réel
   if (event.request.url.includes('supabase.co')) {
     return;
   }
 
+  // Stratégie "Network First" pour index.html / navigation pour forcer la mise à jour si connecté
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request) || caches.match('/index.html');
+        })
+    );
+    return;
+  }
+
+  // Stratégie "Stale-While-Revalidate" pour les autres assets locaux (css, js, images)
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // Stratégie "Cache First" pour les assets locaux, avec fallback réseau
-      return cachedResponse || fetch(event.request).then((fetchResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          // On ne met en cache que les requêtes locales (extensions css/js/etc.)
-          if (event.request.url.startsWith(self.location.origin)) {
-            cache.put(event.request, fetchResponse.clone());
-          }
-          return fetchResponse;
-        });
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && event.request.url.startsWith(self.location.origin)) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return networkResponse;
+      }).catch((err) => {
+        console.log('[Service Worker] Échec de récupération réseau, utilisation du cache si disponible', err);
       });
-    }).catch(() => {
-      // Si on est hors ligne et que la ressource n'est pas dans le cache, on essaie de renvoyer index.html pour le routage de base
-      if (event.request.mode === 'navigate') {
-        return caches.match('/index.html');
-      }
+
+      return cachedResponse || fetchPromise;
     })
   );
+});
+
+// Écouter les messages pour forcer l'activation du nouveau Service Worker
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
 });

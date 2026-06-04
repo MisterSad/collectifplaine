@@ -1624,16 +1624,79 @@ document.addEventListener("DOMContentLoaded", () => {
     // Démarrage initial de l'application
     initApp();
 
-    // Enregistrement du Service Worker (PWA)
+    // Système de Toast Système (générique)
+    function showSystemToast(title, body, actionText = "", onAction = null) {
+        const toast = document.createElement("div");
+        toast.className = "toast-alert";
+        toast.setAttribute("role", "alert");
+        toast.innerHTML = `
+            <div class="toast-icon" style="color:var(--accent-primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="toast-content" style="${onAction ? 'cursor: pointer;' : ''}">
+                <div class="toast-title">${title}</div>
+                <div class="toast-body">${body} ${actionText ? `<strong style="color:var(--accent-primary); text-decoration:underline; margin-left:5px;">${actionText}</strong>` : ''}</div>
+            </div>
+            <button class="toast-close" aria-label="Fermer la notification">&times;</button>
+        `;
+
+        if (onAction) {
+            toast.querySelector(".toast-content").addEventListener("click", () => {
+                onAction();
+                toast.remove();
+            });
+        }
+
+        toast.querySelector(".toast-close").addEventListener("click", (e) => {
+            e.stopPropagation();
+            toast.style.opacity = "0";
+            toast.style.transform = "translateX(50px)";
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        });
+
+        toastContainer.appendChild(toast);
+    }
+
+    // Enregistrement du Service Worker (PWA) avec détection active des mises à jour
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
                 .then(registration => {
                     console.log('[Service Worker] Enregistré avec succès. Scope:', registration.scope);
+                    
+                    // Écouter s'il y a une mise à jour en attente
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Une mise à jour est prête, on propose de recharger
+                                    showSystemToast(
+                                        "Mise à jour disponible",
+                                        "Une nouvelle version de l'application est disponible.",
+                                        "Recharger",
+                                        () => {
+                                            newWorker.postMessage({ action: 'skipWaiting' });
+                                            setTimeout(() => window.location.reload(), 1000);
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                    });
                 })
                 .catch(error => {
                     console.log('[Service Worker] Échec de l\'enregistrement:', error);
                 });
+        });
+
+        // Rechargement automatique de l'application quand un nouveau service worker prend le contrôle
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+                refreshing = true;
+                window.location.reload();
+            }
         });
     }
 
