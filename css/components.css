@@ -92,6 +92,21 @@
     filter: brightness(1.1);
 }
 
+/* Report Action Button — Premium Glowing Red */
+.btn-report {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.btn-report:hover {
+    box-shadow: 0 6px 24px rgba(239, 68, 68, 0.55);
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
 /* Secondary */
 .btn-secondary {
     background: rgba(255, 255, 255, 0.05);

@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button class="btn btn-secondary btn-view-details" data-id="${elevator.id}">
                         Historique
                     </button>
-                    <button class="btn btn-primary btn-report-card" data-id="${elevator.id}">
+                    <button class="btn btn-report btn-report-card" data-id="${elevator.id}">
                         Signaler
                     </button>
                 </div>
