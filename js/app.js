@@ -322,7 +322,21 @@ document.addEventListener("DOMContentLoaded", () => {
             el.className = "report-item";
             
             const badgeClass = incident.status === 'resolu' ? 'badge-functional' : 'badge-broken';
-            const badgeText = incident.status === 'resolu' ? 'Résolu' : 'En cours';
+            const badgeText = incident.status === 'resolu' ? 'Réparé' : 'En cours';
+
+            // Si connecté, on propose un bouton pour modifier le statut
+            const tenant = Security.getLoggedInTenant();
+            let actionBtnHtml = "";
+            if (tenant) {
+                const nextStatus = incident.status === 'resolu' ? 'en_cours' : 'resolu';
+                const btnLabel = incident.status === 'resolu' ? 'Remettre en cours' : 'Marquer comme réparé';
+                const btnStyle = incident.status === 'resolu' ? 'background:rgba(239,68,68,0.1); color:var(--color-danger); border:1px solid rgba(239,68,68,0.2);' : 'background:rgba(16,185,129,0.1); color:var(--accent-primary); border:1px solid rgba(16,185,129,0.2);';
+                actionBtnHtml = `
+                    <button class="btn-toggle-incident-status" data-id="${incident.id}" data-status="${nextStatus}" style="${btnStyle} font-size:0.7rem; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600; font-family:inherit; margin:0;">
+                        ${btnLabel}
+                    </button>
+                `;
+            }
 
             el.innerHTML = `
                 <div class="report-header">
@@ -336,13 +350,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p></p>
                 </div>
                 ${incident.photo_url ? `<div class="report-photo-thumb" style="background-image: url('${incident.photo_url}'); cursor:pointer;" onclick="window.openLightbox('${incident.photo_url}')" title="Agrandir la photo"></div>` : ""}
-                <div style="margin-top:0.75rem; display:flex; justify-content:space-between; align-items:center;">
+                <div style="margin-top:0.75rem; display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; width:100%;">
                     <span class="status-badge ${badgeClass}" style="font-size:0.7rem; padding:2px 6px;">${badgeText}</span>
+                    ${actionBtnHtml}
                 </div>
             `;
             el.querySelector(".report-author").textContent = incident.user_display;
             el.querySelector(".report-content p").textContent = incident.description;
             incidentsFeed.appendChild(el);
+        });
+
+        // Liaison des boutons de changement d'état
+        incidentsFeed.querySelectorAll(".btn-toggle-incident-status").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const newStatus = btn.dataset.status;
+                btn.disabled = true;
+                
+                try {
+                    await Store.updateIncidentStatus(id, newStatus);
+                    renderIncidents();
+                } catch (err) {
+                    alert("Erreur lors de la mise à jour du statut de l'incident : " + err.message);
+                    btn.disabled = false;
+                }
+            });
         });
     }
 

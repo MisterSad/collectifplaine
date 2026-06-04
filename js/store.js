@@ -386,6 +386,24 @@ const Store = (() => {
             return { id: incidentId };
         },
 
+        async updateIncidentStatus(incidentId, newStatus) {
+            _ensureSupabase();
+            if (!Security.getLoggedInTenant()) {
+                throw new Error("Accès refusé : Vous devez être connecté pour mettre à jour le statut d'un incident.");
+            }
+
+            const { error } = await supabase
+                .from('incidents')
+                .update({
+                    status: String(newStatus)
+                })
+                .eq('id', String(incidentId));
+
+            if (error) throw error;
+            await _fetchAndAssembleState();
+            return true;
+        },
+
         async addMessage(rawMessageData) {
             _ensureSupabase();
             const loggedTenant = Security.getLoggedInTenant();
