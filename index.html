@@ -469,6 +469,62 @@
                 <div id="auth-success-msg" class="alert-box alert-success hidden"></div>
             </div>
 
+    <!-- ============================================ -->
+    <!-- MODALE : PROFIL LOCATAIRE -->
+    <!-- ============================================ -->
+    <div id="profile-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
+        <div class="modal-card glass" tabindex="-1">
+            <div class="modal-header">
+                <h3>Mon Profil Locataire</h3>
+                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
+            </div>
+            
+            <div class="modal-alerts-container">
+                <div id="profile-error-msg" class="alert-box alert-danger hidden"></div>
+                <div id="profile-success-msg" class="alert-box alert-success hidden"></div>
+            </div>
+
+            <form id="profile-form">
+                <div class="modal-body">
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="profile-firstname">Prénom</label>
+                            <input type="text" id="profile-firstname" placeholder="Ex: Jean">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-lastname">Nom</label>
+                            <input type="text" id="profile-lastname" placeholder="Ex: Dupont">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profile-entrance">Bâtiment / Entrée <span class="required">*</span></label>
+                        <select id="profile-entrance" required>
+                            <option value="" disabled selected>Sélectionner votre entrée...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profile-apartment">Numéro de Logement / Appartement <span class="required">*</span></label>
+                        <input type="text" id="profile-apartment" required placeholder="Ex: Appt 14" maxlength="10">
+                    </div>
+
+                    <div class="form-group checkbox-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1.25rem;">
+                        <input type="checkbox" id="profile-notifications" style="width: auto; margin: 0; cursor: pointer;">
+                        <label for="profile-notifications" style="margin: 0; cursor: pointer; font-size: 0.85rem; color: var(--text-secondary);">Recevoir des notifications en temps réel pour mon bâtiment</label>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" id="profile-logout-btn" class="btn btn-danger">Se déconnecter</button>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
             <!-- Formulaire de Connexion -->
             <form id="auth-login-form">
                 <div class="modal-body">
@@ -494,17 +550,6 @@
                         <label for="auth-register-username">Choisir un Pseudo <span class="required">*</span></label>
                         <input type="text" id="auth-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
                         <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="auth-register-entrance">Numéro d'Entrée <span class="required">*</span></label>
-                        <select id="auth-register-entrance" required>
-                            <option value="" disabled selected>Sélectionner votre entrée...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="auth-register-apartment">Numéro d'Appartement <span class="required">*</span></label>
-                        <input type="text" id="auth-register-apartment" required placeholder="Ex: Appt 14" maxlength="10">
-                        <span class="field-hint">Sert à authentifier votre statut de résident.</span>
                     </div>
                     <div class="form-group">
                         <label for="auth-register-password">Mot de passe de sécurité <span class="required">*</span></label>

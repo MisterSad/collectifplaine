@@ -112,22 +112,6 @@ const Security = (() => {
                 errors.push("Le pseudo doit faire entre 3 et 15 caractères et ne contenir que des lettres, chiffres, tirets ou underscores.");
             }
 
-            // Entrée
-            const entranceNum = parseInt(data.entrance, 10);
-            const validEntrances = (typeof CONFIG !== 'undefined' && CONFIG.entrances)
-                ? CONFIG.entrances.map(e => parseInt(e.id, 10))
-                : [36, 38, 40, 42, 44, 46, 48, 50, 52]; // Repli de sécurité robuste
-            if (!validEntrances.includes(entranceNum)) {
-                errors.push("Le numéro d'entrée est incorrect.");
-            }
-
-            // Appartement (max 10 caractères alphanumériques)
-            if (!data.apartment || typeof data.apartment !== 'string' || data.apartment.trim().length === 0) {
-                errors.push("Le numéro d'appartement est obligatoire.");
-            } else if (data.apartment.trim().length > 10) {
-                errors.push("Le numéro d'appartement ne doit pas dépasser 10 caractères.");
-            }
-
             // Mot de passe (min 8 caractères, au moins une lettre et un chiffre)
             if (!data.password || typeof data.password !== 'string') {
                 errors.push("Le mot de passe est obligatoire.");

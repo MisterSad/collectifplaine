@@ -1348,3 +1348,30 @@ textarea:focus {
 .bg-success { background-color: var(--accent-primary); box-shadow: var(--accent-glow); }
 .bg-warning { background-color: var(--color-warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
 .bg-danger { background-color: var(--color-danger); box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+
+/* Premium round profile icon in header */
+.user-avatar-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.user-avatar-btn:hover {
+    transform: scale(1.06);
+    filter: brightness(1.15);
+}
+
+.user-avatar-btn .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    box-shadow: var(--accent-glow);
+    border: 1px solid var(--accent-primary-border);
+}

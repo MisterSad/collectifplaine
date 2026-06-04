@@ -11,6 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const authHeaderArea = document.getElementById("auth-header-area");
     const adminBanner = document.getElementById("admin-banner");
     
+    // Modale Profil
+    const profileModal = document.getElementById("profile-modal");
+    const profileForm = document.getElementById("profile-form");
+    const profileErrorMsg = document.getElementById("profile-error-msg");
+    const profileSuccessMsg = document.getElementById("profile-success-msg");
+    const profileLogoutBtn = document.getElementById("profile-logout-btn");
+    
     // Modale : Auth Locataire
     const authModal = document.getElementById("auth-modal");
     const authLoginForm = document.getElementById("auth-login-form");
@@ -823,6 +830,13 @@ document.addEventListener("DOMContentLoaded", () => {
             incidentModal.classList.remove("hidden");
             incidentModal.setAttribute("aria-hidden", "false");
             incidentForm.reset();
+            
+            // Choisir le bâtiment du résident par défaut
+            const tenant = Security.getLoggedInTenant();
+            if (tenant && tenant.entrance) {
+                document.getElementById("incident-entrance").value = tenant.entrance;
+            }
+            
             incidentErrorMsg.classList.add("hidden");
             incidentSuccessMsg.classList.add("hidden");
         });
@@ -1129,30 +1143,71 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Rendu dynamique de la zone d'authentification dans l'en-tête (Header)
      */
+    function getTenantInitials(tenant) {
+        if (!tenant) return "";
+        try {
+            const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${tenant.username}`);
+            if (profileStr) {
+                const profile = JSON.parse(profileStr);
+                const first = (profile.first_name || "").trim().charAt(0).toUpperCase();
+                const last = (profile.last_name || "").trim().charAt(0).toUpperCase();
+                if (first && last) return first + last;
+                if (first) return first;
+                if (last) return last;
+            }
+        } catch (e) {
+            console.error("Erreur lecture initiales", e);
+        }
+        return tenant.username.substring(0, 2).toUpperCase();
+    }
+
+    function openProfileModal() {
+        profileErrorMsg.classList.add("hidden");
+        profileSuccessMsg.classList.add("hidden");
+        
+        const tenant = Security.getLoggedInTenant();
+        if (!tenant) return;
+
+        document.getElementById("profile-apartment").value = tenant.apartment || "";
+        document.getElementById("profile-entrance").value = tenant.entrance || "";
+        
+        let firstName = "";
+        let lastName = "";
+        let notifications = false;
+        try {
+            const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${tenant.username}`);
+            if (profileStr) {
+                const profile = JSON.parse(profileStr);
+                firstName = profile.first_name || "";
+                lastName = profile.last_name || "";
+                notifications = !!profile.notifications;
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        
+        document.getElementById("profile-firstname").value = firstName;
+        document.getElementById("profile-lastname").value = lastName;
+        document.getElementById("profile-notifications").checked = notifications;
+
+        openModal(profileModal);
+    }
+
     function renderAuthHeader() {
         authHeaderArea.innerHTML = "";
         
         const tenant = Security.getLoggedInTenant();
 
         if (tenant) {
-            const firstLetter = tenant.username.charAt(0).toUpperCase();
+            const initials = getTenantInitials(tenant);
             authHeaderArea.innerHTML = `
-                <div class="user-profile-badge" title="Connecté en tant que résident">
-                    <span class="user-avatar">${firstLetter}</span>
-                    <span>${tenant.username} (Appt ${tenant.apartment})</span>
-                </div>
-                <button id="tenant-logout-btn" class="btn btn-secondary btn-sm" aria-label="Se déconnecter">
-                    <span>Déconnexion</span>
+                <button id="tenant-profile-btn" class="user-avatar-btn" aria-label="Espace Locataire" title="Mon Profil Locataire">
+                    <span class="user-avatar">${initials}</span>
                 </button>
             `;
             
-            document.getElementById("tenant-logout-btn").addEventListener("click", async () => {
-                await Store.logoutTenant();
-                renderAuthHeader();
-                renderDashboard();
-                if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
-                    openDetailsModal(activeDetailsEntranceId);
-                }
+            document.getElementById("tenant-profile-btn").addEventListener("click", () => {
+                openProfileModal();
             });
         } else {
             authHeaderArea.innerHTML = `
@@ -1222,6 +1277,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderAuthHeader();
                 renderDashboard();
                 
+                // Instantly trigger profile modal to complete registration fields (Nom, Prenom, Entree, Logement)
+                setTimeout(() => {
+                    openProfileModal();
+                    profileSuccessMsg.textContent = "Bienvenue ! Veuillez renseigner votre Prénom, Nom, Entrée et Logement pour finaliser votre inscription.";
+                    profileSuccessMsg.classList.remove("hidden");
+                }, 400);
+                
                 // Activer les notifications en temps réel
                 requestDesktopNotificationPermission();
                 subscribeToRealtimeNotifications();
@@ -1243,12 +1305,11 @@ document.addEventListener("DOMContentLoaded", () => {
         authSuccessMsg.classList.add("hidden");
 
         const username = document.getElementById("auth-register-username").value;
-        const entrance = document.getElementById("auth-register-entrance").value;
-        const apartment = document.getElementById("auth-register-apartment").value;
         const password = document.getElementById("auth-register-password").value;
 
         try {
-            await Store.registerTenant(username, password, entrance, apartment);
+            // Register with temporary default entrance '36' and empty apartment
+            await Store.registerTenant(username, password, "36", "");
             
             authSuccessMsg.textContent = "Votre compte locataire a été créé avec succès ! Bienvenue...";
             authSuccessMsg.classList.remove("hidden");
@@ -1261,6 +1322,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitBtn.disabled = false;
                 renderAuthHeader();
                 renderDashboard();
+                
+                // Instantly trigger profile modal to complete registration fields (Nom, Prenom, Entree, Logement)
+                setTimeout(() => {
+                    openProfileModal();
+                    profileSuccessMsg.textContent = "Bienvenue ! Veuillez renseigner votre Prénom, Nom, Entrée et Logement pour finaliser votre inscription.";
+                    profileSuccessMsg.classList.remove("hidden");
+                }, 400);
                 
                 // Activer les notifications en temps réel
                 requestDesktopNotificationPermission();
@@ -1370,6 +1438,71 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Écouter les changements de hash du navigateur
+        // Soumission Formulaire Profil Locataire
+    if (profileForm) {
+        profileForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            profileErrorMsg.classList.add("hidden");
+            profileSuccessMsg.classList.add("hidden");
+
+            const tenant = Security.getLoggedInTenant();
+            if (!tenant) return;
+
+            const firstName = document.getElementById("profile-firstname").value.trim();
+            const lastName = document.getElementById("profile-lastname").value.trim();
+            const entrance = document.getElementById("profile-entrance").value;
+            const apartment = document.getElementById("profile-apartment").value.trim();
+            const notifications = document.getElementById("profile-notifications").checked;
+
+            const submitBtn = profileForm.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+
+            try {
+                // 1. Mettre à jour la table des résidents
+                await Store.updateTenantProfile(tenant.username, entrance, apartment);
+
+                // 2. Enregistrer les informations locales (Nom, Prenom, pref notif)
+                const profileData = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    notifications: notifications
+                };
+                localStorage.setItem(`leclerc_asc_tenant_profile_${tenant.username}`, JSON.stringify(profileData));
+
+                profileSuccessMsg.textContent = "Profil locataire mis à jour avec succès !";
+                profileSuccessMsg.classList.remove("hidden");
+
+                // Gérer l'abonnement aux notifications locales si cochées
+                if (notifications) {
+                    requestDesktopNotificationPermission();
+                }
+
+                setTimeout(() => {
+                    closeModal(profileModal);
+                    submitBtn.disabled = false;
+                    renderAuthHeader();
+                    renderDashboard();
+                }, 1200);
+            } catch (err) {
+                profileErrorMsg.textContent = err.message;
+                profileErrorMsg.classList.remove("hidden");
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    if (profileLogoutBtn) {
+        profileLogoutBtn.addEventListener("click", async () => {
+            await Store.logoutTenant();
+            closeModal(profileModal);
+            renderAuthHeader();
+            renderDashboard();
+            if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
+                openDetailsModal(activeDetailsEntranceId);
+            }
+        });
+    }
+
     window.addEventListener("hashchange", handleRouting);
 
     // ---------------------------------------------------------
@@ -1490,7 +1623,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const dropdowns = [
             { id: "report-entrance", prefix: "N° ", suffix: " - Leclerc" },
-            { id: "auth-register-entrance", prefix: "", suffix: "" },
+            { id: "profile-entrance", prefix: "Entrée ", suffix: "" },
             { id: "incident-entrance", prefix: "", suffix: "" }
         ];
 

@@ -486,7 +486,7 @@ const Store = (() => {
         // GESTION DES RESIDENTS (SUPABASE TABLE 'residents')
         // ---------------------------------------------------------
 
-        async registerTenant(username, password, entrance, apartment) {
+        async registerTenant(username, password, entrance = "36", apartment = "") {
             _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
@@ -560,6 +560,32 @@ const Store = (() => {
             };
             Security.setTenantSession(tenant);
             return tenant;
+        },
+
+                async updateTenantProfile(username, entrance, apartment) {
+            _ensureSupabase();
+            const normalizedUser = Security.sanitizeHTML(String(username).trim());
+            const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
+
+            // 1. Mettre à jour dans Supabase residents
+            const { error } = await supabase
+                .from('residents')
+                .update({
+                    entrance: String(entrance),
+                    apartment: normalizedApartment
+                })
+                .ilike('username', normalizedUser);
+
+            if (error) throw error;
+
+            // 2. Mettre à jour la session locale
+            const currentTenant = Security.getLoggedInTenant();
+            if (currentTenant && currentTenant.username.toLowerCase() === normalizedUser.toLowerCase()) {
+                currentTenant.entrance = String(entrance);
+                currentTenant.apartment = normalizedApartment;
+                Security.setTenantSession(currentTenant);
+            }
+            return true;
         },
 
         async logoutTenant() {
