@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
     
     // Éléments Globaux
-    const themeToggle = document.getElementById("theme-toggle");
     const authHeaderArea = document.getElementById("auth-header-area");
     const adminBanner = document.getElementById("admin-banner");
     
@@ -149,16 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
 
     function initTheme() {
-        const savedTheme = localStorage.getItem("theme") || "dark";
-        document.documentElement.setAttribute("data-theme", savedTheme);
+        document.documentElement.setAttribute("data-theme", "dark");
     }
-
-    themeToggle.addEventListener("click", () => {
-        const currentTheme = document.documentElement.getAttribute("data-theme");
-        const newTheme = currentTheme === "dark" ? "light" : "dark";
-        document.documentElement.setAttribute("data-theme", newTheme);
-        localStorage.setItem("theme", newTheme);
-    });
 
     // ---------------------------------------------------------
     // 4. RENDU DYNAMIQUE DE L'INTERFACE PRINCIPALE
