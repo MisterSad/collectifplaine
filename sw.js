@@ -1,4 +1,4 @@
-const CACHE_NAME = 'collectif-plaine-v19';
+const CACHE_NAME = 'collectif-plaine-v20';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -17,7 +17,8 @@ const ASSETS_TO_CACHE = [
   '/js/chart.min.js',
   '/js/jspdf.umd.min.js',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-512x512.png',
+  '/icons/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
