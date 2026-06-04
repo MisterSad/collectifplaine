@@ -638,6 +638,25 @@ const Store = (() => {
 
         async logoutTenant() {
             Security.logoutTenant();
+        },
+
+        async deleteTenantAccount(username) {
+            _ensureSupabase();
+            const normalizedUser = String(username).trim();
+
+            // 1. Supprimer le résident de la table Supabase
+            const { error } = await supabase
+                .from('residents')
+                .delete()
+                .ilike('username', normalizedUser);
+
+            if (error) throw error;
+
+            // 2. Nettoyer les données locales de profil et de session
+            localStorage.removeItem(`leclerc_asc_tenant_profile_${normalizedUser}`);
+            Security.logoutTenant();
+            
+            return true;
         }
     };
 })();

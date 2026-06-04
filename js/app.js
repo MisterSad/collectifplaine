@@ -26,6 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const accountProfileError = document.getElementById("account-profile-error");
     const accountProfileSuccess = document.getElementById("account-profile-success");
     const accountLogoutBtn = document.getElementById("account-logout-btn");
+    const accountDeleteBtn = document.getElementById("account-delete-btn");
+    const deleteAccountModal = document.getElementById("delete-account-modal");
+    const btnConfirmDelete = document.getElementById("btn-confirm-delete");
+    const btnOpenAbout = document.getElementById("btn-open-about");
+    const aboutModal = document.getElementById("about-modal");
+    const btnOpenRgpd = document.getElementById("btn-open-rgpd");
+    const rgpdModal = document.getElementById("rgpd-modal");
     const entrancesGrid = document.getElementById("entrances-grid");
     
     // Stats Widgets
@@ -1522,6 +1529,63 @@ document.addEventListener("DOMContentLoaded", () => {
             if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
                 openDetailsModal(activeDetailsEntranceId);
             }
+        });
+    }
+
+    if (accountDeleteBtn) {
+        accountDeleteBtn.addEventListener("click", () => {
+            if (deleteAccountModal) openModal(deleteAccountModal);
+        });
+    }
+
+    if (btnConfirmDelete) {
+        btnConfirmDelete.addEventListener("click", async () => {
+            const tenant = Security.getLoggedInTenant();
+            if (!tenant) return;
+
+            btnConfirmDelete.disabled = true;
+            try {
+                // 1. Supprimer le compte de la base de données et nettoyer le cache local
+                await Store.deleteTenantAccount(tenant.username);
+                
+                // 2. Fermer la modale
+                if (deleteAccountModal) closeModal(deleteAccountModal);
+                
+                // 3. Se désabonner du canal temps réel
+                unsubscribeFromRealtimeNotifications();
+                
+                // 4. Mettre à jour l'interface utilisateur
+                renderAccountNav();
+                renderDashboard();
+                refreshAccountTab();
+
+                if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
+                    openDetailsModal(activeDetailsEntranceId);
+                }
+
+                // 5. Afficher un toast système informatif en français
+                showSystemToast(
+                    "Compte supprimé",
+                    "Votre compte résident a été supprimé de la base de données de manière définitive."
+                );
+            } catch (err) {
+                console.error("Erreur de suppression de compte", err);
+                alert("Une erreur est survenue lors de la suppression de votre compte : " + err.message);
+            } finally {
+                btnConfirmDelete.disabled = false;
+            }
+        });
+    }
+
+    if (btnOpenAbout) {
+        btnOpenAbout.addEventListener("click", () => {
+            if (aboutModal) openModal(aboutModal);
+        });
+    }
+
+    if (btnOpenRgpd) {
+        btnOpenRgpd.addEventListener("click", () => {
+            if (rgpdModal) openModal(rgpdModal);
         });
     }
 

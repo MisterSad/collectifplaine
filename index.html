@@ -310,43 +310,29 @@
                         <button type="button" id="account-logout-btn" class="btn btn-danger" style="flex: 1;">Se déconnecter</button>
                         <button type="submit" class="btn btn-primary" style="flex: 1;">Enregistrer</button>
                     </div>
+                    <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; text-align: center; width: 100%;">
+                        <button type="button" id="account-delete-btn" style="color: var(--color-danger); background: none; border: none; font-size: 0.85rem; cursor: pointer; text-decoration: underline; font-weight: 500; transition: color var(--transition-fast);">Supprimer mon compte définitivement</button>
+                    </div>
                 </form>
             </div>
 
-            <!-- Section À Propos -->
-            <div class="card glass" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
-                <h3 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                    À propos de l'application
-                </h3>
-                <div style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <p>Cette application mobile et web a été développée bénévolement par <strong>André Vieira</strong>, fils de M. et Mme. TAVARES FERNANDES (locataires résidant au 50 avenue de la Division Leclerc à Cachan).</p>
-                    <p>Face au désintérêt persistant du bailleur <strong>Valdévy</strong> vis-à-vis des pannes d'ascenseurs récurrentes et du délabrement progressif de nos parties communes, cette plateforme fournit aux résidents des outils collaboratifs pour documenter objectivement chaque incident.</p>
-                    <p>L'accumulation de rapports fiables, horodatés et appuyés par des photos permet de constituer des dossiers de réclamation et des procédures collectives de mise en demeure incontestables, unissant ainsi les locataires pour exiger le respect de nos droits fondamentaux à un logement décent et sécurisé.</p>
-                </div>
-            </div>
-
-            <!-- Section RGPD -->
-            <div class="card glass" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
-                <h3 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.15rem; color: var(--text-primary); border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    Protection des données (RGPD)
-                </h3>
-                <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <p>Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, les informations recueillies dans cette application sont destinées uniquement à la gestion technique des pannes d'ascenseurs et à la défense collective des locataires.</p>
-                    <ul style="padding-left: 1.25rem; margin: 0; display: flex; flex-direction: column; gap: 0.35rem;">
-                        <li><strong>Responsable du traitement :</strong> André Vieira.</li>
-                        <li><strong>Données collectées :</strong> Pseudonyme, bâtiment d'habitation, numéro d'appartement, prénom/nom (facultatifs), ainsi que les détails et photos des incidents signalés.</li>
-                        <li><strong>Finalité :</strong> Affichage en temps réel des dysfonctionnements, envoi de notifications d'incident et génération de rapports de mise en demeure collectifs.</li>
-                        <li><strong>Destinataires :</strong> Les données publiques (signalements et photos) sont visibles par tous les locataires connectés de la résidence. Les mots de passe sont hachés de manière irréversible côté client et ne sont jamais visibles en clair.</li>
-                        <li><strong>Conservation :</strong> Les informations du profil sont conservées tant que vous maintenez votre compte actif. Les signalements archivés ou supprimés le sont définitivement.</li>
-                        <li><strong>Vos droits :</strong> Vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données. Vous pouvez modifier vos informations à tout moment depuis cet espace de profil ou supprimer définitivement votre compte.</li>
-                    </ul>
-                    <p style="margin-top: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
-                        Pour toute question ou demande concernant le traitement de vos données, vous pouvez contacter :
-                        <br><strong style="color: var(--text-primary);">André Vieira</strong> — <a href="mailto:vieira.andre@proton.me" style="color: var(--accent-primary); text-decoration: none;">vieira.andre@proton.me</a>
-                    </p>
-                </div>
+            <!-- Liens d'information légale et à propos -->
+            <div style="max-width: 600px; margin: 2rem auto; display: flex; flex-direction: column; gap: 0.75rem; padding: 0 1rem; width: 100%;">
+                <button type="button" id="btn-open-about" class="btn btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem; font-weight: 600; text-align: left;">
+                    <span style="display: flex; align-items: center; gap: 0.75rem;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        À propos de l'application
+                    </span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                
+                <button type="button" id="btn-open-rgpd" class="btn btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem; font-weight: 600; text-align: left;">
+                    <span style="display: flex; align-items: center; gap: 0.75rem;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Protection des données (RGPD)
+                    </span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
             </div>
         </div>
             </main>
@@ -615,6 +601,81 @@
             <button id="btn-close-lightbox" class="btn-close-lightbox" aria-label="Fermer la vue plein écran">&times;</button>
             <img id="lightbox-img" src="" alt="Photo de la panne en grand format">
             <div id="lightbox-caption" class="lightbox-caption">Photo horodatée</div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODALE : CONFIRMATION SUPPRESSION COMPTE -->
+    <!-- ============================================ -->
+    <div id="delete-account-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
+        <div class="modal-card glass" style="max-width: 400px; margin: auto;" tabindex="-1">
+            <div class="modal-header">
+                <h3>Suppression du compte</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-delete-modal" aria-label="Fermer">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem; text-align: center;">
+                <div style="font-size: 2.5rem; color: var(--color-danger); margin-bottom: 1rem; display: flex; justify-content: center;">
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Êtes-vous sûr ?</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
+                    Cette action est irréversible. Toutes vos données personnelles de profil seront supprimées de la base de données.
+                    <br><br>
+                    <strong>Note :</strong> Vos signalements seront conservés anonymement pour l'historique commun.
+                </p>
+                <div style="display: flex; gap: 1rem; width: 100%;">
+                    <button type="button" class="btn btn-secondary btn-close-modal" id="btn-cancel-delete" style="flex: 1;">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="btn-confirm-delete" style="flex: 1;">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODALE : A PROPOS -->
+    <!-- ============================================ -->
+    <div id="about-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
+        <div class="modal-card glass" style="max-width: 600px; margin: auto;" tabindex="-1">
+            <div class="modal-header">
+                <h3>À propos de l'application</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-about-modal" aria-label="Fermer">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem; max-height: 60vh; overflow-y: auto;">
+                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 1rem;">
+                    <p>Cette application mobile et web a été développée bénévolement par <strong>André Vieira</strong>, fils de M. et Mme. TAVARES FERNANDES (locataires résidant au 50 avenue de la Division Leclerc à Cachan).</p>
+                    <p>Face au désintérêt persistant du bailleur <strong>Valdévy</strong> vis-à-vis des pannes d'ascenseurs récurrentes et du délabrement progressif de nos parties communes, cette plateforme fournit aux résidents des outils collaboratifs pour documenter objectivement chaque incident.</p>
+                    <p>L'accumulation de rapports fiables, horodatés et appuyés par des photos permet de constituer des dossiers de réclamation et des procédures collectives de mise en demeure incontestables, unissant ainsi les locataires pour exiger le respect de nos droits fondamentaux à un logement décent et sécurisé.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODALE : RGPD -->
+    <!-- ============================================ -->
+    <div id="rgpd-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
+        <div class="modal-card glass" style="max-width: 600px; margin: auto;" tabindex="-1">
+            <div class="modal-header">
+                <h3>Protection des données (RGPD)</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-rgpd-modal" aria-label="Fermer">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem; max-height: 60vh; overflow-y: auto;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 1rem;">
+                    <p>Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, les informations recueillies dans cette application sont destinées uniquement à la gestion technique des pannes d'ascenseurs et à la défense collective des locataires.</p>
+                    <ul style="padding-left: 1.25rem; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                        <li><strong>Responsable du traitement :</strong> André Vieira.</li>
+                        <li><strong>Données collectées :</strong> Pseudonyme, bâtiment d'habitation, numéro d'appartement, prénom/nom (facultatifs), ainsi que les détails et photos des incidents signalés.</li>
+                        <li><strong>Finalité :</strong> Affichage en temps réel des dysfonctionnements, envoi de notifications d'incident et génération de rapports de mise en demeure collectifs.</li>
+                        <li><strong>Destinataires :</strong> Les données publiques (signalements et photos) sont visibles par tous les locataires connectés de la résidence. Les mots de passe sont hachés de manière irréversible côté client et ne sont jamais visibles en clair.</li>
+                        <li><strong>Conservation :</strong> Les informations du profil sont conservées tant que vous maintenez votre compte actif. Les signalements archivés ou supprimés le sont définitivement.</li>
+                        <li><strong>Vos droits :</strong> Vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données. Vous pouvez modifier vos informations à tout moment depuis cet espace de profil ou supprimer définitivement votre compte.</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                        Pour toute question ou demande concernant le traitement de vos données, vous pouvez contacter :
+                        <br><strong style="color: var(--text-primary);">André Vieira</strong> — <a href="mailto:vieira.andre@proton.me" style="color: var(--accent-primary); text-decoration: none;">vieira.andre@proton.me</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
     
