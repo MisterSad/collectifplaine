@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const el = document.createElement("div");
             el.className = "report-item";
             
-            const badgeClass = incident.status === 'resolu' ? 'badge-functional' : 'badge-broken';
+            const badgeClass = incident.status === 'resolu' ? 'incident-badge incident-badge-repare' : 'incident-badge incident-badge-encours';
             const badgeText = incident.status === 'resolu' ? 'Réparé' : 'En cours';
 
             // Si connecté, on propose un bouton pour modifier le statut
@@ -351,12 +351,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 ${incident.photo_url ? `<div class="report-photo-thumb" style="background-image: url('${incident.photo_url}'); cursor:pointer;" onclick="window.openLightbox('${incident.photo_url}')" title="Agrandir la photo"></div>` : ""}
                 <div style="margin-top:0.75rem; display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; width:100%;">
-                    <span class="status-badge ${badgeClass}" style="font-size:0.7rem; padding:2px 6px;">${badgeText}</span>
+                    <span class="${badgeClass}">${badgeText}</span>
                     ${actionBtnHtml}
                 </div>
             `;
             el.querySelector(".report-author").textContent = incident.user_display;
             el.querySelector(".report-content p").textContent = incident.description;
+
+            // Rendre toute la tuile cliquable pour agrandir la photo si présente
+            if (incident.photo_url) {
+                el.style.cursor = "pointer";
+                el.title = "Cliquez pour agrandir la photo";
+                el.addEventListener("click", (e) => {
+                    if (e.target.closest(".btn-toggle-incident-status")) return;
+                    window.openLightbox(incident.photo_url);
+                });
+            }
+
             incidentsFeed.appendChild(el);
         });
 
