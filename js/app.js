@@ -1221,19 +1221,23 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("account-apartment").value = tenant.apartment || "";
             document.getElementById("account-entrance").value = tenant.entrance || "";
 
-            let firstName = "";
-            let lastName = "";
-            let notifications = false;
-            try {
-                const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${tenant.username}`);
-                if (profileStr) {
-                    const profile = JSON.parse(profileStr);
-                    firstName = profile.first_name || "";
-                    lastName = profile.last_name || "";
-                    notifications = !!profile.notifications;
+            let firstName = tenant.first_name || "";
+            let lastName = tenant.last_name || "";
+            let notifications = !!tenant.notifications;
+
+            // Fallback en localStorage si non renseigné dans la session (pour compatibilité)
+            if (!firstName && !lastName) {
+                try {
+                    const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${tenant.username}`);
+                    if (profileStr) {
+                        const profile = JSON.parse(profileStr);
+                        firstName = profile.first_name || "";
+                        lastName = profile.last_name || "";
+                        notifications = !!profile.notifications;
+                    }
+                } catch (e) {
+                    console.error(e);
                 }
-            } catch (e) {
-                console.error(e);
             }
 
             document.getElementById("account-firstname").value = firstName;
@@ -1484,7 +1488,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 // 1. Mettre à jour la table des résidents
-                await Store.updateTenantProfile(tenant.username, entrance, apartment);
+                await Store.updateTenantProfile(tenant.username, entrance, apartment, firstName, lastName, notifications);
 
                 // 2. Enregistrer les informations locales (Nom, Prenom, pref notif)
                 const profileData = {

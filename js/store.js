@@ -524,7 +524,10 @@ const Store = (() => {
             const tenant = {
                 username: normalizedUser,
                 entrance: String(entrance),
-                apartment: normalizedApartment
+                apartment: normalizedApartment,
+                first_name: "",
+                last_name: "",
+                notifications: false
             };
             Security.setTenantSession(tenant);
             return tenant;
@@ -553,36 +556,81 @@ const Store = (() => {
             }
 
             // 3. Initialiser la session
+            let firstName = user.first_name || "";
+            let lastName = user.last_name || "";
+            let notifications = !!user.notifications;
+
+            // Si non présents en DB, charger depuis le localStorage de ce navigateur (pour compatibilité)
+            if (!user.first_name && !user.last_name) {
+                try {
+                    const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${user.username}`);
+                    if (profileStr) {
+                        const profile = JSON.parse(profileStr);
+                        firstName = profile.first_name || "";
+                        lastName = profile.last_name || "";
+                        notifications = !!profile.notifications;
+                    }
+                } catch (e) {
+                    console.error("Erreur de lecture fallback localStorage", e);
+                }
+            }
+
             const tenant = {
                 username: user.username,
                 entrance: user.entrance,
-                apartment: user.apartment
+                apartment: user.apartment,
+                first_name: firstName,
+                last_name: lastName,
+                notifications: notifications
             };
             Security.setTenantSession(tenant);
             return tenant;
         },
 
-                async updateTenantProfile(username, entrance, apartment) {
+        async updateTenantProfile(username, entrance, apartment, firstName = "", lastName = "", notifications = false) {
             _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
+            const cleanFirstName = Security.sanitizeHTML(String(firstName).trim());
+            const cleanLastName = Security.sanitizeHTML(String(lastName).trim());
 
-            // 1. Mettre à jour dans Supabase residents
-            const { error } = await supabase
-                .from('residents')
-                .update({
-                    entrance: String(entrance),
-                    apartment: normalizedApartment
-                })
-                .ilike('username', normalizedUser);
+            try {
+                // Tenter de sauvegarder toutes les informations (si les colonnes existent)
+                const { error } = await supabase
+                    .from('residents')
+                    .update({
+                        entrance: String(entrance),
+                        apartment: normalizedApartment,
+                        first_name: cleanFirstName,
+                        last_name: cleanLastName,
+                        notifications: Boolean(notifications)
+                    })
+                    .ilike('username', normalizedUser);
 
-            if (error) throw error;
+                if (error) throw error;
+            } catch (err) {
+                console.warn("Échec de mise à jour des colonnes étendues (first_name, last_name, notifications). Tentative de mise à jour restreinte.", err);
+                
+                // Fallback : mise à jour uniquement des colonnes d'origine
+                const { error: fallbackError } = await supabase
+                    .from('residents')
+                    .update({
+                        entrance: String(entrance),
+                        apartment: normalizedApartment
+                    })
+                    .ilike('username', normalizedUser);
 
-            // 2. Mettre à jour la session locale
+                if (fallbackError) throw fallbackError;
+            }
+
+            // Mettre à jour la session locale
             const currentTenant = Security.getLoggedInTenant();
             if (currentTenant && currentTenant.username.toLowerCase() === normalizedUser.toLowerCase()) {
                 currentTenant.entrance = String(entrance);
                 currentTenant.apartment = normalizedApartment;
+                currentTenant.first_name = cleanFirstName;
+                currentTenant.last_name = cleanLastName;
+                currentTenant.notifications = Boolean(notifications);
                 Security.setTenantSession(currentTenant);
             }
             return true;
