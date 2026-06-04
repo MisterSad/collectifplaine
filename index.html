@@ -469,6 +469,46 @@
                 <div id="auth-success-msg" class="alert-box alert-success hidden"></div>
             </div>
 
+            <!-- Formulaire de Connexion -->
+            <form id="auth-login-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="auth-login-username">Votre Pseudo <span class="required">*</span></label>
+                        <input type="text" id="auth-login-username" required placeholder="Ex: Marc40" autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="auth-login-password">Votre Mot de passe <span class="required">*</span></label>
+                        <input type="password" id="auth-login-password" required placeholder="Saisir votre mot de passe" autocomplete="current-password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                </div>
+            </form>
+
+            <!-- Formulaire d'Inscription (Masqué par défaut) -->
+            <form id="auth-register-form" class="hidden">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="auth-register-username">Choisir un Pseudo <span class="required">*</span></label>
+                        <input type="text" id="auth-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
+                        <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="auth-register-password">Mot de passe de sécurité <span class="required">*</span></label>
+                        <input type="password" id="auth-register-password" required placeholder="Créer votre mot de passe (min 8 car.)" autocomplete="new-password">
+                        <span class="field-hint">Minimum 8 caractères, au moins une lettre et un chiffre.</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Créer mon compte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ============================================ -->
     <!-- MODALE : PROFIL LOCATAIRE -->
     <!-- ============================================ -->
@@ -520,46 +560,6 @@
                         <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
                         <button type="submit" class="btn btn-primary">Enregistrer</button>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-            <!-- Formulaire de Connexion -->
-            <form id="auth-login-form">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="auth-login-username">Votre Pseudo <span class="required">*</span></label>
-                        <input type="text" id="auth-login-username" required placeholder="Ex: Marc40" autocomplete="username">
-                    </div>
-                    <div class="form-group">
-                        <label for="auth-login-password">Votre Mot de passe <span class="required">*</span></label>
-                        <input type="password" id="auth-login-password" required placeholder="Saisir votre mot de passe" autocomplete="current-password">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Se connecter</button>
-                </div>
-            </form>
-
-            <!-- Formulaire d'Inscription (Masqué par défaut) -->
-            <form id="auth-register-form" class="hidden">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="auth-register-username">Choisir un Pseudo <span class="required">*</span></label>
-                        <input type="text" id="auth-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
-                        <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="auth-register-password">Mot de passe de sécurité <span class="required">*</span></label>
-                        <input type="password" id="auth-register-password" required placeholder="Créer votre mot de passe (min 8 car.)" autocomplete="new-password">
-                        <span class="field-hint">Minimum 8 caractères, au moins une lettre et un chiffre.</span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary">Créer mon compte</button>
                 </div>
             </form>
         </div>
