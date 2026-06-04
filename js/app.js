@@ -1175,21 +1175,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderAccountNav() {
-        const tenant = Security.getLoggedInTenant();
         const sidebarIcon = document.getElementById("sidebar-account-icon");
         const mobileIcon = document.getElementById("mobile-account-icon");
 
-        if (tenant) {
-            const initials = getTenantInitials(tenant);
-            const avatarHtml = `<span class="user-avatar" style="width: 20px; height: 20px; font-size: 0.6rem;">${initials}</span>`;
-            if (sidebarIcon) sidebarIcon.innerHTML = avatarHtml;
-            if (mobileIcon) mobileIcon.innerHTML = avatarHtml;
-        } else {
-            const sidebarSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
-            const mobileSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
-            if (sidebarIcon) sidebarIcon.innerHTML = sidebarSvg;
-            if (mobileIcon) mobileIcon.innerHTML = mobileSvg;
-        }
+        const sidebarSvg = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+        const mobileSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+        
+        if (sidebarIcon) sidebarIcon.innerHTML = sidebarSvg;
+        if (mobileIcon) mobileIcon.innerHTML = mobileSvg;
     }
 
     function renderAuthHeader() {
