@@ -122,11 +122,11 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function formatIssueType(type) {
         const types = {
-            "arrêt": "🔴 Arrêt complet",
-            "portes": "🚪 Problème de portes",
-            "boutons": "🎛️ Boutons inactifs",
-            "bruit": "🔊 Bruit ou vibration",
-            "autre": "❓ Autre problème"
+            "arrêt": "Arrêt complet",
+            "portes": "Problème de portes",
+            "boutons": "Boutons inactifs",
+            "bruit": "Bruit ou vibration",
+            "autre": "Autre problème"
         };
         return types[type] || type;
     }
@@ -203,24 +203,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (elevator.status === "en_panne") {
                 statusSummaryHtml = `
-                    <div class="card-summary-msg color-danger">⚠️ Ascenseur à l'arrêt</div>
+                    <div class="card-summary-msg color-danger"><span class="status-indicator-dot bg-danger"></span>Ascenseur à l'arrêt</div>
                     <div class="card-summary-desc">${elevator.maintenanceNotes || "Panne en cours de diagnostic."}</div>
                 `;
             } else if (elevator.status === "en_maintenance") {
                 statusSummaryHtml = `
-                    <div class="card-summary-msg color-warning">🛠️ Travaux en cours</div>
+                    <div class="card-summary-msg color-warning"><span class="status-indicator-dot bg-warning"></span>Travaux en cours</div>
                     <div class="card-summary-desc">${elevator.maintenanceNotes || "Opération de maintenance périodique."}</div>
                 `;
             } else {
                 // En service
                 if (reportCount > 0) {
                     statusSummaryHtml = `
-                        <div class="card-summary-msg color-warning">⚠️ Dysfonctionnements signalés</div>
+                        <div class="card-summary-msg color-warning"><span class="status-indicator-dot bg-warning"></span>Dysfonctionnements signalés</div>
                         <div class="card-summary-desc">${reportCount} signalement${reportCount > 1 ? 's' : ''} actif${reportCount > 1 ? 's' : ''}.</div>
                     `;
                 } else {
                     statusSummaryHtml = `
-                        <div class="card-summary-msg color-success">🟢 Fonctionnement normal</div>
+                        <div class="card-summary-msg color-success"><span class="status-indicator-dot bg-success"></span>Fonctionnement normal</div>
                         <div class="card-summary-desc">Aucun incident signalé récemment.</div>
                     `;
                 }
@@ -293,9 +293,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const categoryIcons = {
-            "porte": "🚪", "vigik": "🔑", "proprete": "🚮", 
-            "chauffage": "🌡️", "eclairage": "💡", "securite": "⚠️", "autre": "❓"
+                const categoryIcons = {
+            "porte": `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--accent-primary);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><path d="M9 3v18"/><circle cx="14" cy="12" r="1"/></svg>`,
+            "vigik": `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--accent-primary);"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3M17 6l3 3"/></svg>`,
+            "proprete": `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--accent-primary);"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`,
+            "chauffage": `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--accent-primary);"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>`,
+            "eclairage": `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--accent-primary);"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A7 7 0 0 0 4 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>`,
+            "securite": `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--color-danger);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+            "autre": `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--text-muted);"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`
         };
 
         incidents.forEach(incident => {
@@ -308,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
             el.innerHTML = `
                 <div class="report-header">
                     <div class="report-meta">
-                        <strong>${categoryIcons[incident.category] || "❓"} ${incident.entrance !== 'tous' ? 'Bâtiment ' + incident.entrance : 'Espaces Communs'}</strong>
+                        <strong>${categoryIcons[incident.category] || `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" class="icon-inline"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`} ${incident.entrance !== 'tous' ? 'Bâtiment ' + incident.entrance : 'Espaces Communs'}</strong>
                         <span class="report-author"></span>
                     </div>
                     <span class="report-time">${formatTimeAgo(new Date(incident.created_at).getTime())}</span>
@@ -512,12 +517,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const tenant = Security.getLoggedInTenant();
         if (!tenant) return;
 
-        console.log(`📡 [Realtime] Abonnement aux alertes et mises à jour de pannes...`);
+        console.log(`[Realtime] Abonnement aux alertes et mises à jour de pannes...`);
 
         realtimeChannel = supabase
             .channel('public:db-changes')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, async payload => {
-                console.log("📡 [Realtime] Signalement modifié :", payload);
+                console.log("[Realtime] Signalement modifié :", payload);
                 
                 // Si c'est un nouveau rapport pour l'entrée du locataire, on affiche une alerte
                 if (payload.eventType === 'INSERT' && String(payload.new.entrance) === String(tenant.entrance)) {
@@ -528,18 +533,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 await Store.init();
             })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'elevators' }, async payload => {
-                console.log("📡 [Realtime] Statut d'ascenseur modifié :", payload);
+                console.log("[Realtime] Statut d'ascenseur modifié :", payload);
                 // Rafraîchir l'état global
                 await Store.init();
             })
             .subscribe((status) => {
-                console.log(`📡 [Realtime] Statut d'abonnement : ${status}`);
+                console.log(`[Realtime] Statut d'abonnement : ${status}`);
             });
     }
 
     function unsubscribeFromRealtimeNotifications() {
         if (realtimeChannel) {
-            console.log("📡 [Realtime] Désabonnement du canal temps réel...");
+            console.log("[Realtime] Désabonnement du canal temps réel...");
             supabase.removeChannel(realtimeChannel);
             realtimeChannel = null;
         }
@@ -601,7 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
         toast.className = "toast-alert";
         toast.setAttribute("role", "alert");
         toast.innerHTML = `
-            <div class="toast-icon">🚨</div>
+            <div class="toast-icon" style="color:var(--color-danger);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
             <div class="toast-content" style="cursor: pointer;">
                 <div class="toast-title">Alerte Entrée ${report.entrance}</div>
                 <div class="toast-body">Nouveau signalement "<strong>${formatIssueType(report.type)}</strong>" par un voisin. Cliquez pour voir.</div>
@@ -662,7 +667,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const item = document.createElement("div");
             item.className = `notification-item ${notif.unread ? 'unread' : ''}`;
             item.innerHTML = `
-                <div class="notification-item-icon">🚨</div>
+                <div class="notification-item-icon" style="color:var(--color-danger);"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
                 <div class="notification-item-content">
                     <div class="notification-item-title">Alerte Entrée ${notif.entrance}</div>
                     <div class="notification-item-desc">Signalement de type "<strong>${formatIssueType(notif.type)}</strong>" : ${notif.description}</div>
@@ -763,7 +768,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 2. Contrôle anti-spam (Rate Limiting)
         const limiter = Security.checkRateLimit();
         if (limiter.limited) {
-            showReportError(`⚠️ Trop de signalements consécutifs. Par sécurité contre le spam, veuillez patienter ${limiter.secondsToWait} secondes avant de soumettre un nouveau signalement.`);
+            showReportError(`Trop de signalements consécutifs. Par sécurité contre le spam, veuillez patienter ${limiter.secondsToWait} secondes avant de soumettre un nouveau signalement.`);
             return;
         }
 
@@ -944,7 +949,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <div class="report-item-footer" style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
                         <button class="btn btn-secondary btn-sm btn-upvote" data-report-id="${report.id}">
-                            👍 Moi aussi <span class="upvote-count" style="margin-left:4px; font-weight:bold;">0</span>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:4px; vertical-align:middle;"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg> Moi aussi <span class="upvote-count" style="margin-left:4px; font-weight:bold;">0</span>
                         </button>
                         ${deleteBtnHtml}
                     </div>
@@ -1424,7 +1429,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Afficher un loader visuel temporaire premium
             entrancesGrid.innerHTML = `
                 <div class="loading-placeholder" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem; color: var(--text-muted);">
-                    <div style="font-size: 2rem; margin-bottom: 1rem; animation: pulse 1.5s infinite;">📡</div>
+                    <div style="font-size: 2rem; margin-bottom: 1rem; color: var(--color-danger);"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
                     <div>Connexion en cours à Supabase...</div>
                 </div>
             `;
@@ -1442,7 +1447,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Erreur d'initialisation Supabase", err);
             entrancesGrid.innerHTML = `
                 <div class="alert-box alert-danger" style="margin-top: 1.5rem;">
-                    ⚠️ Impossible de se connecter à la base de données. L'application est actuellement indisponible. Veuillez vérifier votre connexion ou désactiver vos bloqueurs de publicité pour ce site.
+                    Impossible de se connecter à la base de données. L'application est actuellement indisponible. Veuillez vérifier votre connexion ou désactiver vos bloqueurs de publicité pour ce site.
                 </div>
             `;
         }

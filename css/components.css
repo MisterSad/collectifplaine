@@ -1313,3 +1313,23 @@ textarea:focus {
 
 /* ── INCIDENTS FEED ── */
 .incidents-feed-section { margin-top: 1.5rem; }
+
+/* Status Indicator Dot & Icons */
+.title-icon {
+    margin-right: 0.75rem;
+    vertical-align: middle;
+    color: var(--accent-primary);
+    filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.3));
+}
+
+.status-indicator-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+.bg-success { background-color: var(--accent-primary); box-shadow: var(--accent-glow); }
+.bg-warning { background-color: var(--color-warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+.bg-danger { background-color: var(--color-danger); box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
