@@ -215,16 +215,19 @@ const Security = (() => {
         // ---------------------------------------------------------
 
         /**
-         * Initialise la session du locataire en sessionStorage
+         * Initialise la session du locataire en localStorage (persistant)
          */
         setTenantSession(tenant) {
             const sessionData = {
                 username: tenant.username,
                 entrance: tenant.entrance,
                 apartment: tenant.apartment,
+                first_name: tenant.first_name || "",
+                last_name: tenant.last_name || "",
+                notifications: !!tenant.notifications,
                 loggedInAt: Date.now()
             };
-            sessionStorage.setItem(TENANT_SESSION_KEY, JSON.stringify(sessionData));
+            localStorage.setItem(TENANT_SESSION_KEY, JSON.stringify(sessionData));
         },
 
         /**
@@ -232,7 +235,7 @@ const Security = (() => {
          */
         getLoggedInTenant() {
             try {
-                const session = sessionStorage.getItem(TENANT_SESSION_KEY);
+                const session = localStorage.getItem(TENANT_SESSION_KEY);
                 return session ? JSON.parse(session) : null;
             } catch (e) {
                 console.error("Erreur de lecture de la session locataire", e);
@@ -244,7 +247,7 @@ const Security = (() => {
          * Déconnecte le locataire actif
          */
         logoutTenant() {
-            sessionStorage.removeItem(TENANT_SESSION_KEY);
+            localStorage.removeItem(TENANT_SESSION_KEY);
         }
     };
 })();
