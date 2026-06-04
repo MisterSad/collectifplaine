@@ -653,16 +653,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderNotificationsList() {
+        if (!notificationList) return;
         notificationList.innerHTML = "";
         
         const unreadCount = notificationsList.filter(n => n.unread).length;
         
         // Mettre à jour le badge de la cloche
-        if (unreadCount > 0) {
-            notificationBadge.textContent = unreadCount;
-            notificationBadge.classList.remove("hidden");
-        } else {
-            notificationBadge.classList.add("hidden");
+        if (notificationBadge) {
+            if (unreadCount > 0) {
+                notificationBadge.textContent = unreadCount;
+                notificationBadge.classList.remove("hidden");
+            } else {
+                notificationBadge.classList.add("hidden");
+            }
         }
 
         if (notificationsList.length === 0) {
@@ -687,8 +690,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 notif.unread = false;
                 openDetailsModal(notif.entrance);
                 renderNotificationsList();
-                notificationDropdown.classList.add("hidden");
-                notificationDropdown.setAttribute("aria-hidden", "true");
+                if (notificationDropdown) {
+                    notificationDropdown.classList.add("hidden");
+                    notificationDropdown.setAttribute("aria-hidden", "true");
+                }
             });
 
             notificationList.appendChild(item);
@@ -1509,38 +1514,44 @@ document.addEventListener("DOMContentLoaded", () => {
     // EVENEMENTS DU CENTRE DE NOTIFICATIONS
     // ---------------------------------------------------------
 
-    notificationBellBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        
-        const isHidden = notificationDropdown.classList.contains("hidden");
-        
-        if (isHidden) {
-            notificationDropdown.classList.remove("hidden");
-            notificationDropdown.setAttribute("aria-hidden", "false");
+    if (notificationBellBtn && notificationDropdown) {
+        notificationBellBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
             
-            // Marquer toutes les alertes comme lues à l'ouverture
-            notificationsList.forEach(n => n.unread = false);
+            const isHidden = notificationDropdown.classList.contains("hidden");
+            
+            if (isHidden) {
+                notificationDropdown.classList.remove("hidden");
+                notificationDropdown.setAttribute("aria-hidden", "false");
+                
+                // Marquer toutes les alertes comme lues à l'ouverture
+                notificationsList.forEach(n => n.unread = false);
+                renderNotificationsList();
+            } else {
+                notificationDropdown.classList.add("hidden");
+                notificationDropdown.setAttribute("aria-hidden", "true");
+            }
+        });
+    }
+
+    if (btnClearNotifications && notificationDropdown) {
+        btnClearNotifications.addEventListener("click", (e) => {
+            e.stopPropagation();
+            notificationsList = [];
             renderNotificationsList();
-        } else {
             notificationDropdown.classList.add("hidden");
             notificationDropdown.setAttribute("aria-hidden", "true");
-        }
-    });
-
-    btnClearNotifications.addEventListener("click", (e) => {
-        e.stopPropagation();
-        notificationsList = [];
-        renderNotificationsList();
-        notificationDropdown.classList.add("hidden");
-        notificationDropdown.setAttribute("aria-hidden", "true");
-    });
+        });
+    }
 
     document.addEventListener("click", (e) => {
-        if (!notificationDropdown.classList.contains("hidden") && 
-            !notificationDropdown.contains(e.target) && 
-            !notificationBellBtn.contains(e.target)) {
-            notificationDropdown.classList.add("hidden");
-            notificationDropdown.setAttribute("aria-hidden", "true");
+        if (notificationDropdown && notificationBellBtn) {
+            if (!notificationDropdown.classList.contains("hidden") && 
+                !notificationDropdown.contains(e.target) && 
+                !notificationBellBtn.contains(e.target)) {
+                notificationDropdown.classList.add("hidden");
+                notificationDropdown.setAttribute("aria-hidden", "true");
+            }
         }
     });
 
