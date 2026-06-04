@@ -1,107 +1,186 @@
-/* =========================================================
+/* ============================================================
    MOBILE.CSS — Mobile-First Responsive Design
-   Collectif Plaine — v3.0 (Full Rewrite)
+   Collectif Plaine — OLED Dark Premium PWA
    
-   Stratégie : Mobile-first, du plus petit au plus grand
-   xs: < 390px (petits iPhones)
-   sm: < 640px (tous les mobiles)
-   md: < 768px (tablettes portrait)
-   ========================================================= */
+   Strategy: Mobile-first → Desktop enhancement
+   xs: < 390px  (small iPhones)
+   sm: < 640px  (all phones)
+   md: < 768px  (tablet portrait)
+   ============================================================ */
 
-/* =========================================================
-   0. RESET & ANTI-OVERFLOW GLOBAL
-   ========================================================= */
-
+/* ── GLOBAL ANTI-OVERFLOW ── */
 html {
-    -webkit-text-size-adjust: 100%; /* Empêche le zoom auto du texte iOS */
+    -webkit-text-size-adjust: 100%;
 }
 
-/* Garde ultime : aucun élément ne peut créer de scroll horizontal */
 @media (max-width: 640px) {
-    *:not(.modal-backdrop):not(.notification-dropdown):not(.toast-container):not(.app-tabs-nav) {
+    *:not(.modal-backdrop):not(.notification-dropdown):not(.toast-container) {
         max-width: 100%;
     }
 
-    img, video, svg:not(.tab-icon):not(.btn-icon-left) {
+    img, video, svg {
         max-width: 100%;
         height: auto;
     }
 }
 
-/* Éviter le double-tap zoom sur les boutons iOS */
+/* Prevent double-tap zoom on touch targets */
 button, a, select, input, textarea, label {
     touch-action: manipulation;
 }
 
-/* =========================================================
-   1. HEADER
-   ========================================================= */
+/* ============================================================
+   LAYOUT — Mobile adaptive
+   ============================================================ */
 
-@media (max-width: 640px) {
-    .app-header {
-        padding: 0.6rem 0;
-        /* Safe area (iPhone notch / Dynamic Island) */
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
+@media (max-width: 768px) {
+    /* Hide desktop sidebar */
+    .app-sidebar {
+        display: none !important;
     }
 
-    .header-container {
-        gap: 0.5rem;
-        padding: 0 1rem;
+    /* Full-width main */
+    .app-main {
+        margin-left: 0 !important;
+        padding-bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom)) !important;
     }
 
-    .logo-area {
-        gap: 0.5rem;
-        min-width: 0; /* Permet la troncature */
-        flex-shrink: 1;
+    .top-bar-container {
+        padding: 0 1rem !important;
     }
 
-    .logo-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 10px;
-        flex-shrink: 0;
-    }
-
-    .logo-text {
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .logo-text h1 {
-        font-size: 0.95rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .logo-text .subtitle {
-        display: none;
-    }
-
-    .header-actions {
-        gap: 0.35rem;
-        flex-shrink: 0;
-    }
-
-    /* Boutons header plus compacts */
-    .btn-icon {
-        width: 32px;
-        height: 32px;
-    }
-
-    .btn-sm {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.55rem;
-        min-height: 32px;
-        border-radius: 8px;
+    .page-container {
+        padding-top: 1.25rem !important;
+        padding-left: 0.875rem !important;
+        padding-right: 0.875rem !important;
     }
 }
 
-/* =========================================================
-   2. AUTH HEADER AREA
-   ========================================================= */
+/* ============================================================
+   MOBILE BOTTOM NAVIGATION — Premium PWA
+   ============================================================ */
 
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 95;
+        display: flex !important;
+        flex-direction: row;
+        height: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
+
+        /* OLED premium dark glass */
+        background: rgba(0, 0, 0, 0.94);
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow:
+            0 -1px 0 rgba(255,255,255,0.04),
+            0 -8px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    .mobile-link {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.2rem;
+        padding: 0.6rem 0.2rem 0.5rem;
+        background: transparent;
+        text-decoration: none;
+        color: var(--text-faint);
+        height: var(--mobile-nav-h);
+        position: relative;
+        transition: color var(--transition-fast);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Neon green pill indicator on active */
+    .mobile-link.active::after {
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 24px;
+        height: 3px;
+        background: var(--accent-primary);
+        border-radius: var(--radius-pill);
+        box-shadow: 0 0 10px var(--accent-primary), 0 0 20px rgba(34, 197, 94, 0.4);
+    }
+
+    .mobile-link.active {
+        color: var(--accent-primary);
+    }
+
+    /* Icon wrapper */
+    .mobile-icon {
+        font-size: 1.35rem;
+        line-height: 1;
+        transition: transform var(--transition-spring), filter var(--transition-fast);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        margin-top: 4px;  /* push down from top indicator */
+    }
+
+    /* Active icon: scale up + glow */
+    .mobile-link.active .mobile-icon {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.7));
+    }
+
+    .mobile-text {
+        font-size: 0.6rem;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    /* Tap feedback */
+    .mobile-link:active .mobile-icon {
+        transform: scale(0.9);
+    }
+}
+
+/* ============================================================
+   TOP BAR — Mobile
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .app-top-bar {
+        height: 56px;
+    }
+
+    .top-bar-title-section h2 {
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .top-bar-actions {
+        gap: 0.45rem;
+    }
+
+    .btn-icon {
+        width: 34px;
+        height: 34px;
+    }
+
+    .btn-sm {
+        font-size: 0.72rem;
+        padding: 0.3rem 0.6rem;
+        min-height: 32px;
+    }
+}
+
+/* Auth header area */
 .auth-header-area {
     display: flex;
     align-items: center;
@@ -109,29 +188,10 @@ button, a, select, input, textarea, label {
 }
 
 @media (max-width: 640px) {
-    .auth-header-area {
-        gap: 0.3rem;
-    }
-
-    /* Sur très petit écran, on masque le bouton "Espace Pro" secondaire
-     * pour ne garder que "Connexion Résident"  */
-    @media (max-width: 390px) {
-        #admin-login-btn .btn-icon-left {
-            display: none;
-        }
-        #admin-login-btn span {
-            display: none;
-        }
-        /* Juste l'icône reste visible */
-        #admin-login-btn::after {
-            content: "🔐";
-            font-size: 1rem;
-        }
-    }
+    .auth-header-area { gap: 0.3rem; }
 
     .user-profile-badge {
-        max-width: 110px;
-        overflow: hidden;
+        max-width: 120px;
     }
 
     .user-profile-badge > span:last-child {
@@ -141,259 +201,185 @@ button, a, select, input, textarea, label {
         display: block;
         max-width: 80px;
     }
-}
 
-/* =========================================================
-   3. ADAPTIVE LAYOUT & FLOATING BOTTOM BAR
-   ========================================================= */
-
-@media (max-width: 768px) {
-    /* Masquer la Sidebar Desktop */
-    .app-sidebar {
-        display: none !important;
-    }
-
-    /* Remettre la zone principale en pleine largeur */
-    .app-main {
-        margin-left: 0 !important;
-        padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important;
-    }
-
-    .top-bar-container {
-        padding: 0 1.25rem !important;
-    }
-
-    /* Container de pages */
-    .page-container {
-        padding-top: 1.5rem !important;
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-    }
-
-    /* Barre de navigation mobile inférieure flottante */
-    .mobile-bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 95;
-        display: flex !important;
-        flex-direction: row;
-        padding-bottom: env(safe-area-inset-bottom);
-        background: rgba(11, 15, 25, 0.9);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border-top: 1px solid rgba(255, 255, 255, 0.06);
-        box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="light"] .mobile-bottom-nav {
-        background: rgba(255, 255, 255, 0.9);
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
-        box-shadow: 0 -4px 30px rgba(148, 163, 184, 0.08);
-    }
-
-    .mobile-link {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 0.15rem;
-        padding: 0.65rem 0.25rem 0.55rem;
-        background: transparent;
-        text-decoration: none;
-        color: var(--text-secondary);
-        min-height: 56px;
-        position: relative;
-        transition: color var(--transition-fast);
-    }
-
-    .mobile-link.active {
-        color: var(--accent-primary);
-    }
-
-    /* Trait indicateur actif en haut de la bottom bar */
-    .mobile-link.active::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 20%;
-        right: 20%;
-        height: 2px;
-        background: var(--accent-gradient);
-        border-radius: 0 0 3px 3px;
-    }
-
-    .mobile-icon {
-        font-size: 1.3rem;
-        line-height: 1;
-        transition: transform var(--transition-fast);
-    }
-
-    .mobile-link.active .mobile-icon {
-        transform: translateY(-2px);
-    }
-
-    .mobile-text {
-        font-size: 0.62rem;
-        font-weight: 700;
-        line-height: 1;
-        letter-spacing: 0.02em;
+    @media (max-width: 390px) {
+        #admin-login-btn .btn-icon-left { display: none; }
+        #admin-login-btn > span { display: none; }
+        #admin-login-btn::after {
+            content: "🔐";
+            font-size: 1rem;
+        }
     }
 }
 
-
-
-/* =========================================================
-   5. STATS SECTION
-   ========================================================= */
+/* ============================================================
+   STATS SECTION — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .stats-section {
-        padding: 1rem;
-        margin-top: 1rem;
+        padding: 0;
+        margin-top: 0.875rem;
     }
 
     .stats-section h2 {
-        font-size: 0.9rem;
-        margin-bottom: 0.75rem;
+        font-size: 0.7rem;
+        margin-bottom: 0.65rem;
     }
 
+    /* 4-column horizontal layout on mobile */
     .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.5rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.4rem;
         margin-bottom: 0.5rem;
     }
 
     .stat-card {
-        padding: 0.65rem 0.4rem;
+        padding: 0.65rem 0.3rem;
+        border-radius: var(--radius-md);
     }
 
     .stat-num {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
     .stat-label {
-        font-size: 0.62rem;
-        margin-top: 0.15rem;
+        font-size: 0.55rem;
+        margin-top: 0.2rem;
     }
 
     .last-update {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         text-align: center;
     }
 }
 
-/* =========================================================
-   6. BOUTON SIGNALER (CTA)
-   ========================================================= */
+/* ============================================================
+   ACTION SECTION — Mobile CTA
+   ============================================================ */
 
 @media (max-width: 640px) {
     .action-section {
-        margin: 0.85rem 0;
+        margin: 0.75rem 0;
     }
 
     .pulse-button {
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         padding: 0.75rem 1rem;
         border-radius: var(--radius-md);
     }
 }
 
-/* =========================================================
-   7. GRILLE DES ASCENSEURS
-   ========================================================= */
+/* ============================================================
+   ELEVATOR CARDS — Mobile (horizontal compact tiles)
+   ============================================================ */
 
 @media (max-width: 640px) {
     .entrances-section {
-        margin: 1rem 0;
+        margin: 0.875rem 0;
     }
 
     .section-title-wrapper {
-        margin-bottom: 0.85rem;
+        margin-bottom: 0.75rem;
     }
 
     .section-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .section-desc {
-        font-size: 0.8rem;
-        margin-top: 0.2rem;
+        font-size: 0.78rem;
+        margin-top: 0.15rem;
     }
 
-    /* ---- TUILES HORIZONTALES MINIMALISTES ---- */
+    /* Compact list layout */
     .entrances-grid {
         grid-template-columns: 1fr;
-        gap: 0.45rem;
+        gap: 0.4rem;
     }
 
-    /* Carte : ligne fine horizontale */
+    /* Horizontal row card */
     .elevator-card {
         flex-direction: row;
         align-items: center;
-        padding: 0.75rem 1rem;
+        padding: 0.85rem 1rem 0.85rem 1.25rem; /* extra left for status border */
         border-radius: var(--radius-md);
-        gap: 1rem;
+        gap: 0.85rem;
         min-height: 0;
-        cursor: pointer;
+        height: auto;
     }
 
-    /* Zone gauche : numéro d'entrée */
+    /* Status colored left border — visible on mobile */
+    .elevator-card::before {
+        width: 4px;
+    }
+
+    /* Left zone: building number */
     .card-header {
         flex-direction: row;
         align-items: center;
-        gap: 0.75rem;
+        gap: 0.65rem;
         margin-bottom: 0;
         flex-shrink: 0;
     }
 
     .entrance-label .title {
-        font-size: 1.25rem;
-        line-height: 1;
-        font-weight: 800;
+        font-size: 1.35rem;
+        font-family: var(--font-data);
     }
 
-    /* Masquer l'adresse et le badge texte */
+    /* Hide address on mobile */
     .entrance-label .road {
         display: none;
     }
 
-    /* Transformer le badge en simple pastille colorée */
+    /* Status badge → dot indicator only */
     .status-badge {
-        width: 14px;
-        height: 14px;
+        width: 10px;
+        height: 10px;
         padding: 0;
         border-radius: 50%;
-        font-size: 0;  /* cacher le texte */
-        flex-shrink: 0;
+        font-size: 0;
         border: none;
         background: transparent;
+        flex-shrink: 0;
         position: relative;
     }
 
-    /* La pastille ::before prend toute la place */
     .status-badge::before {
-        width: 14px;
-        height: 14px;
+        width: 10px;
+        height: 10px;
         position: absolute;
         top: 0;
         left: 0;
-        box-shadow: 0 0 0 3px currentColor;
-        opacity: 0.25;
     }
 
-    .badge-functional::before  { background-color: var(--color-success); box-shadow: 0 0 8px var(--color-success); opacity: 1; }
-    .badge-maintenance::before { background-color: var(--color-warning); box-shadow: 0 0 8px var(--color-warning); opacity: 1; }
-    .badge-broken::before      { background-color: var(--color-danger);  box-shadow: 0 0 8px var(--color-danger);  opacity: 1; }
+    .badge-functional { background: var(--color-success); box-shadow: 0 0 8px var(--color-success); }
+    .badge-maintenance { background: var(--color-warning); box-shadow: 0 0 8px var(--color-warning); }
+    .badge-broken { background: var(--color-danger); box-shadow: 0 0 8px var(--color-danger); }
 
-    /* Zone centrale : masquée (on n'affiche que le numéro + pastille) */
+    /* Middle zone: hidden on mobile */
     .card-content {
-        display: none;
+        flex: 1;
+        margin-bottom: 0;
+        min-width: 0;
     }
 
-    /* Zone droite : bouton Historique uniquement */
+    .card-summary-msg {
+        font-size: 0.78rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .card-summary-desc { display: none; }
+
+    .report-counter-tag {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.35rem;
+    }
+
+    /* Right zone: actions */
     .card-actions {
         flex-direction: row;
         gap: 0;
@@ -407,71 +393,83 @@ button, a, select, input, textarea, label {
     }
 
     .card-actions .btn-view-details {
-        min-height: 34px;
-        font-size: 0.75rem;
-        padding: 0.35rem 0.85rem;
+        min-height: 32px;
+        font-size: 0.72rem;
+        padding: 0.3rem 0.75rem;
         white-space: nowrap;
         border-radius: var(--radius-sm);
     }
 }
 
-/* Très petit écran : légèrement plus compact */
 @media (max-width: 390px) {
     .elevator-card {
-        padding: 0.65rem 0.85rem;
-        gap: 0.75rem;
+        padding: 0.7rem 0.85rem 0.7rem 1rem;
+        gap: 0.65rem;
     }
 
-    .entrance-label .title {
-        font-size: 1.1rem;
-    }
+    .entrance-label .title { font-size: 1.15rem; }
 
     .card-actions .btn-view-details {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.65rem;
+        font-size: 0.68rem;
+        padding: 0.25rem 0.6rem;
     }
 }
 
-/* =========================================================
-   8. MODALES — Sheet Style (glisse depuis le bas)
-   ========================================================= */
+/* ============================================================
+   MODALS — Bottom Sheet Style (iOS native feel)
+   ============================================================ */
 
 @media (max-width: 640px) {
     .modal-backdrop {
         padding: 0;
         align-items: flex-end;
-        background-color: rgba(6, 9, 17, 0.75);
+        background: rgba(0, 0, 0, 0.85);
     }
 
     .modal-card {
         width: 100%;
         max-width: 100%;
         max-height: 93vh;
-        border-radius: 20px 20px 0 0;
-        animation: slideUpSheet var(--transition-normal);
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        animation: slideUpSheet var(--transition-spring);
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        border-top: 1px solid rgba(255,255,255,0.1);
     }
 
     .modal-card.modal-sm {
         max-width: 100%;
-        border-radius: 20px 20px 0 0;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    /* Handle pill */
+    .modal-card::before {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: var(--radius-pill);
+        margin: 0.65rem auto 0;
+        flex-shrink: 0;
     }
 
     .modal-header {
-        padding: 0.85rem 1.25rem;
+        padding: 0.85rem 1.25rem 0.85rem;
+        background: transparent;
     }
 
-    .modal-header h3 {
-        font-size: 1.05rem;
-    }
+    .modal-header h3 { font-size: 1rem; }
 
     .modal-body {
         padding: 1rem 1.25rem;
     }
 
-    /* Boutons du footer : empilés, pleine largeur */
+    /* Stacked full-width buttons */
     .modal-footer {
         flex-direction: column-reverse;
-        gap: 0.45rem;
+        gap: 0.4rem;
         padding: 0.85rem 1.25rem;
         padding-bottom: max(0.85rem, env(safe-area-inset-bottom));
     }
@@ -481,31 +479,16 @@ button, a, select, input, textarea, label {
         justify-content: center;
         min-height: 46px;
     }
-
-    /* Poignée visuelle façon bottom sheet */
-    .modal-card::before {
-        content: "";
-        display: block;
-        width: 36px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 2px;
-        margin: 0.6rem auto -0.2rem;
-    }
-
-    [data-theme="light"] .modal-card::before {
-        background: rgba(0, 0, 0, 0.12);
-    }
 }
 
 @keyframes slideUpSheet {
-    from { transform: translateY(40px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from { transform: translateY(60px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
 }
 
-/* =========================================================
-   9. MODALE AUTH (Connexion / Inscription)
-   ========================================================= */
+/* ============================================================
+   AUTH MODAL — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .modal-header.auth-modal-header {
@@ -513,314 +496,338 @@ button, a, select, input, textarea, label {
     }
 
     .modal-tabs {
-        gap: 0.75rem;
+        gap: 0.5rem;
+        padding: 0 1.25rem;
     }
 
     .modal-tab-btn {
-        font-size: 0.95rem;
-        padding: 0.9rem 0.25rem 0.7rem;
+        font-size: 0.9rem;
+        padding: 0.85rem 0.2rem 0.7rem;
     }
 
     .modal-alerts-container {
-        padding: 0.75rem 1.25rem 0;
+        padding: 0.65rem 1.25rem 0;
     }
 
-    /* Champs de formulaire plus grands sur mobile = meilleur tap */
     .form-group {
-        margin-bottom: 1rem;
+        margin-bottom: 0.875rem;
     }
 
     input[type="text"],
     input[type="password"],
     select,
     textarea {
-        font-size: 1rem; /* Évite le zoom auto iOS sur focus */
-        padding: 0.75rem 0.85rem;
+        font-size: 1rem; /* Prevent iOS auto-zoom */
+        padding: 0.75rem 0.9rem;
         min-height: 46px;
     }
 
-    .field-hint {
-        font-size: 0.7rem;
-    }
+    .field-hint { font-size: 0.68rem; }
 }
 
-/* =========================================================
-   10. MODALE DÉTAILS ASCENSEUR
-   ========================================================= */
+/* ============================================================
+   DETAILS MODAL — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .details-status-container {
         flex-direction: row;
         align-items: center;
         gap: 0.75rem;
-        padding: 0.75rem;
-        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.875rem;
     }
 
-    .status-meta h4 {
-        font-size: 0.95rem;
-    }
+    .status-meta h4 { font-size: 0.9rem; }
 
     .details-section h4 {
-        font-size: 0.85rem;
+        font-size: 0.72rem;
+        margin-bottom: 0.65rem;
     }
 
     .maintenance-info-box {
         padding: 0.75rem;
-        margin-bottom: 1rem;
+        margin-bottom: 0.875rem;
     }
 
-    /* Historique timeline plus compact */
     .history-timeline {
         padding-left: 1rem;
         gap: 0.75rem;
     }
 
-    .timeline-date {
-        font-size: 0.65rem;
-    }
+    .timeline-date { font-size: 0.62rem; }
+    .timeline-title { font-size: 0.75rem; }
+    .timeline-desc { font-size: 0.68rem; }
 
-    .timeline-title {
-        font-size: 0.75rem;
-    }
-
-    .timeline-desc {
-        font-size: 0.7rem;
-    }
-
-    /* Section admin dans la modale */
     .admin-actions-section {
-        padding: 0.85rem;
+        padding: 0.875rem;
         margin-top: 1.25rem;
     }
 
-    .admin-action-header h5 {
-        font-size: 0.85rem;
-    }
+    .admin-action-header h5 { font-size: 0.82rem; }
 }
 
-/* =========================================================
-   11. MODALE SIGNALEMENT
-   ========================================================= */
+/* ============================================================
+   REPORT MODAL — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
-    /* Aperçu photo plus grand sur mobile */
     .photo-preview-container {
         max-width: 100%;
         height: 140px;
     }
 
-    .char-counter {
-        font-size: 0.7rem;
-    }
+    .char-counter { font-size: 0.68rem; }
 }
 
-/* =========================================================
-   12. DROPDOWN NOTIFICATIONS
-   ========================================================= */
+/* ============================================================
+   NOTIFICATIONS — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .notification-dropdown {
         position: fixed;
         top: auto;
-        bottom: calc(54px + env(safe-area-inset-bottom));
+        bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom) + 8px);
         left: 0.75rem;
         right: 0.75rem;
         width: auto;
         max-width: 100%;
-        border-radius: var(--radius-md);
+        border-radius: var(--radius-lg);
         max-height: 60vh;
         animation: slideUpSheet var(--transition-fast);
     }
 }
 
-/* =========================================================
-   13. TOASTS
-   ========================================================= */
+/* ============================================================
+   TOASTS — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .toast-container {
         position: fixed;
         top: auto;
-        bottom: calc(70px + env(safe-area-inset-bottom));
+        bottom: calc(var(--mobile-nav-h) + env(safe-area-inset-bottom) + 8px);
         left: 0.75rem;
         right: 0.75rem;
         max-width: 100%;
         width: auto;
     }
 
-    .toast-alert {
-        padding: 0.75rem;
-    }
-
-    .toast-title {
-        font-size: 0.8rem;
-    }
-
-    .toast-body {
-        font-size: 0.75rem;
-    }
+    .toast-alert { padding: 0.75rem; }
+    .toast-title { font-size: 0.8rem; }
+    .toast-body  { font-size: 0.75rem; }
 }
 
-/* =========================================================
-   14. PAGE MANIFESTE / VIE DU COLLECTIF
-   ========================================================= */
+/* ============================================================
+   ACCUEIL PAGE — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .welcome-association {
         padding: 1.1rem;
-        margin-bottom: 1.25rem;
+        margin-bottom: 1.1rem;
+        border-radius: var(--radius-lg);
     }
 
-    .assoc-header {
-        gap: 0.5rem;
-        margin-bottom: 0.6rem;
-    }
+    .assoc-header { gap: 0.5rem; margin-bottom: 0.65rem; }
 
     .welcome-association h2 {
-        font-size: 1.05rem;
+        font-size: 1rem;
         line-height: 1.3;
     }
 
     .manifest-content {
         font-size: 0.875rem;
-        margin-top: 1rem;
+        margin-top: 0.75rem;
     }
 
-    .manifest-content p {
-        margin-bottom: 1rem;
-    }
-
-    .lead-text {
-        font-size: 1rem;
-    }
+    .manifest-content p { margin-bottom: 0.875rem; }
+    .lead-text { font-size: 0.95rem; }
 
     .manifest-highlight {
-        padding: 0.85rem 1rem;
-        margin: 1rem 0;
+        padding: 0.75rem 1rem;
+        margin: 0.875rem 0;
     }
 
-    .manifest-highlight h3 {
+    .manifest-highlight h3 { font-size: 0.875rem; }
+    .manifest-highlight li { font-size: 0.78rem; }
+
+    .manifest-content h3 {
         font-size: 0.95rem;
-    }
-
-    .manifest-highlight li {
-        font-size: 0.8rem;
-    }
-
-    .manifest-content h3:not(.manifest-highlight h3) {
-        font-size: 1rem;
-        margin-top: 1.25rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .manifest-content li:not(.manifest-highlight li) {
-        font-size: 0.85rem;
+        margin-top: 1.1rem;
     }
 
     .call-to-action-text {
-        font-size: 0.9rem;
-        padding: 0.9rem;
-        margin-top: 1.25rem;
-        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        padding: 0.875rem;
+        margin-top: 1.1rem;
     }
 }
 
-/* =========================================================
-   15. PAGES PLACEHOLDER (Communs / Chauffage)
-   ========================================================= */
+/* ============================================================
+   PLACEHOLDER PAGES — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .placeholder-section {
-        padding: 2rem 1rem;
+        padding: 2.5rem 1rem;
         margin: 0.5rem 0;
     }
 
-    .placeholder-section h3 {
-        font-size: 1.1rem;
-    }
-
-    .placeholder-desc {
-        font-size: 0.85rem;
-    }
+    .placeholder-section h3 { font-size: 1.05rem; }
+    .placeholder-desc { font-size: 0.85rem; }
 
     .placeholder-icon {
-        width: 70px;
-        height: 70px;
+        width: 68px;
+        height: 68px;
         margin-bottom: 1rem;
     }
 
     .placeholder-icon svg {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
 
     .soon-banner {
-        font-size: 0.75rem;
-        padding: 0.4rem 1rem;
+        font-size: 0.72rem;
+        padding: 0.3rem 0.875rem;
     }
 }
 
-/* =========================================================
-   16. FOOTER
-   ========================================================= */
+/* ============================================================
+   FOOTER — Hidden on mobile (bottom nav replaces it)
+   ============================================================ */
 
 @media (max-width: 640px) {
-    .app-footer-bar {
-        display: none;
-    }
-
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .gdpr-tag {
-        justify-content: center;
-        font-size: 0.72rem;
-    }
-
-    .security-badge {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.6rem;
-    }
+    .app-footer-bar { display: none; }
 }
 
-/* =========================================================
-   17. LIGHTBOX (zoom photo)
-   ========================================================= */
+/* ============================================================
+   LIGHTBOX — Mobile
+   ============================================================ */
 
 @media (max-width: 640px) {
     .lightbox-container {
         max-width: 100vw;
         max-height: 90vh;
-        border-radius: var(--radius-md);
-        padding: 0.85rem;
+        border-radius: var(--radius-lg);
+        margin: 0 0.5rem;
     }
 
-    .lightbox-container img {
-        max-height: 65vh;
-        border-radius: var(--radius-sm);
+    .lightbox-container img { max-height: 75vh; }
+    .lightbox-footer { padding: 0.65rem 0.875rem; }
+    .lightbox-caption { font-size: 0.75rem; }
+}
+
+/* ============================================================
+   PAGE HEADER — Mobile
+   ============================================================ */
+
+@media (max-width: 640px) {
+    .page-title {
+        font-size: 1.45rem;
     }
 
-    .btn-close-lightbox {
-        top: 8px;
-        right: 8px;
+    .page-subtitle {
+        font-size: 0.8rem;
     }
 
-    .lightbox-caption {
-        font-size: 0.75rem;
+    .page-header {
+        margin-bottom: 1.25rem;
     }
 }
 
-/* =========================================================
-   18. SAFE AREAS (iPhone notch / Dynamic Island / home bar)
-   ========================================================= */
+/* ============================================================
+   INCIDENTS FEED — Mobile
+   ============================================================ */
 
-@supports (padding: env(safe-area-inset-bottom)) {
-    .app-header {
-        padding-top: max(0.6rem, env(safe-area-inset-top));
+@media (max-width: 640px) {
+    .report-item {
+        padding: 0.75rem;
+    }
+
+    .report-meta strong { font-size: 0.8rem; }
+    .report-author { font-size: 0.68rem; }
+    .report-time { font-size: 0.65rem; }
+    .report-content p { font-size: 0.82rem; }
+
+    .report-photo-thumb {
+        height: 100px;
+    }
+}
+
+/* ============================================================
+   SECTION TITLES — Mobile
+   ============================================================ */
+
+@media (max-width: 640px) {
+    .section-title { font-size: 1.05rem; }
+}
+
+/* ============================================================
+   TABS NAV — Mobile horizontal scroll
+   ============================================================ */
+
+@media (max-width: 640px) {
+    .app-tabs-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 0.35rem;
+        padding-bottom: 2px;
+        margin-top: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .app-tabs-nav::-webkit-scrollbar { display: none; }
+
+    .tab-link {
+        font-size: 0.78rem;
+        padding: 0.4rem 0.75rem;
+        min-height: 32px;
+        flex-shrink: 0;
+    }
+}
+
+/* ============================================================
+   TABLET (768px – 1024px)
+   ============================================================ */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .app-sidebar {
+        width: 220px;
+    }
+
+    .app-main {
+        margin-left: 220px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .entrances-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .top-bar-container {
+        padding: 0 1.5rem;
+    }
+}
+
+/* ============================================================
+   LARGE DESKTOP (≥ 1280px)
+   ============================================================ */
+
+@media (min-width: 1280px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .entrances-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 }
