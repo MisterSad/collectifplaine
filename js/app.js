@@ -60,9 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminSelectStatus = document.getElementById("admin-select-status");
     const adminMaintenanceNotes = document.getElementById("admin-maintenance-notes");
     
-    // Nouveaux Modules (Incidents & Entraide)
     const quickIncidentBtn = document.getElementById("quick-incident-btn");
-    const quickMessageBtn = document.getElementById("quick-message-btn");
     
     const incidentModal = document.getElementById("incident-modal");
     const incidentForm = document.getElementById("incident-form");
@@ -70,11 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const incidentSuccessMsg = document.getElementById("incident-success-msg");
     const incidentsFeed = document.getElementById("incidents-feed");
 
-    const messageModal = document.getElementById("message-modal");
-    const messageForm = document.getElementById("message-form");
-    const messageErrorMsg = document.getElementById("message-error-msg");
-    const messageSuccessMsg = document.getElementById("message-success-msg");
-    const messagesFeed = document.getElementById("messages-feed");
     
     // Formulaire Signalement - Éléments Photo
     const reportPhotoInput = document.getElementById("report-photo");
@@ -294,7 +287,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         renderIncidents();
-        renderMessages();
     }
 
     /**
@@ -344,46 +336,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    /**
-     * Rendu des Messages d'Entraide
-     */
-    function renderMessages() {
-        if (!messagesFeed) return;
-        const messages = Store.getMessages();
-        messagesFeed.innerHTML = "";
-
-        if (messages.length === 0) {
-            messagesFeed.innerHTML = `<div class="loading-placeholder">Soyez le premier à publier un message !</div>`;
-            return;
-        }
-
-        const typeLabels = {
-            "annonce": "📌 Annonce",
-            "entraide": "🤝 Entraide",
-            "alerte": "🚨 Alerte"
-        };
-
-        messages.forEach(msg => {
-            const el = document.createElement("div");
-            el.className = "card glass";
-            el.style.marginBottom = "1rem";
-            el.style.padding = "1.25rem";
-            
-            el.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
-                    <div>
-                        <span class="status-badge" style="background-color:rgba(255,255,255,0.1); color:var(--text-primary); margin-bottom:0.5rem; display:inline-block; font-size:0.75rem;">${typeLabels[msg.type]}</span>
-                        <h4 style="margin:0; font-size:1rem;" class="msg-author"></h4>
-                        <span class="report-time" style="font-size:0.75rem;">${formatTimeAgo(new Date(msg.created_at).getTime())} ${msg.entrance ? '• Bât. ' + msg.entrance : ''}</span>
-                    </div>
-                </div>
-                <p style="margin:0; line-height:1.5; color:var(--text-secondary);" class="msg-content"></p>
-            `;
-            el.querySelector(".msg-author").textContent = msg.author;
-            el.querySelector(".msg-content").textContent = msg.content;
-            messagesFeed.appendChild(el);
-        });
-    }
 
     // Export pour le onclick depuis le DOM HTML sur les images d'incident
     window.openLightbox = (url) => {
@@ -880,20 +832,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    if (quickMessageBtn) {
-        quickMessageBtn.addEventListener("click", () => {
-            if (!Security.getLoggedInTenant()) {
-                authModal.classList.remove("hidden");
-                authModal.setAttribute("aria-hidden", "false");
-                return;
-            }
-            messageModal.classList.remove("hidden");
-            messageModal.setAttribute("aria-hidden", "false");
-            messageForm.reset();
-            messageErrorMsg.classList.add("hidden");
-            messageSuccessMsg.classList.add("hidden");
-        });
-    }
 
     // Soumission Formulaire Incident
     if (incidentForm) {
@@ -932,41 +870,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Soumission Formulaire Message
-    if (messageForm) {
-        messageForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            messageErrorMsg.classList.add("hidden");
-            messageSuccessMsg.classList.add("hidden");
-
-            const type = document.getElementById("message-type").value;
-            const entrance = document.getElementById("message-entrance").value;
-            const content = document.getElementById("message-content").value;
-
-            const submitBtn = messageForm.querySelector("button[type='submit']");
-            submitBtn.disabled = true;
-
-            try {
-                await Store.addMessage({
-                    type,
-                    entrance,
-                    content
-                });
-                
-                messageSuccessMsg.textContent = "Message publié avec succès.";
-                messageSuccessMsg.classList.remove("hidden");
-                
-                setTimeout(() => {
-                    closeModal(messageModal);
-                    submitBtn.disabled = false;
-                }, 1500);
-            } catch (err) {
-                messageErrorMsg.textContent = err.message;
-                messageErrorMsg.classList.remove("hidden");
-                submitBtn.disabled = false;
-            }
-        });
-    }
 
     // ---------------------------------------------------------
     // MODALE : DÉTAILS DE L'ASCENSEUR
@@ -1387,20 +1290,14 @@ document.addEventListener("DOMContentLoaded", () => {
         "#/accueil": "tab-accueil",
         "#/ascenseurs": "tab-elevators",
         "#/incidents": "tab-incidents",
-        "#/entraide": "tab-entraide",
-        "#/charges": "tab-charges",
-        "#/juridique": "tab-juridique",
-        "#/contacts": "tab-contacts"
+        "#/charges": "tab-charges"
     };
 
     const pageTitles = {
         "#/accueil": "Accueil",
         "#/ascenseurs": "Ascenseurs",
         "#/incidents": "Incidents",
-        "#/entraide": "Entraide",
-        "#/charges": "Charges",
-        "#/juridique": "Juridique",
-        "#/contacts": "Contacts"
+        "#/charges": "Charges"
     };
 
     function handleRouting() {
@@ -1473,24 +1370,6 @@ document.addEventListener("DOMContentLoaded", () => {
         // 4. Initialisations et rafraîchissements spécifiques aux pages
         if (targetPanelId === "tab-elevators") {
             renderDashboard();
-        } else if (targetPanelId === "tab-juridique") {
-            // Pré-remplissage automatique pour le locataire connecté
-            const tenant = Security.getLoggedInTenant();
-            if (tenant) {
-                const entranceSelect = document.getElementById("legal-entrance");
-                const apartmentInput = document.getElementById("legal-apartment");
-                
-                if (entranceSelect && !entranceSelect.value) {
-                    entranceSelect.value = tenant.entrance;
-                    // Déclencher le peuplement des pannes
-                    if (typeof populateOutagesForEntrance === "function") {
-                        populateOutagesForEntrance(tenant.entrance);
-                    }
-                }
-                if (apartmentInput && !apartmentInput.value) {
-                    apartmentInput.value = tenant.apartment;
-                }
-            }
         }
     }
 
@@ -1535,148 +1414,6 @@ document.addEventListener("DOMContentLoaded", () => {
             notificationDropdown.setAttribute("aria-hidden", "true");
         }
     });
-
-    // ---------------------------------------------------------
-    // LOGIQUE DE LA PAGE CONTACTS DYNAMIQUE (STYLE iOS)
-    // ---------------------------------------------------------
-    
-    const tabContactsElement = document.getElementById("tab-contacts");
-    if (tabContactsElement) {
-        // 1. Gestion de l'accordéon au clic sur une ligne
-        tabContactsElement.addEventListener("click", (e) => {
-            const header = e.target.closest(".ios-contact-header");
-            const callBtn = e.target.closest(".call-btn");
-            const addBtn = e.target.closest(".add-btn");
-            
-            // Empêcher le clic de propager si on clique sur un bouton d'action
-            if (callBtn || addBtn) {
-                return;
-            }
-            
-            if (header) {
-                const row = header.closest(".ios-contact-row");
-                if (row) {
-                    // Fermer les autres contacts pour un effet accordéon propre
-                    document.querySelectorAll(".ios-contact-row").forEach(otherRow => {
-                        if (otherRow !== row && otherRow.classList.contains("expanded")) {
-                            otherRow.classList.remove("expanded");
-                        }
-                    });
-                    
-                    // Basculer l'état déployé de la ligne cliquée
-                    row.classList.toggle("expanded");
-                }
-            }
-        });
-
-        // 2. Clic sur le bouton de vCard "ajouter"
-        tabContactsElement.addEventListener("click", (e) => {
-            const addCardBtn = e.target.closest(".btn-add-card");
-            if (addCardBtn) {
-                e.preventDefault();
-                const name = addCardBtn.dataset.name || "";
-                const phone = addCardBtn.dataset.phone || "";
-                const address = addCardBtn.dataset.address || "";
-                const email = addCardBtn.dataset.email || "";
-                const role = addCardBtn.dataset.role || "";
-                
-                downloadVCard(name, phone, address, email, role);
-            }
-        });
-
-        // 3. Logique de Recherche en Temps Réel iOS
-        const contactSearch = document.getElementById("contact-search");
-        const contactSearchClear = document.getElementById("contact-search-clear");
-        
-        if (contactSearch) {
-            contactSearch.addEventListener("input", () => {
-                const query = contactSearch.value.trim().toLowerCase();
-                
-                // Afficher/masquer le bouton effacer (✕)
-                if (query.length > 0) {
-                    contactSearchClear.classList.remove("hidden");
-                } else {
-                    contactSearchClear.classList.add("hidden");
-                }
-                
-                filterContactsList(query);
-            });
-        }
-        
-        if (contactSearchClear) {
-            contactSearchClear.addEventListener("click", () => {
-                contactSearch.value = "";
-                contactSearchClear.classList.add("hidden");
-                filterContactsList("");
-                contactSearch.focus();
-            });
-        }
-    }
-
-    // Fonction de filtrage des contacts
-    function filterContactsList(query) {
-        const sections = document.querySelectorAll(".ios-contact-section");
-        
-        sections.forEach(section => {
-            const rows = section.querySelectorAll(".ios-contact-row");
-            let sectionHasVisibleRows = false;
-            
-            rows.forEach(row => {
-                const name = row.querySelector("h3") ? row.querySelector("h3").textContent.toLowerCase() : "";
-                const role = row.querySelector(".ios-contact-info p") ? row.querySelector(".ios-contact-info p").textContent.toLowerCase() : "";
-                
-                // Recherche également dans les notes/description détaillées
-                const noteBox = row.querySelector(".ios-detail-box:last-child .field-value");
-                const notes = noteBox ? noteBox.textContent.toLowerCase() : "";
-                
-                // Recherche dans le numéro de téléphone
-                const phoneBox = row.querySelector(".phone-link");
-                const phone = phoneBox ? phoneBox.textContent.toLowerCase() : "";
-                
-                const isMatch = name.includes(query) || role.includes(query) || notes.includes(query) || phone.includes(query);
-                
-                if (isMatch) {
-                    row.classList.remove("hidden");
-                    sectionHasVisibleRows = true;
-                } else {
-                    row.classList.add("hidden");
-                    row.classList.remove("expanded"); // Refermer si caché
-                }
-            });
-            
-            // Afficher ou masquer la section selon la présence de lignes correspondantes
-            if (sectionHasVisibleRows) {
-                section.classList.remove("hidden");
-            } else {
-                section.classList.add("hidden");
-            }
-        });
-    }
-
-
-    // Helper de téléchargement de vCard (.vcf)
-    function downloadVCard(name, phone, address, email, role) {
-        const vcard = [
-            "BEGIN:VCARD",
-            "VERSION:3.0",
-            `FN:${name}`,
-            `TEL;TYPE=CELL,VOICE:${phone}`,
-            address ? `ADR;TYPE=WORK:;;${address.replace(/,/g, '\\;')};;;` : "",
-            email ? `EMAIL;TYPE=PREF,INTERNET:${email}` : "",
-            role ? `TITLE:${role}` : "",
-            "END:VCARD"
-        ].filter(Boolean).join("\r\n");
-
-        const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `${name.replace(/\s+/g, "_")}.vcf`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }
 
     // ---------------------------------------------------------
     // 7. INITIALISATION & ABONNEMENTS ÉVÉNEMENTIELS
@@ -1746,89 +1483,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Formulaire de génération légale
-    const legalForm = document.getElementById("legal-form");
-    const legalEntrance = document.getElementById("legal-entrance");
-    const legalOutage = document.getElementById("legal-outage");
-
-    window.populateOutagesForEntrance = function(entranceId) {
-        if (!legalOutage) return;
-        
-        legalOutage.innerHTML = '<option value="" disabled selected>Chargement...</option>';
-        legalOutage.disabled = true;
-
-        const elevator = Store.getElevatorById(entranceId);
-        
-        if (!elevator) {
-            legalOutage.innerHTML = '<option value="" disabled selected>Aucun ascenseur trouvé pour cette entrée</option>';
-            return;
-        }
-
-        legalOutage.innerHTML = '<option value="general">Panne récurrente / Problème général</option>';
-        
-        // 1. Ajouter la panne actuelle si l'ascenseur est en panne
-        if (elevator.status === "en_panne" && elevator.lastStatusChange) {
-            const dateObj = new Date(elevator.lastStatusChange);
-            const dateStr = dateObj.toLocaleDateString("fr-FR");
-            const opt = document.createElement("option");
-            opt.value = dateStr;
-            opt.textContent = `Panne actuelle (depuis le ${dateStr})`;
-            legalOutage.appendChild(opt);
-        }
-
-        // 2. Ajouter les pannes déclarées par les locataires
-        const reports = (elevator.tenantReports || []).sort((a, b) => b.timestamp - a.timestamp);
-        reports.forEach(report => {
-            const dateObj = new Date(report.timestamp);
-            const dateStr = dateObj.toLocaleDateString("fr-FR");
-            const opt = document.createElement("option");
-            opt.value = dateStr;
-            opt.textContent = `Panne déclarée le ${dateStr}`;
-            // Eviter les doublons exacts
-            if (!Array.from(legalOutage.options).some(o => o.value === dateStr)) {
-                legalOutage.appendChild(opt);
-            }
-        });
-
-        // 3. Ajouter l'historique officiel
-        const recentOutages = (elevator.history || []).filter(h => h.status === "en_panne").sort((a, b) => b.timestamp - a.timestamp);
-        recentOutages.forEach(outage => {
-            const dateObj = new Date(outage.timestamp);
-            const dateStr = dateObj.toLocaleDateString("fr-FR");
-            const opt = document.createElement("option");
-            opt.value = dateStr;
-            opt.textContent = `Historique: Panne du ${dateStr}`;
-            if (!Array.from(legalOutage.options).some(o => o.value === dateStr)) {
-                legalOutage.appendChild(opt);
-            }
-        });
-
-        legalOutage.disabled = false;
-        legalOutage.value = "general";
-    };
-
-    if (legalEntrance) {
-        legalEntrance.addEventListener("change", (e) => {
-            populateOutagesForEntrance(e.target.value);
-        });
-    }
-
-    if (legalForm) {
-        legalForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            
-            const formData = {
-                firstname: document.getElementById("legal-firstname").value,
-                lastname: document.getElementById("legal-lastname").value,
-                entrance: document.getElementById("legal-entrance").value,
-                apartment: document.getElementById("legal-apartment").value,
-                outage: legalOutage ? legalOutage.value : "general"
-            };
-            
-            window.LegalGenerator.generateMiseEnDemeure(formData);
-        });
-    }
-
     /**
      * Génère dynamiquement les options de toutes les listes déroulantes de bâtiments
      */
@@ -1839,11 +1493,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const dropdowns = [
-            { id: "legal-entrance", prefix: "", suffix: "" },
             { id: "report-entrance", prefix: "N° ", suffix: " - Leclerc" },
             { id: "auth-register-entrance", prefix: "", suffix: "" },
-            { id: "incident-entrance", prefix: "", suffix: "" },
-            { id: "message-entrance", prefix: "🏢 Uniquement ", suffix: "" }
+            { id: "incident-entrance", prefix: "", suffix: "" }
         ];
 
         dropdowns.forEach(cfg => {
