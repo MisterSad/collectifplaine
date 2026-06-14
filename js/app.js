@@ -1507,6 +1507,8 @@ document.addEventListener("DOMContentLoaded", () => {
             renderDashboard();
         } else if (targetPanelId === "tab-compte") {
             refreshAccountTab();
+        } else if (targetPanelId === "tab-charges") {
+            renderWiki();
         }
     }
 
@@ -1851,4 +1853,187 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    // ============================================================
+    // GESTION DU WIKI DU LOCATAIRE
+    // ============================================================
+    const wikiSearchInput = document.getElementById("wiki-search");
+    const wikiSearchClear = document.getElementById("wiki-search-clear");
+    const wikiFilterBtns = document.querySelectorAll(".wiki-filters .filter-btn");
+    const wikiArticlesList = document.getElementById("wiki-articles-list");
+    const wikiNoResults = document.getElementById("wiki-no-results");
+
+    let currentWikiCategory = "all";
+    let currentWikiSearch = "";
+
+    function initWiki() {
+        if (!wikiSearchInput || !wikiArticlesList) return;
+
+        // Écouter la recherche
+        wikiSearchInput.addEventListener("input", (e) => {
+            currentWikiSearch = e.target.value.toLowerCase().trim();
+            if (currentWikiSearch) {
+                wikiSearchClear.classList.remove("hidden");
+            } else {
+                wikiSearchClear.classList.add("hidden");
+            }
+            renderWiki();
+        });
+
+        // Vider la recherche
+        wikiSearchClear.addEventListener("click", () => {
+            wikiSearchInput.value = "";
+            currentWikiSearch = "";
+            wikiSearchClear.classList.add("hidden");
+            renderWiki();
+            wikiSearchInput.focus();
+        });
+
+        // Écouter les filtres de catégorie
+        wikiFilterBtns.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                wikiFilterBtns.forEach(b => b.classList.remove("active"));
+                e.target.classList.add("active");
+                currentWikiCategory = e.target.dataset.category;
+                renderWiki();
+            });
+        });
+    }
+
+    const categoryLabels = {
+        charges: "Charges Récupérables",
+        rep_locatives: "Réparations Locatives",
+        chauffage: "Chauffage & Eau",
+        decence: "Décence & Logement",
+        garantie_conge: "Congé & Caution"
+    };
+
+    function renderWiki() {
+        if (!wikiArticlesList || typeof WIKI_DATA === "undefined") return;
+
+        // Filtrer les articles
+        const filtered = WIKI_DATA.filter(article => {
+            // 1. Filtrer par catégorie
+            if (currentWikiCategory !== "all" && article.category !== currentWikiCategory) {
+                return false;
+            }
+            // 2. Filtrer par terme de recherche
+            if (currentWikiSearch) {
+                const inTitle = article.title.toLowerCase().includes(currentWikiSearch);
+                const inSummary = article.summary.toLowerCase().includes(currentWikiSearch);
+                const inKeywords = article.keywords.some(kw => kw.toLowerCase().includes(currentWikiSearch));
+                return inTitle || inSummary || inKeywords;
+            }
+            return true;
+        });
+
+        // Gérer l'affichage si aucun résultat
+        if (filtered.length === 0) {
+            wikiArticlesList.innerHTML = "";
+            wikiNoResults.classList.remove("hidden");
+            return;
+        }
+        wikiNoResults.classList.add("hidden");
+
+        // Générer le HTML
+        wikiArticlesList.innerHTML = filtered.map(article => {
+            return `
+                <div class="wiki-card">
+                    <button class="wiki-card-header" aria-expanded="false" data-target="${article.id}">
+                        <div class="wiki-card-header-main">
+                            <div class="wiki-card-meta">
+                                <span class="wiki-cat-badge">${categoryLabels[article.category] || article.category}</span>
+                                <span class="wiki-law-badge">${article.legislation}</span>
+                            </div>
+                            <h3>${article.title}</h3>
+                        </div>
+                        <span class="wiki-card-chevron">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="wiki-card-body" id="body-${article.id}">
+                        <div class="wiki-card-content">
+                            <p class="wiki-article-summary" style="font-weight: 500; color: var(--text-primary); border-left: 2px solid var(--accent-primary); padding-left: 0.75rem; margin-bottom: 1.25rem;">
+                                ${article.summary}
+                            </p>
+                            ${article.content}
+                            ${article.actionLink ? `
+                                <div class="wiki-action-area">
+                                    <button class="wiki-action-btn" data-link="${article.actionLink}">
+                                        ${article.actionText} &rarr;
+                                    </button>
+                                </div>
+                            ` : ""}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+        // Ajouter la logique d'accordéon interactif
+        const headers = wikiArticlesList.querySelectorAll(".wiki-card-header");
+        headers.forEach(header => {
+            header.addEventListener("click", () => {
+                const isOpen = header.classList.contains("open");
+                const targetId = header.dataset.target;
+                const body = document.getElementById(`body-${targetId}`);
+
+                // Fermer tous les autres accordéons
+                headers.forEach(h => {
+                    if (h !== header && h.classList.contains("open")) {
+                        h.classList.remove("open");
+                        h.setAttribute("aria-expanded", "false");
+                        const otherBody = document.getElementById(`body-${h.dataset.target}`);
+                        if (otherBody) otherBody.style.maxHeight = null;
+                    }
+                });
+
+                // Basculer l'accordéon cliqué
+                if (isOpen) {
+                    header.classList.remove("open");
+                    header.setAttribute("aria-expanded", "false");
+                    if (body) body.style.maxHeight = null;
+                } else {
+                    header.classList.add("open");
+                    header.setAttribute("aria-expanded", "true");
+                    if (body) body.style.maxHeight = body.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Ajouter la navigation d'action contextuelle
+        const actionBtns = wikiArticlesList.querySelectorAll(".wiki-action-btn");
+        actionBtns.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const targetLink = e.currentTarget.dataset.link;
+                if (targetLink) {
+                    // Si on doit aller vers incidents et qu'il y a un comportement spécifique
+                    if (targetLink === "#/incidents") {
+                        window.location.hash = targetLink;
+                        // Si le bouton est "Créer une mise en demeure", faire défiler vers le bouton
+                        if (btn.textContent.includes("mise en demeure")) {
+                            setTimeout(() => {
+                                const demandBtn = document.getElementById("open-demand-modal-btn") || 
+                                                  document.querySelector(".btn-secondary") || 
+                                                  document.getElementById("legal-demand-generator-section");
+                                if (demandBtn) {
+                                    demandBtn.scrollIntoView({ behavior: "smooth" });
+                                    if (demandBtn.tagName === "BUTTON" || demandBtn.tagName === "A") {
+                                        demandBtn.click();
+                                    }
+                                }
+                            }, 300);
+                        }
+                    } else {
+                        window.location.hash = targetLink;
+                    }
+                }
+            });
+        });
+    }
+
+    // Appeler l'initialisation du Wiki
+    initWiki();
 });

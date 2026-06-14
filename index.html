@@ -61,7 +61,7 @@
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> <span class="menu-text">Incidents</span>
                 </a>
                 <a href="#/charges" class="menu-link" data-page="page-charges">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span> <span class="menu-text">Charges</span>
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span class="menu-text">Wiki & Charges</span>
                 </a>
                 <a href="#/compte" class="menu-link" data-page="page-profile" id="sidebar-account-link">
                     <span class="menu-icon" id="sidebar-account-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="menu-text" id="sidebar-account-text">Mon Compte</span>
@@ -202,21 +202,49 @@
         <!-- CONTENU DE L'ONGLET 5 : CHARGES (CONSTRUCTION) -->
         <!-- ============================================ -->
         <div id="tab-charges" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
+            <div class="wiki-header card glass">
+                <div class="wiki-title-area">
+                    <span class="wiki-tag">⚖️ Droits du Locataire</span>
+                    <h2>Wiki & Guide Pratique</h2>
+                    <p>Découvrez vos droits et obligations face au bailleur selon la législation française en vigueur.</p>
+                </div>
+            </div>
 
-            <section class="placeholder-section card glass center-text">
+            <!-- Barre de Recherche & Filtres Rapides -->
+            <div class="wiki-controls card glass">
+                <div class="wiki-search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="wiki-search" placeholder="Rechercher un sujet (ex: chauffage, caution, TEOM, chaudière, rat...)" class="search-input">
+                    <button id="wiki-search-clear" class="search-clear-btn hidden">&times;</button>
+                </div>
+                
+                <div class="wiki-filter-scroll">
+                    <div class="wiki-filters">
+                        <button class="filter-btn active" data-category="all">Tout voir</button>
+                        <button class="filter-btn" data-category="charges">Charges Récupérables</button>
+                        <button class="filter-btn" data-category="rep_locatives">Réparations & Travaux</button>
+                        <button class="filter-btn" data-category="chauffage">Chauffage & Eau</button>
+                        <button class="filter-btn" data-category="decence">Décence & Nuisibles</button>
+                        <button class="filter-btn" data-category="garantie_conge">Congé & Caution</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des Articles (Accordéons) -->
+            <div id="wiki-articles-list" class="wiki-list">
+                <!-- Les articles seront générés dynamiquement par js/app.js -->
+            </div>
+            
+            <!-- Message de recherche vide -->
+            <div id="wiki-no-results" class="card glass center-text hidden" style="padding: 3rem;">
                 <div class="placeholder-icon color-warning">
-                    <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                        <line x1="16" y1="2" x2="16" y2="6"/>
-                        <line x1="8" y1="2" x2="8" y2="6"/>
-                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
                     </svg>
                 </div>
-                <h3>Analyse des Charges</h3>
-                <p class="placeholder-desc">Cet espace permettra de décortiquer et de suivre les régularisations de charges annuelles (nettoyage, entretien espaces verts, contrats ascenseurs...).</p>
-                <div class="soon-banner" style="margin-top: 1rem; display: inline-block;">En construction</div>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">Nous sommes actuellement dans l'attente des documents justificatifs de la part du bailleur pour alimenter cette rubrique.</p>
-            </section>
+                <h3>Aucun article trouvé</h3>
+                <p class="placeholder-desc" style="max-width: 450px; margin: 0.5rem auto 0;">Nous n'avons trouvé aucun guide correspondant à vos mots-clés. Essayez d'autres termes comme « chaudière », « préavis » ou « ordures ».</p>
+            </div>
         </div>
 
         <!-- ============================================ -->
@@ -353,8 +381,8 @@
                 <span class="mobile-text">Incidents</span>
             </a>
             <a href="#/charges" class="mobile-link" data-page="page-charges">
-                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
-                <span class="mobile-text">Charges</span>
+                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="mobile-text">Wiki & Ch.</span>
             </a>
             <a href="#/compte" class="mobile-link" data-page="page-profile" id="mobile-account-link">
                 <span class="mobile-icon" id="mobile-account-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
@@ -692,6 +720,7 @@
     <script src="js/config.js"></script>
     <script src="js/security.js"></script>
     <script src="js/mockData.js"></script>
+    <script src="js/wikiData.js"></script>
     <script src="js/db-client.js"></script>
     <script src="js/store.js"></script>
     <script src="js/legal-generator.js"></script>

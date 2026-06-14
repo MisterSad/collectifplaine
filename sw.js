@@ -1,4 +1,4 @@
-const CACHE_NAME = 'collectif-plaine-v27';
+const CACHE_NAME = 'collectif-plaine-v28';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -9,6 +9,7 @@ const ASSETS_TO_CACHE = [
   '/js/config.js',
   '/js/security.js',
   '/js/mockData.js',
+  '/js/wikiData.js',
   '/js/db-client.js',
   '/js/db-lib.js',
   '/js/store.js',
