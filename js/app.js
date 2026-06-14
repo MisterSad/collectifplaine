@@ -1381,8 +1381,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = document.getElementById("account-register-password").value;
 
             try {
-                // Register with temporary default entrance '36' and empty apartment
-                await Store.registerTenant(username, password, "36", "");
+                // Register with temporary default entrance '38' and empty apartment
+                await Store.registerTenant(username, password, "38", "");
                 
                 accountAuthSuccess.textContent = "Votre compte locataire a été créé avec succès ! Bienvenue...";
                 accountAuthSuccess.classList.remove("hidden");

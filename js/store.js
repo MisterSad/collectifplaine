@@ -504,7 +504,7 @@ const Store = (() => {
         // GESTION DES RESIDENTS (SUPABASE TABLE 'residents')
         // ---------------------------------------------------------
 
-        async registerTenant(username, password, entrance = "36", apartment = "") {
+        async registerTenant(username, password, entrance = "38", apartment = "") {
             _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());

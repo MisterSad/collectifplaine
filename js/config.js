@@ -4,7 +4,6 @@
  */
 const CONFIG = {
     entrances: [
-        { id: "36", label: "36 avenue Division Leclerc" },
         { id: "38", label: "38 avenue Division Leclerc" },
         { id: "40", label: "40 avenue Division Leclerc" },
         { id: "42", label: "42 avenue Division Leclerc" },

@@ -4,14 +4,6 @@
  */
 const INITIAL_ELEVATOR_DATA = [
     {
-        id: "36",
-        status: "en_service",
-        lastStatusChange: Date.now(),
-        maintenanceNotes: "",
-        tenantReports: [],
-        history: []
-    },
-    {
         id: "38",
         status: "en_service",
         lastStatusChange: Date.now(),

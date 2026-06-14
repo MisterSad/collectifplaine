@@ -1,4 +1,4 @@
-const CACHE_NAME = 'collectif-plaine-v26';
+const CACHE_NAME = 'collectif-plaine-v27';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
