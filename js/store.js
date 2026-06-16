@@ -181,7 +181,7 @@ const Store = (() => {
 
                 // 2. Auto-seeding / Auto-migration : insérer les entrées de CONFIG.entrances absentes de Supabase
                 const existingIds = new Set(elevators.map(el => String(el.id)));
-                const missingEntrances = CONFIG.entrances.filter(ent => !existingIds.has(String(ent.id)));
+                const missingEntrances = CONFIG.entrances.filter(ent => ent.hasElevator !== false && !existingIds.has(String(ent.id)));
                 
                 if (missingEntrances.length > 0) {
                     console.log(`🚀 [Supabase Seeding] Insertion des ${missingEntrances.length} nouvelles entrées manquantes...`);

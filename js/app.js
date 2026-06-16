@@ -1913,15 +1913,23 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             CONFIG.entrances.forEach(ent => {
+                // Si c'est pour un rapport d'ascenseur en panne et qu'il n'y a pas d'ascenseur, on l'exclut
+                if (cfg.id === "report-entrance" && ent.hasElevator === false) {
+                    return;
+                }
+
                 const opt = document.createElement("option");
                 opt.value = ent.id;
                 
+                let shortStreet = "Leclerc";
+                if (ent.street && ent.street.includes("Sangnier")) shortStreet = "Sangnier";
+                else if (ent.street && ent.street.includes("Ronsard")) shortStreet = "Ronsard";
+                else if (ent.street && ent.street.includes("Montreuil")) shortStreet = "Montreuil";
+
                 let text = ent.label || ent.id;
                 if (cfg.id === "report-entrance") {
-                    const shortStreet = ent.street && ent.street.includes("Leclerc") ? "Leclerc" : "Sangnier";
                     text = `N° ${ent.id} - ${shortStreet}`;
                 } else if (cfg.id === "account-entrance") {
-                    const shortStreet = ent.street && ent.street.includes("Leclerc") ? "Leclerc" : "Sangnier";
                     text = `Entrée ${ent.id} (${shortStreet})`;
                 } else {
                     text = ent.label || ent.id;
