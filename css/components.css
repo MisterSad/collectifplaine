@@ -447,6 +447,8 @@
 
 input[type="text"],
 input[type="password"],
+input[type="email"],
+input[type="tel"],
 select,
 textarea {
     background: rgba(255,255,255,0.04);
@@ -464,12 +466,16 @@ textarea {
 
 input[type="text"]::placeholder,
 input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="tel"]::placeholder,
 textarea::placeholder {
     color: var(--text-muted);
 }
 
 input[type="text"]:hover,
 input[type="password"]:hover,
+input[type="email"]:hover,
+input[type="tel"]:hover,
 select:hover,
 textarea:hover {
     border-color: var(--border-hover);
@@ -477,6 +483,8 @@ textarea:hover {
 
 input[type="text"]:focus,
 input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
 select:focus,
 textarea:focus {
     outline: none;
