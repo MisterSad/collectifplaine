@@ -75,8 +75,7 @@ const Store = (() => {
 
             if (msgError) throw msgError;
 
-            // 6. Assemblage au format de l'application
-            _incidents = incidents || [];
+            // 6.             _incidents = incidents || [];
             _messages = messages || [];
             _elevators = elevators.map(el => {
                 const elReports = reports
@@ -90,7 +89,7 @@ const Store = (() => {
                     }))
                     : [];
 
-                    const elHistory = histories
+                const elHistory = histories
                     ? histories.filter(h => String(h.entrance) === String(el.id)).map(h => ({
                         id: h.id,
                         timestamp: new Date(h.created_at).getTime(),
@@ -156,12 +155,102 @@ const Store = (() => {
                 };
             });
             
-            // Notifier l'application que les données ont été mises à jour
+            // Mettre en cache locale pour le mode hors-ligne
+            try {
+                localStorage.setItem("leclerc_asc_cached_elevators", JSON.stringify(_elevators));
+                localStorage.setItem("leclerc_asc_cached_incidents", JSON.stringify(_incidents));
+                localStorage.setItem("leclerc_asc_cached_messages", JSON.stringify(_messages));
+            } catch (e) {
+                console.error("Erreur de sauvegarde dans le cache local", e);
+            }
+
             window.dispatchEvent(new CustomEvent("storeUpdated"));
         } catch (err) {
-            console.error("Erreur d'assemblage de l'état depuis Supabase", err);
+            console.warn("⚠️ Impossible de rafraîchir l'état depuis le serveur. Chargement du cache local.", err);
+            
+            try {
+                const cachedElevators = localStorage.getItem("leclerc_asc_cached_elevators");
+                const cachedIncidents = localStorage.getItem("leclerc_asc_cached_incidents");
+                const cachedMessages = localStorage.getItem("leclerc_asc_cached_messages");
+                
+                if (cachedElevators) _elevators = JSON.parse(cachedElevators);
+                if (cachedIncidents) _incidents = JSON.parse(cachedIncidents);
+                if (cachedMessages) _messages = JSON.parse(cachedMessages);
+                
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                
+                if (cachedElevators) {
+                    return; // Succès de chargement depuis le cache, ne pas lever d'erreur
+                }
+            } catch (cacheErr) {
+                console.error("Erreur lors de la lecture du cache local", cacheErr);
+            }
             throw err;
         }
+    }
+
+    // ── GESTION DE LA FILE DE SYNCHRONISATION HORS-LIGNE ──
+    const SYNC_QUEUE_KEY = "leclerc_asc_sync_queue";
+
+    function _getSyncQueue() {
+        try {
+            const queueStr = localStorage.getItem(SYNC_QUEUE_KEY);
+            return queueStr ? JSON.parse(queueStr) : [];
+        } catch (e) {
+            console.error("Erreur lecture file de synchronisation", e);
+            return [];
+        }
+    }
+
+    function _saveSyncQueue(queue) {
+        try {
+            localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(queue));
+        } catch (e) {
+            console.error("Erreur écriture file de synchronisation", e);
+        }
+    }
+
+    function _addToSyncQueue(action, payload) {
+        const queue = _getSyncQueue();
+        const item = {
+            id: "sq_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
+            action: action,
+            payload: payload,
+            timestamp: Date.now()
+        };
+        queue.push(item);
+        _saveSyncQueue(queue);
+
+        if (typeof window !== "undefined" && window.showSystemToast) {
+            window.showSystemToast(
+                "Mode hors-ligne",
+                "Votre action a été enregistrée localement et sera synchronisée dès le retour du réseau.",
+                "OK"
+            );
+        }
+    }
+
+    function _setupNetworkListeners() {
+        if (typeof window === "undefined") return;
+        
+        if (window._networkListenersAttached) return;
+        window._networkListenersAttached = true;
+
+        window.addEventListener("online", () => {
+            console.log("🌐 [Network] Connexion réseau rétablie !");
+            Store.syncOfflineData();
+        });
+
+        window.addEventListener("offline", () => {
+            console.log("🌐 [Network] Connexion réseau coupée.");
+            if (window.showSystemToast) {
+                window.showSystemToast(
+                    "Mode hors-ligne",
+                    "Connexion perdue. L'application reste utilisable et vos actions seront synchronisées ultérieurement.",
+                    "OK"
+                );
+            }
+        });
     }
 
     return {
@@ -169,6 +258,27 @@ const Store = (() => {
          * Initialise la connexion et effectue l'auto-seeding si la base est vide
          */
         async init() {
+            _setupNetworkListeners();
+
+            // Si hors ligne dès le départ, charger le cache et s'arrêter là
+            if (!navigator.onLine) {
+                console.log("📡 [Store] Démarrage hors-ligne détecté. Chargement des données locales...");
+                try {
+                    const cachedElevators = localStorage.getItem("leclerc_asc_cached_elevators");
+                    const cachedIncidents = localStorage.getItem("leclerc_asc_cached_incidents");
+                    const cachedMessages = localStorage.getItem("leclerc_asc_cached_messages");
+                    
+                    if (cachedElevators) _elevators = JSON.parse(cachedElevators);
+                    if (cachedIncidents) _incidents = JSON.parse(cachedIncidents);
+                    if (cachedMessages) _messages = JSON.parse(cachedMessages);
+                    
+                    window.dispatchEvent(new CustomEvent("storeUpdated"));
+                    return;
+                } catch (e) {
+                    console.error("Échec de chargement initial du cache local", e);
+                }
+            }
+
             try {
                 _ensureSupabase();
                 
@@ -213,9 +323,286 @@ const Store = (() => {
                 }
 
                 console.log("📡 [Store] Connexion Cloud Supabase opérationnelle.");
+                
+                // Lancer la synchro des données en attente au démarrage (si connecté)
+                Store.syncOfflineData();
             } catch (err) {
                 console.error("Erreur critique lors de l'initialisation Supabase.", err);
                 throw err; // Propage l'erreur pour la gérer dans app.js
+            }
+        },
+
+        async syncOfflineData() {
+            if (!navigator.onLine) return;
+            const queue = _getSyncQueue();
+            if (queue.length === 0) return;
+
+            console.log(`🔄 [Store] Début de la synchronisation de ${queue.length} actions hors-ligne...`);
+            if (window.showSystemToast) {
+                window.showSystemToast(
+                    "Synchronisation",
+                    `Synchronisation en arrière-plan de ${queue.length} action(s)...`,
+                    ""
+                );
+            }
+
+            let successCount = 0;
+            let failureCount = 0;
+            const newQueue = [];
+
+            for (const item of queue) {
+                try {
+                    _ensureSupabase();
+                    const { action, payload } = item;
+                    
+                    if (action === 'addReport') {
+                        let publicPhotoUrl = null;
+                        if (payload.rawReportData.photo) {
+                            try {
+                                const response = await fetch(payload.rawReportData.photo);
+                                const blob = await response.blob();
+                                const filePath = `reports/${payload.entranceId}/${payload.reportId}.jpg`;
+                                const { error: uploadError } = await supabase.storage
+                                    .from('elevator-photos')
+                                    .upload(filePath, blob, {
+                                        contentType: 'image/jpeg',
+                                        cacheControl: '3600',
+                                        upsert: true
+                                    });
+                                if (uploadError) throw uploadError;
+                                const { data: { publicUrl } } = supabase.storage
+                                    .from('elevator-photos')
+                                    .getPublicUrl(filePath);
+                                publicPhotoUrl = publicUrl;
+                            } catch (e) {
+                                console.error("Erreur d'upload de photo lors de la synchro :", e);
+                            }
+                        }
+
+                        const { error: insertError } = await supabase
+                            .from('reports')
+                            .insert({
+                                id: payload.reportId,
+                                entrance: String(payload.entranceId),
+                                type: String(payload.rawReportData.type),
+                                description: Security.sanitizeHTML(String(payload.rawReportData.description).trim()),
+                                user_display: payload.userDisplay,
+                                photo_url: publicPhotoUrl,
+                                created_at: new Date(payload.timestamp).toISOString()
+                            });
+                        if (insertError) throw insertError;
+
+                        const { error: updateError } = await supabase
+                            .from('elevators')
+                            .update({
+                                status: 'en_panne',
+                                last_status_change: new Date(payload.timestamp).toISOString()
+                            })
+                            .eq('id', String(payload.entranceId));
+                        if (updateError) console.error("Erreur mise à jour statut auto:", updateError);
+
+                        const { error: histError } = await supabase
+                            .from('histories')
+                            .insert({
+                                id: payload.historyId,
+                                entrance: String(payload.entranceId),
+                                status: 'en_panne',
+                                notes: `Signalement de panne automatique suite au rapport de ${payload.userDisplay}`,
+                                created_at: new Date(payload.timestamp).toISOString()
+                            });
+                        if (histError) console.error("Erreur historique auto:", histError);
+
+                    } else if (action === 'deleteReport') {
+                        const { error } = await supabase
+                            .from('reports')
+                            .delete()
+                            .eq('id', String(payload.reportId));
+                        if (error) throw error;
+
+                    } else if (action === 'addIncident') {
+                        let publicPhotoUrl = null;
+                        if (payload.rawIncidentData.photo) {
+                            try {
+                                const response = await fetch(payload.rawIncidentData.photo);
+                                const blob = await response.blob();
+                                const filePath = `incidents/${payload.rawIncidentData.category}/${payload.incidentId}.jpg`;
+                                const { error: uploadError } = await supabase.storage
+                                    .from('elevator-photos')
+                                    .upload(filePath, blob, {
+                                        contentType: 'image/jpeg',
+                                        cacheControl: '3600',
+                                        upsert: true
+                                    });
+                                if (uploadError) throw uploadError;
+                                const { data: { publicUrl } } = supabase.storage
+                                    .from('elevator-photos')
+                                    .getPublicUrl(filePath);
+                                publicPhotoUrl = publicUrl;
+                            } catch (e) {
+                                console.error("Erreur upload photo incident synchro :", e);
+                            }
+                        }
+
+                        const { error: insertError } = await supabase
+                            .from('incidents')
+                            .insert({
+                                id: payload.incidentId,
+                                entrance: String(payload.rawIncidentData.entrance),
+                                category: String(payload.rawIncidentData.category),
+                                description: Security.sanitizeHTML(String(payload.rawIncidentData.description).trim()),
+                                user_display: payload.userDisplay,
+                                photo_url: publicPhotoUrl,
+                                status: 'nouveau',
+                                created_at: new Date(payload.timestamp).toISOString()
+                            });
+                        if (insertError) throw insertError;
+
+                    } else if (action === 'updateIncidentStatus') {
+                        const { error } = await supabase
+                            .from('incidents')
+                            .update({
+                                status: String(payload.newStatus)
+                            })
+                            .eq('id', String(payload.incidentId));
+                        if (error) throw error;
+
+                    } else if (action === 'addMessage') {
+                        const { error: insertError } = await supabase
+                            .from('community_messages')
+                            .insert({
+                                id: payload.messageId,
+                                entrance: payload.rawMessageData.entrance === 'tous' ? null : String(payload.rawMessageData.entrance),
+                                type: String(payload.rawMessageData.type),
+                                content: Security.sanitizeHTML(String(payload.rawMessageData.content).trim()),
+                                author: payload.author,
+                                created_at: new Date(payload.timestamp).toISOString()
+                            });
+                        if (insertError) throw insertError;
+
+                    } else if (action === 'updateStatus') {
+                        const { error: elError } = await supabase
+                            .from('elevators')
+                            .update({
+                                status: payload.newStatus,
+                                last_status_change: new Date(payload.timestamp).toISOString(),
+                                maintenance_notes: payload.technicalNotes ? Security.sanitizeHTML(String(payload.technicalNotes).trim()) : ""
+                            })
+                            .eq('id', String(payload.entranceId));
+                        if (elError) throw elError;
+
+                        const statusLabels = {
+                            "en_service": "Remise en service",
+                            "en_maintenance": "Mise en maintenance",
+                            "en_panne": "Signalement de panne / Arrêt"
+                        };
+                        const notes = payload.technicalNotes ? Security.sanitizeHTML(String(payload.technicalNotes).trim()) : "";
+                        const historyNote = notes ? `${statusLabels[payload.newStatus]} : ${notes}` : `${statusLabels[payload.newStatus]} (changement d'état sans détails supplémentaires).`;
+
+                        const { error: histError } = await supabase
+                            .from('histories')
+                            .insert({
+                                id: payload.historyId,
+                                entrance: String(payload.entranceId),
+                                status: payload.newStatus,
+                                notes: historyNote,
+                                created_at: new Date(payload.timestamp).toISOString()
+                            });
+                        if (histError) throw histError;
+
+                        if (payload.newStatus === "en_service") {
+                            const { error: delError } = await supabase
+                                .from('reports')
+                                .delete()
+                                .eq('entrance', String(payload.entranceId));
+                            if (delError) console.error("Erreur suppression reports:", delError);
+                        }
+
+                    } else if (action === 'updateTenantProfile') {
+                        const { username, entrance, apartment, firstName, lastName, notifications, phone, email } = payload;
+                        const normalizedUser = Security.sanitizeHTML(String(username).trim());
+                        const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
+                        const cleanFirstName = Security.sanitizeHTML(String(firstName).trim());
+                        const cleanLastName = Security.sanitizeHTML(String(lastName).trim());
+                        const cleanPhone = Security.sanitizeHTML(String(phone).trim());
+                        const cleanEmail = Security.sanitizeHTML(String(email).trim());
+
+                        try {
+                            const { error } = await supabase
+                                .from('residents')
+                                .update({
+                                    entrance: String(entrance),
+                                    apartment: normalizedApartment,
+                                    first_name: cleanFirstName,
+                                    last_name: cleanLastName,
+                                    notifications: Boolean(notifications),
+                                    phone: cleanPhone,
+                                    email: cleanEmail
+                                })
+                                .ilike('username', normalizedUser);
+                            if (error) throw error;
+                        } catch (err) {
+                            console.warn("Échec de mise à jour des colonnes de contact en synchro. Tentative de repli.", err);
+                            try {
+                                const { error: secondError } = await supabase
+                                    .from('residents')
+                                    .update({
+                                        entrance: String(entrance),
+                                        apartment: normalizedApartment,
+                                        first_name: cleanFirstName,
+                                        last_name: cleanLastName,
+                                        notifications: Boolean(notifications)
+                                    })
+                                    .ilike('username', normalizedUser);
+                                if (secondError) throw secondError;
+                            } catch (fallbackErr) {
+                                console.warn("Échec de mise à jour des colonnes de profil en synchro. Tentative de mise à jour restreinte d'origine.", fallbackErr);
+                                const { error: fallbackError } = await supabase
+                                    .from('residents')
+                                    .update({
+                                        entrance: String(entrance),
+                                        apartment: normalizedApartment
+                                    })
+                                    .ilike('username', normalizedUser);
+                                if (fallbackError) throw fallbackError;
+                            }
+                        }
+                    }
+
+                    successCount++;
+                } catch (err) {
+                    console.error(`❌ [Store] Échec de la synchronisation de l'action ${item.action}`, err);
+                    failureCount++;
+                    newQueue.push(item);
+                }
+            }
+
+            _saveSyncQueue(newQueue);
+
+            if (successCount > 0) {
+                console.log(`✅ [Store] Synchronisation réussie pour ${successCount} action(s).`);
+                if (window.showSystemToast) {
+                    window.showSystemToast(
+                        "Synchronisation réussie",
+                        `${successCount} action(s) synchronisée(s) avec succès.`,
+                        "OK"
+                    );
+                }
+                try {
+                    await _fetchAndAssembleState();
+                } catch (e) {
+                    console.error("Erreur de rafraîchissement post-synchro :", e);
+                }
+            }
+
+            if (failureCount > 0) {
+                console.warn(`⚠️ [Store] ${failureCount} action(s) n'ont pas pu être synchronisées.`);
+                if (window.showSystemToast) {
+                    window.showSystemToast(
+                        "Synchronisation partielle",
+                        `${failureCount} action(s) en attente de réseau ou de résolution.`,
+                        "OK"
+                    );
+                }
             }
         },
 
@@ -237,11 +624,58 @@ const Store = (() => {
         },
 
         async addReport(entranceId, rawReportData) {
-            _ensureSupabase();
             const loggedTenant = Security.getLoggedInTenant();
             if (!loggedTenant) {
                 throw new Error("Accès refusé : Vous devez créer un compte locataire et être connecté pour signaler un incident.");
             }
+
+            if (!navigator.onLine) {
+                const reportId = "r_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const historyId = "h_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const userDisplay = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
+                
+                _addToSyncQueue('addReport', {
+                    entranceId,
+                    rawReportData,
+                    reportId,
+                    historyId,
+                    userDisplay,
+                    timestamp: Date.now()
+                });
+
+                const elevator = _elevators.find(e => String(e.id) === String(entranceId));
+                if (elevator) {
+                    const localReport = {
+                        id: reportId,
+                        timestamp: Date.now(),
+                        type: rawReportData.type,
+                        description: Security.sanitizeHTML(String(rawReportData.description).trim()),
+                        user: userDisplay,
+                        photo: rawReportData.photo || null
+                    };
+                    elevator.tenantReports = elevator.tenantReports || [];
+                    elevator.tenantReports.unshift(localReport);
+
+                    if (elevator.status !== 'en_panne') {
+                        elevator.status = 'en_panne';
+                        elevator.lastStatusChange = Date.now();
+                        const localHistory = {
+                            id: historyId,
+                            timestamp: Date.now(),
+                            status: 'en_panne',
+                            notes: `Signalement de panne automatique suite au rapport de ${userDisplay}`
+                        };
+                        elevator.history = elevator.history || [];
+                        elevator.history.unshift(localHistory);
+                    }
+                }
+
+                localStorage.setItem("leclerc_asc_cached_elevators", JSON.stringify(_elevators));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return { id: reportId, photo: rawReportData.photo || null };
+            }
+
+            _ensureSupabase();
 
             const reportId = "r_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
             let publicPhotoUrl = null;
@@ -323,10 +757,30 @@ const Store = (() => {
         },
 
         async deleteReport(entranceId, reportId) {
-            _ensureSupabase();
             if (!Security.getLoggedInTenant()) {
                 throw new Error("Accès refusé : Vous devez être connecté pour supprimer un signalement.");
             }
+
+            if (!navigator.onLine) {
+                if (String(reportId).startsWith("r_offline_")) {
+                    const queue = _getSyncQueue();
+                    const updatedQueue = queue.filter(item => !(item.action === 'addReport' && item.payload.reportId === reportId));
+                    _saveSyncQueue(updatedQueue);
+                } else {
+                    _addToSyncQueue('deleteReport', { entranceId, reportId });
+                }
+
+                const elevator = _elevators.find(e => String(e.id) === String(entranceId));
+                if (elevator && elevator.tenantReports) {
+                    elevator.tenantReports = elevator.tenantReports.filter(r => String(r.id) !== String(reportId));
+                }
+
+                localStorage.setItem("leclerc_asc_cached_elevators", JSON.stringify(_elevators));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return true;
+            }
+
+            _ensureSupabase();
 
             const { error } = await supabase
                 .from('reports')
@@ -339,11 +793,40 @@ const Store = (() => {
         },
 
         async addIncident(rawIncidentData) {
-            _ensureSupabase();
             const loggedTenant = Security.getLoggedInTenant();
             if (!loggedTenant) {
                 throw new Error("Accès refusé : Vous devez être connecté pour signaler un incident.");
             }
+
+            if (!navigator.onLine) {
+                const incidentId = "i_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const userDisplay = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
+
+                _addToSyncQueue('addIncident', {
+                    rawIncidentData,
+                    incidentId,
+                    userDisplay,
+                    timestamp: Date.now()
+                });
+
+                const localIncident = {
+                    id: incidentId,
+                    entrance: String(rawIncidentData.entrance),
+                    category: String(rawIncidentData.category),
+                    description: Security.sanitizeHTML(String(rawIncidentData.description).trim()),
+                    user_display: userDisplay,
+                    photo_url: rawIncidentData.photo || null,
+                    status: 'nouveau',
+                    created_at: new Date().toISOString()
+                };
+                _incidents.unshift(localIncident);
+
+                localStorage.setItem("leclerc_asc_cached_incidents", JSON.stringify(_incidents));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return { id: incidentId };
+            }
+
+            _ensureSupabase();
 
             const incidentId = "i_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
             let publicPhotoUrl = null;
@@ -393,10 +876,24 @@ const Store = (() => {
         },
 
         async updateIncidentStatus(incidentId, newStatus) {
-            _ensureSupabase();
             if (!Security.getLoggedInTenant()) {
                 throw new Error("Accès refusé : Vous devez être connecté pour mettre à jour le statut d'un incident.");
             }
+
+            if (!navigator.onLine) {
+                _addToSyncQueue('updateIncidentStatus', { incidentId, newStatus });
+
+                const incident = _incidents.find(i => String(i.id) === String(incidentId));
+                if (incident) {
+                    incident.status = String(newStatus);
+                }
+
+                localStorage.setItem("leclerc_asc_cached_incidents", JSON.stringify(_incidents));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return true;
+            }
+
+            _ensureSupabase();
 
             const { error } = await supabase
                 .from('incidents')
@@ -411,11 +908,38 @@ const Store = (() => {
         },
 
         async addMessage(rawMessageData) {
-            _ensureSupabase();
             const loggedTenant = Security.getLoggedInTenant();
             if (!loggedTenant) {
                 throw new Error("Accès refusé : Vous devez être connecté pour publier un message.");
             }
+
+            if (!navigator.onLine) {
+                const messageId = "m_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const author = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
+
+                _addToSyncQueue('addMessage', {
+                    rawMessageData,
+                    messageId,
+                    author,
+                    timestamp: Date.now()
+                });
+
+                const localMessage = {
+                    id: messageId,
+                    entrance: rawMessageData.entrance === 'tous' ? null : String(rawMessageData.entrance),
+                    type: String(rawMessageData.type),
+                    content: Security.sanitizeHTML(String(rawMessageData.content).trim()),
+                    author: author,
+                    created_at: new Date().toISOString()
+                };
+                _messages.unshift(localMessage);
+
+                localStorage.setItem("leclerc_asc_cached_messages", JSON.stringify(_messages));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return { id: messageId };
+            }
+
+            _ensureSupabase();
 
             const messageId = "m_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
             const author = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
@@ -436,10 +960,55 @@ const Store = (() => {
         },
 
         async updateStatus(entranceId, newStatus, technicalNotes) {
-            _ensureSupabase();
             if (!Security.getLoggedInTenant()) {
                 throw new Error("Accès refusé : Vous devez être connecté pour mettre à jour le statut.");
             }
+
+            if (!navigator.onLine) {
+                const historyId = "h_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const sanitizedNotes = technicalNotes ? Security.sanitizeHTML(String(technicalNotes).trim()) : "";
+
+                _addToSyncQueue('updateStatus', {
+                    entranceId,
+                    newStatus,
+                    technicalNotes,
+                    historyId,
+                    timestamp: Date.now()
+                });
+
+                const elevator = _elevators.find(e => String(e.id) === String(entranceId));
+                if (elevator) {
+                    elevator.status = newStatus;
+                    elevator.lastStatusChange = Date.now();
+                    elevator.maintenanceNotes = sanitizedNotes;
+
+                    const statusLabels = {
+                        "en_service": "Remise en service",
+                        "en_maintenance": "Mise en maintenance",
+                        "en_panne": "Signalement de panne / Arrêt"
+                    };
+                    const historyNote = sanitizedNotes ? `${statusLabels[newStatus]} : ${sanitizedNotes}` : `${statusLabels[newStatus]} (changement d'état sans détails supplémentaires).`;
+
+                    const localHistory = {
+                        id: historyId,
+                        timestamp: Date.now(),
+                        status: newStatus,
+                        notes: historyNote
+                    };
+                    elevator.history = elevator.history || [];
+                    elevator.history.unshift(localHistory);
+
+                    if (newStatus === "en_service") {
+                        elevator.tenantReports = [];
+                    }
+                }
+
+                localStorage.setItem("leclerc_asc_cached_elevators", JSON.stringify(_elevators));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return true;
+            }
+
+            _ensureSupabase();
 
             const sanitizedNotes = technicalNotes ? Security.sanitizeHTML(String(technicalNotes).trim()) : "";
             const historyId = "h_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
@@ -620,13 +1189,49 @@ const Store = (() => {
         },
 
         async updateTenantProfile(username, entrance, apartment, firstName = "", lastName = "", notifications = false, phone = "", email = "") {
-            _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
             const cleanFirstName = Security.sanitizeHTML(String(firstName).trim());
             const cleanLastName = Security.sanitizeHTML(String(lastName).trim());
             const cleanPhone = Security.sanitizeHTML(String(phone).trim());
             const cleanEmail = Security.sanitizeHTML(String(email).trim());
+
+            if (!navigator.onLine) {
+                _addToSyncQueue('updateTenantProfile', {
+                    username,
+                    entrance,
+                    apartment,
+                    firstName: cleanFirstName,
+                    lastName: cleanLastName,
+                    notifications,
+                    phone: cleanPhone,
+                    email: cleanEmail
+                });
+
+                const currentTenant = Security.getLoggedInTenant();
+                if (currentTenant && currentTenant.username.toLowerCase() === normalizedUser.toLowerCase()) {
+                    currentTenant.entrance = String(entrance);
+                    currentTenant.apartment = normalizedApartment;
+                    currentTenant.first_name = cleanFirstName;
+                    currentTenant.last_name = cleanLastName;
+                    currentTenant.notifications = Boolean(notifications);
+                    currentTenant.phone = cleanPhone;
+                    currentTenant.email = cleanEmail;
+                    Security.setTenantSession(currentTenant);
+                }
+
+                localStorage.setItem(`leclerc_asc_tenant_profile_${username}`, JSON.stringify({
+                    first_name: cleanFirstName,
+                    last_name: cleanLastName,
+                    notifications: Boolean(notifications),
+                    phone: cleanPhone,
+                    email: cleanEmail
+                }));
+
+                return true;
+            }
+
+            _ensureSupabase();
 
             try {
                 // Étape 1 : Essayer de tout sauvegarder en base (incluant téléphone et e-mail)

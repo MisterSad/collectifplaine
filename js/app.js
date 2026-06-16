@@ -1897,6 +1897,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         toastContainer.appendChild(toast);
     }
+    window.showSystemToast = showSystemToast;
 
     // Enregistrement du Service Worker (PWA) avec détection active des mises à jour
     if ('serviceWorker' in navigator) {
