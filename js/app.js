@@ -35,6 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const rgpdModal = document.getElementById("rgpd-modal");
     const entrancesGrid = document.getElementById("entrances-grid");
     
+    // Theme Switcher Elements
+    const themeBtnLight = document.getElementById("theme-btn-light");
+    const themeBtnDark = document.getElementById("theme-btn-dark");
+    const sidebarThemeCheckbox = document.getElementById("sidebar-theme-checkbox");
+    
     // Stats Widgets
     const statFunctional = document.getElementById("stat-functional");
     const statMaintenance = document.getElementById("stat-maintenance");
@@ -162,7 +167,53 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
 
     function initTheme() {
-        document.documentElement.setAttribute("data-theme", "dark");
+        const savedTheme = localStorage.getItem("theme");
+        const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        
+        let theme = "light"; // default to light for trust-building & readability
+        if (savedTheme === "dark" || (savedTheme === null && systemPrefersDark)) {
+            theme = "dark";
+        }
+        
+        setTheme(theme);
+    }
+
+    function setTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+        updateThemeToggleUI(theme);
+    }
+
+    function updateThemeToggleUI(theme) {
+        if (theme === "dark") {
+            if (themeBtnLight) {
+                themeBtnLight.style.background = "none";
+                themeBtnLight.style.color = "var(--text-muted)";
+                themeBtnLight.style.boxShadow = "none";
+            }
+            if (themeBtnDark) {
+                themeBtnDark.style.background = "var(--bg-secondary)";
+                themeBtnDark.style.color = "var(--text-primary)";
+                themeBtnDark.style.boxShadow = "var(--shadow-sm)";
+            }
+            if (sidebarThemeCheckbox) {
+                sidebarThemeCheckbox.checked = true;
+            }
+        } else {
+            if (themeBtnLight) {
+                themeBtnLight.style.background = "var(--bg-secondary)";
+                themeBtnLight.style.color = "var(--text-primary)";
+                themeBtnLight.style.boxShadow = "var(--shadow-sm)";
+            }
+            if (themeBtnDark) {
+                themeBtnDark.style.background = "none";
+                themeBtnDark.style.color = "var(--text-muted)";
+                themeBtnDark.style.boxShadow = "none";
+            }
+            if (sidebarThemeCheckbox) {
+                sidebarThemeCheckbox.checked = false;
+            }
+        }
     }
 
     // ---------------------------------------------------------
@@ -1632,6 +1683,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnOpenRgpd) {
         btnOpenRgpd.addEventListener("click", () => {
             if (rgpdModal) openModal(rgpdModal);
+        });
+    }
+
+    // Theme Switcher Listeners
+    if (themeBtnLight) {
+        themeBtnLight.addEventListener("click", () => setTheme("light"));
+    }
+    if (themeBtnDark) {
+        themeBtnDark.addEventListener("click", () => setTheme("dark"));
+    }
+    if (sidebarThemeCheckbox) {
+        sidebarThemeCheckbox.addEventListener("change", (e) => {
+            setTheme(e.target.checked ? "dark" : "light");
         });
     }
 
