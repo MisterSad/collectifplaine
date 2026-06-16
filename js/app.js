@@ -242,98 +242,155 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 3. Rendu de chaque ascenseur
-        elevators.forEach(elevator => {
-            const card = document.createElement("div");
-            card.className = "elevator-card glass";
-            card.setAttribute("role", "button");
-            card.setAttribute("aria-label", `Ascenseur entrée ${elevator.id}, statut actuel : ${formatStatusLabel(elevator.status)}`);
-            card.dataset.id = elevator.id;
-
-            // Déterminer la classe de badge de statut correspondante
-            let badgeClass = "badge-functional";
-            let statusText = "En Service";
-            
-            if (elevator.status === "en_maintenance") {
-                badgeClass = "badge-maintenance";
-                statusText = "Maintenance";
-            } else if (elevator.status === "en_panne") {
-                badgeClass = "badge-broken";
-                statusText = "En Panne";
-            }
-
-            // Nombre de signalements actifs des locataires
-            const reportCount = elevator.tenantReports.length;
-            let statusSummaryHtml = "";
-
-            if (elevator.status === "en_panne") {
-                statusSummaryHtml = `
-                    <div class="card-summary-msg color-danger"><span class="status-indicator-dot bg-danger"></span>Ascenseur à l'arrêt</div>
-                    <div class="card-summary-desc">${elevator.maintenanceNotes || "Panne en cours de diagnostic."}</div>
-                `;
-            } else if (elevator.status === "en_maintenance") {
-                statusSummaryHtml = `
-                    <div class="card-summary-msg color-warning"><span class="status-indicator-dot bg-warning"></span>Travaux en cours</div>
-                    <div class="card-summary-desc">${elevator.maintenanceNotes || "Opération de maintenance périodique."}</div>
-                `;
-            } else {
-                // En service
-                if (reportCount > 0) {
-                    statusSummaryHtml = `
-                        <div class="card-summary-msg color-warning"><span class="status-indicator-dot bg-warning"></span>Dysfonctionnements signalés</div>
-                        <div class="card-summary-desc">${reportCount} signalement${reportCount > 1 ? 's' : ''} actif${reportCount > 1 ? 's' : ''}.</div>
-                    `;
-                } else {
-                    statusSummaryHtml = `
-                        <div class="card-summary-msg color-success"><span class="status-indicator-dot bg-success"></span>Fonctionnement normal</div>
-                        <div class="card-summary-desc">Aucun incident signalé récemment.</div>
-                    `;
-                }
-            }
-
-            // Génération du badge de signalement (si applicable)
-            const reportBadgeHtml = (reportCount > 0 && elevator.status !== "en_panne") 
-                ? `<div class="report-counter-tag">${reportCount} signalement${reportCount > 1 ? 's' : ''}</div>` 
-                : "";
-
-            // Chercher les informations de l'entrée dans la configuration
+        // 3. Trier et grouper les ascenseurs par rue
+        const sortedElevators = [...elevators].sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
+        
+        const groupedByStreet = {};
+        sortedElevators.forEach(elevator => {
             const entrance = (typeof CONFIG !== "undefined" && CONFIG.entrances) 
                 ? CONFIG.entrances.find(ent => String(ent.id) === String(elevator.id))
                 : null;
             const streetName = entrance ? entrance.street : "Avenue Division Leclerc";
-            const displayTitle = entrance ? entrance.shortLabel : `N° ${elevator.id}`;
+            
+            if (!groupedByStreet[streetName]) {
+                groupedByStreet[streetName] = [];
+            }
+            groupedByStreet[streetName].push(elevator);
+        });
 
-            // Structure interne de la carte
-            card.innerHTML = `
-                <div class="card-header">
-                    <div class="entrance-label">
-                        <span class="title">${displayTitle}</span>
-                        <span class="road">${streetName}</span>
-                    </div>
-                    <span class="status-badge ${badgeClass}">${statusText}</span>
-                </div>
-                <div class="card-content">
-                    ${statusSummaryHtml}
-                    ${reportBadgeHtml}
-                </div>
-                <div class="card-actions">
-                    <button class="btn btn-secondary btn-view-details" data-id="${elevator.id}">
-                        Historique
-                    </button>
-                    <button class="btn btn-report btn-report-card" data-id="${elevator.id}">
-                        Signaler
-                    </button>
-                </div>
+        // 4. Rendu des groupes dépliables et des listes horizontales (rues triées par ordre alphabétique)
+        const sortedStreetNames = Object.keys(groupedByStreet).sort((a, b) => a.localeCompare(b, "fr", { numeric: true }));
+        sortedStreetNames.forEach(streetName => {
+            const streetElevators = groupedByStreet[streetName];
+            
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "street-group";
+            
+            const headerBtn = document.createElement("button");
+            headerBtn.type = "button";
+            headerBtn.className = "street-header-btn";
+            headerBtn.setAttribute("aria-expanded", "true");
+            headerBtn.innerHTML = `
+                <span class="street-title-wrapper">
+                    <svg class="chevron-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                    <span class="street-name">${streetName}</span>
+                </span>
+                <span class="street-count-badge">${streetElevators.length} ascenseur${streetElevators.length > 1 ? 's' : ''}</span>
             `;
+            
+            const cardsContainer = document.createElement("div");
+            cardsContainer.className = "street-cards-container";
+            
+            // Logique de déploiement
+            headerBtn.addEventListener("click", () => {
+                const isExpanded = headerBtn.getAttribute("aria-expanded") === "true";
+                headerBtn.setAttribute("aria-expanded", isExpanded ? "false" : "true");
+                cardsContainer.classList.toggle("collapsed", isExpanded);
+                if (isExpanded) {
+                    cardsContainer.setAttribute("hidden", "until-found");
+                } else {
+                    cardsContainer.removeAttribute("hidden");
+                }
+            });
+            
+            // Support de la recherche native "Find in page" (Cmd+F / Ctrl+F)
+            cardsContainer.addEventListener("beforematch", () => {
+                headerBtn.setAttribute("aria-expanded", "true");
+                cardsContainer.classList.remove("collapsed");
+            });
+            
+            groupDiv.appendChild(headerBtn);
+            groupDiv.appendChild(cardsContainer);
+            entrancesGrid.appendChild(groupDiv);
 
-            // Ajout au DOM
-            entrancesGrid.appendChild(card);
+            // Rendu de chaque carte d'ascenseur dans la rue correspondante
+            streetElevators.forEach(elevator => {
+                const card = document.createElement("div");
+                card.className = "elevator-card glass";
+                card.setAttribute("role", "button");
+                card.setAttribute("aria-label", `Ascenseur entrée ${elevator.id}, statut actuel : ${formatStatusLabel(elevator.status)}`);
+                card.dataset.id = elevator.id;
 
-            // Événement clic sur la carte globale (ouvre les détails par défaut)
-            card.addEventListener("click", (e) => {
-                // Empêcher l'ouverture si on clique sur un bouton spécifique à l'intérieur
-                if (e.target.closest("button")) return;
-                openDetailsModal(elevator.id);
+                // Déterminer la classe de badge de statut correspondante
+                let badgeClass = "badge-functional";
+                let statusText = "En Service";
+                
+                if (elevator.status === "en_maintenance") {
+                    badgeClass = "badge-maintenance";
+                    statusText = "Maintenance";
+                } else if (elevator.status === "en_panne") {
+                    badgeClass = "badge-broken";
+                    statusText = "En Panne";
+                }
+
+                // Nombre de signalements actifs des locataires
+                const reportCount = elevator.tenantReports.length;
+                let statusSummaryHtml = "";
+
+                if (elevator.status === "en_panne") {
+                    statusSummaryHtml = `
+                        <div class="card-summary-msg color-danger"><span class="status-indicator-dot bg-danger"></span>Ascenseur à l'arrêt</div>
+                        <div class="card-summary-desc">${elevator.maintenanceNotes || "Panne en cours de diagnostic."}</div>
+                    `;
+                } else if (elevator.status === "en_maintenance") {
+                    statusSummaryHtml = `
+                        <div class="card-summary-msg color-warning"><span class="status-indicator-dot bg-warning"></span>Travaux en cours</div>
+                        <div class="card-summary-desc">${elevator.maintenanceNotes || "Opération de maintenance périodique."}</div>
+                    `;
+                } else {
+                    if (reportCount > 0) {
+                        statusSummaryHtml = `
+                            <div class="card-summary-msg color-warning"><span class="status-indicator-dot bg-warning"></span>Dysfonctionnements signalés</div>
+                            <div class="card-summary-desc">${reportCount} signalement${reportCount > 1 ? 's' : ''} actif${reportCount > 1 ? 's' : ''}.</div>
+                        `;
+                    } else {
+                        statusSummaryHtml = `
+                            <div class="card-summary-msg color-success"><span class="status-indicator-dot bg-success"></span>Fonctionnement normal</div>
+                            <div class="card-summary-desc">Aucun incident signalé récemment.</div>
+                        `;
+                    }
+                }
+
+                const reportBadgeHtml = (reportCount > 0 && elevator.status !== "en_panne") 
+                    ? `<div class="report-counter-tag">${reportCount} signalement${reportCount > 1 ? 's' : ''}</div>` 
+                    : "";
+
+                const entrance = (typeof CONFIG !== "undefined" && CONFIG.entrances) 
+                    ? CONFIG.entrances.find(ent => String(ent.id) === String(elevator.id))
+                    : null;
+                const streetNameVal = entrance ? entrance.street : "Avenue Division Leclerc";
+                const displayTitle = entrance ? entrance.shortLabel : `N° ${elevator.id}`;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="entrance-label">
+                            <span class="title">${displayTitle}</span>
+                            <span class="road">${streetNameVal}</span>
+                        </div>
+                        <span class="status-badge ${badgeClass}">${statusText}</span>
+                    </div>
+                    <div class="card-content">
+                        ${statusSummaryHtml}
+                        ${reportBadgeHtml}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-secondary btn-view-details" data-id="${elevator.id}">
+                            Historique
+                        </button>
+                        <button class="btn btn-report btn-report-card" data-id="${elevator.id}">
+                            Signaler
+                        </button>
+                    </div>
+                `;
+
+                cardsContainer.appendChild(card);
+
+                card.addEventListener("click", (e) => {
+                    if (e.target.closest("button")) return;
+                    openDetailsModal(elevator.id);
+                });
             });
         });
 

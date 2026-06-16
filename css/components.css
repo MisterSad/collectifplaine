@@ -1788,3 +1788,101 @@ textarea:focus {
     box-shadow: var(--shadow-sm);
     transform: translateY(-1px);
 }
+
+/* ── STREET GROUPING & COLLAPSIBLE LISTS ── */
+.street-group {
+    margin-bottom: 2rem;
+}
+
+.street-header-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.street-header-btn:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-tertiary);
+}
+
+.street-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.street-header-btn .chevron-icon {
+    transition: transform var(--transition-normal);
+    color: var(--text-muted);
+}
+
+.street-header-btn[aria-expanded="false"] .chevron-icon {
+    transform: rotate(-90deg);
+}
+
+.street-count-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--accent-primary-dim);
+    color: var(--accent-primary);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--accent-primary-border);
+}
+
+.street-cards-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 0.5rem 0.25rem 1rem;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    transition: max-height var(--transition-normal) ease-out, opacity var(--transition-normal);
+    max-height: 500px;
+    opacity: 1;
+}
+
+/* Hide scrollbars but keep functionality */
+.street-cards-container::-webkit-scrollbar {
+    height: 6px;
+}
+.street-cards-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.street-cards-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: var(--radius-pill);
+}
+.street-cards-container::-webkit-scrollbar-thumb:hover {
+    background: var(--border-hover);
+}
+
+.street-cards-container.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Ensure cards don't shrink in horizontal row */
+.street-cards-container .elevator-card {
+    flex: 0 0 280px; /* fixed width for cards in horizontal view */
+    max-width: 280px;
+}

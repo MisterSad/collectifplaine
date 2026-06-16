@@ -842,3 +842,120 @@ button, a, select, input, textarea, label {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
 }
+
+/* ============================================================
+   STREET GROUPING - MOBILE ADAPTIVE OVERRIDES
+   ============================================================ */
+@media (max-width: 640px) {
+    /* Prevent the grid layout and make it vertical stack on mobile */
+    .entrances-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+    }
+
+    /* Force vertical column card layout inside horizontal scrolls even on mobile */
+    .street-cards-container .elevator-card {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 1.25rem !important;
+        gap: 0 !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        border-left: 1px solid var(--border-color) !important; /* restore full border */
+    }
+
+    /* Restore background/border colors of card-left line */
+    .street-cards-container .elevator-card::before {
+        display: none !important; /* hide the mobile left status stripe */
+    }
+
+    /* Restore header flex direction and title size */
+    .street-cards-container .elevator-card .card-header {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        margin-bottom: 0.85rem !important;
+    }
+
+    .street-cards-container .elevator-card .entrance-label .title {
+        font-size: 1.75rem !important;
+    }
+
+    /* Restore address display */
+    .street-cards-container .elevator-card .entrance-label .road {
+        display: block !important;
+    }
+
+    /* Restore status badge */
+    .street-cards-container .elevator-card .status-badge {
+        width: auto !important;
+        height: auto !important;
+        padding: 0.3rem 0.65rem !important;
+        border-radius: var(--radius-pill) !important;
+        font-size: 0.68rem !important;
+        border: 1px solid transparent !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+    }
+
+    .street-cards-container .elevator-card .status-badge::before {
+        display: inline-block !important;
+        position: static !important;
+        width: 5px !important;
+        height: 5px !important;
+        margin-right: 0.3rem !important;
+        border-radius: 50% !important;
+    }
+
+    .street-cards-container .elevator-card .badge-functional {
+        background: var(--color-success-bg) !important;
+        color: var(--color-success) !important;
+        border-color: var(--color-success-border) !important;
+    }
+    
+    .street-cards-container .elevator-card .badge-maintenance {
+        background: var(--color-warning-bg) !important;
+        color: var(--color-warning) !important;
+        border-color: var(--color-warning-border) !important;
+    }
+    
+    .street-cards-container .elevator-card .badge-broken {
+        background: var(--color-danger-bg) !important;
+        color: var(--color-danger) !important;
+        border-color: var(--color-danger-border) !important;
+    }
+
+    /* Restore content block */
+    .street-cards-container .elevator-card .card-content {
+        display: flex !important;
+        flex-direction: column !important;
+        margin-bottom: 1rem !important;
+        flex-grow: 1 !important;
+    }
+
+    .street-cards-container .elevator-card .card-summary-desc {
+        display: block !important;
+    }
+
+    /* Restore action buttons */
+    .street-cards-container .elevator-card .card-actions {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 0.5rem !important;
+        margin-top: auto !important;
+        margin-left: 0 !important;
+    }
+
+    .street-cards-container .elevator-card .card-actions .btn-report-card {
+        display: inline-flex !important;
+    }
+
+    .street-cards-container .elevator-card .card-actions .btn {
+        flex: 1 !important;
+        min-height: 36px !important;
+        font-size: 0.775rem !important;
+        padding: 0.35rem 0.5rem !important;
+    }
+}
