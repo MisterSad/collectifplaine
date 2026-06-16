@@ -873,7 +873,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function openReportModal(entranceId = "") {
         const tenant = Security.getLoggedInTenant();
         if (!tenant) {
-            window.location.hash = "#/compte";
+            window.location.hash = "#/landing";
             setTimeout(() => {
                 if (accountAuthError) {
                     accountAuthError.textContent = "ℹ️ Veuillez vous connecter ou créer un compte résident pour pouvoir signaler une panne.";
@@ -997,7 +997,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (quickIncidentBtn) {
         quickIncidentBtn.addEventListener("click", () => {
             if (!Security.getLoggedInTenant()) {
-                window.location.hash = "#/compte";
+                window.location.hash = "#/landing";
                 setTimeout(() => {
                     if (accountAuthError) {
                         accountAuthError.textContent = "ℹ️ Veuillez vous connecter ou créer un compte résident pour pouvoir signaler un incident.";
@@ -1483,6 +1483,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
                         openDetailsModal(activeDetailsEntranceId);
                     }
+                    
+                    // Rediriger vers la page principale
+                    window.location.hash = "#/ascenseurs";
                 }, 1500);
             } catch (err) {
                 accountAuthError.textContent = err.message;
@@ -1526,6 +1529,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
                         openDetailsModal(activeDetailsEntranceId);
                     }
+                    
+                    // Rediriger vers la page principale
+                    window.location.hash = "#/ascenseurs";
                 }, 1500);
             } catch (err) {
                 accountAuthError.textContent = err.message;
@@ -1541,7 +1547,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ---------------------------------------------------------
     
     const pageRouteMap = {
-        "#/accueil": "tab-accueil",
+        "#/landing": "tab-landing",
         "#/ascenseurs": "tab-elevators",
         "#/incidents": "tab-incidents",
         "#/charges": "tab-charges",
@@ -1549,7 +1555,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     const pageTitles = {
-        "#/accueil": "Accueil",
+        "#/landing": "Collectif Plaine - Hub Locataires",
         "#/ascenseurs": "Ascenseurs",
         "#/incidents": "Incidents",
         "#/charges": "Charges",
@@ -1557,12 +1563,30 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     function handleRouting() {
-        const hash = window.location.hash || "#/accueil";
+        const tenant = Security.getLoggedInTenant();
+        let hash = window.location.hash;
+
+        if (!tenant) {
+            // Configuration de l'affichage pour utilisateur non connecté
+            document.body.classList.add("unauth-layout");
+            if (hash !== "#/landing") {
+                window.location.hash = "#/landing";
+                return;
+            }
+        } else {
+            // Configuration de l'affichage pour utilisateur connecté
+            document.body.classList.remove("unauth-layout");
+            if (!hash || hash === "#/landing" || hash === "#/accueil") {
+                window.location.hash = "#/ascenseurs";
+                return;
+            }
+        }
+
         const targetPanelId = pageRouteMap[hash];
 
         if (!targetPanelId) {
-            // Redirection vers l'accueil si le hash est inconnu
-            window.location.hash = "#/accueil";
+            // Redirection vers l'onglet principal adapté si le hash est inconnu
+            window.location.hash = tenant ? "#/ascenseurs" : "#/landing";
             return;
         }
 
@@ -1700,6 +1724,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
                 openDetailsModal(activeDetailsEntranceId);
             }
+            window.location.hash = "#/landing";
         });
     }
 
@@ -1729,6 +1754,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderAccountNav();
                 renderDashboard();
                 refreshAccountTab();
+                window.location.hash = "#/landing";
 
                 if (activeDetailsEntranceId && !detailsModal.classList.contains("hidden")) {
                     openDetailsModal(activeDetailsEntranceId);
