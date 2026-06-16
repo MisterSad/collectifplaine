@@ -57,8 +57,11 @@
                 <a href="#/incidents" class="menu-link" data-page="page-incidents">
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> <span class="menu-text">Incidents</span>
                 </a>
+                <a href="#/guides" class="menu-link" data-page="page-guides">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span class="menu-text">Guides</span>
+                </a>
                 <a href="#/charges" class="menu-link" data-page="page-charges">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span class="menu-text">Wiki & Charges</span>
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> <span class="menu-text">Charges</span>
                 </a>
                 <a href="#/compte" class="menu-link" data-page="page-profile" id="sidebar-account-link">
                     <span class="menu-icon" id="sidebar-account-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="menu-text" id="sidebar-account-text">Mon Compte</span>
@@ -301,13 +304,13 @@
         </div>
 
         <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 5 : CHARGES (CONSTRUCTION) -->
+        <!-- CONTENU DE L'ONGLET : GUIDES PRATIQUES -->
         <!-- ============================================ -->
-        <div id="tab-charges" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
+        <div id="tab-guides" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-guides">
             <div class="wiki-header card glass">
                 <div class="wiki-title-area">
                     <span class="wiki-tag">⚖️ Droits du Locataire</span>
-                    <h2>Wiki & Guide Pratique</h2>
+                    <h2>Guides & Aide Pratique</h2>
                     <p>Découvrez vos droits et obligations face au bailleur selon la législation française en vigueur.</p>
                 </div>
             </div>
@@ -346,6 +349,30 @@
                 </div>
                 <h3>Aucun article trouvé</h3>
                 <p class="placeholder-desc" style="max-width: 450px; margin: 0.5rem auto 0;">Nous n'avons trouvé aucun guide correspondant à vos mots-clés. Essayez d'autres termes comme « chaudière », « préavis » ou « ordures ».</p>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CONTENU DE L'ONGLET : CHARGES (CONSTRUCTION) -->
+        <!-- ============================================ -->
+        <div id="tab-charges" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
+            <div class="card glass" style="max-width: 600px; margin: 3rem auto; padding: 3rem; text-align: center; border-radius: var(--radius-lg);">
+                <div style="background: rgba(37, 99, 235, 0.1); color: var(--accent-primary); width: 80px; height: 80px; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);">
+                    <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">Audit des Charges</h2>
+                <div class="assoc-badge" style="margin: 0 auto 1.5rem; display: inline-block;">Module en construction</div>
+                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                    Ce module vous permettra de téléverser vos décomptes de régularisation de charges annuelles envoyés par Valdévy.
+                    <br><br>
+                    Grâce à un outil d'analyse collective, nous pourrons éplucher chaque ligne de dépense (gardiennage, électricité des communs, entretien des ascenseurs, taxes d'ordures ménagères) afin d'identifier les surfacturations et contester les charges abusives de manière groupée.
+                </p>
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); font-size: 0.85rem; color: var(--text-muted); border: 1px solid var(--border-color);">
+                    ⏳ <strong>Bientôt disponible</strong> — Rejoignez l'amicale pour être prévenu du lancement de cet outil.
+                </div>
             </div>
         </div>
 
@@ -489,9 +516,13 @@
                 <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                 <span class="mobile-text">Incidents</span>
             </a>
+            <a href="#/guides" class="mobile-link" data-page="page-guides">
+                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="mobile-text">Guides</span>
+            </a>
             <a href="#/charges" class="mobile-link" data-page="page-charges">
-                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                <span class="mobile-text">Wiki & Ch.</span>
+                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                <span class="mobile-text">Charges</span>
             </a>
             <a href="#/compte" class="mobile-link" data-page="page-profile" id="mobile-account-link">
                 <span class="mobile-icon" id="mobile-account-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>

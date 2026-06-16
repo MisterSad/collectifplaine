@@ -1663,6 +1663,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "#/landing": "tab-landing",
         "#/ascenseurs": "tab-elevators",
         "#/incidents": "tab-incidents",
+        "#/guides": "tab-guides",
         "#/charges": "tab-charges",
         "#/compte": "tab-compte"
     };
@@ -1671,7 +1672,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "#/landing": "Collectif Plaine - Hub Locataires",
         "#/ascenseurs": "Ascenseurs",
         "#/incidents": "Incidents",
-        "#/charges": "Charges",
+        "#/guides": "Guides",
+        "#/charges": "Audit des Charges",
         "#/compte": "Mon Compte"
     };
 
@@ -1765,7 +1767,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderDashboard();
         } else if (targetPanelId === "tab-compte") {
             refreshAccountTab();
-        } else if (targetPanelId === "tab-charges") {
+        } else if (targetPanelId === "tab-guides") {
             renderWiki();
         }
     }
