@@ -225,6 +225,8 @@ const Security = (() => {
                 first_name: tenant.first_name || "",
                 last_name: tenant.last_name || "",
                 notifications: !!tenant.notifications,
+                phone: tenant.phone || "",
+                email: tenant.email || "",
                 loggedInAt: Date.now()
             };
             localStorage.setItem(TENANT_SESSION_KEY, JSON.stringify(sessionData));

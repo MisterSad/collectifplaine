@@ -964,4 +964,10 @@ button, a, select, input, textarea, label {
         font-size: 0.775rem !important;
         padding: 0.35rem 0.5rem !important;
     }
+
+    /* Stack form grid columns vertically on mobile devices */
+    .form-row {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
 }

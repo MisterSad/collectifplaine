@@ -551,7 +551,9 @@ const Store = (() => {
                 apartment: normalizedApartment,
                 first_name: "",
                 last_name: "",
-                notifications: false
+                notifications: false,
+                phone: "",
+                email: ""
             };
             Security.setTenantSession(tenant);
             return tenant;
@@ -583,9 +585,11 @@ const Store = (() => {
             let firstName = user.first_name || "";
             let lastName = user.last_name || "";
             let notifications = !!user.notifications;
+            let phone = user.phone || "";
+            let email = user.email || "";
 
             // Si non présents en DB, charger depuis le localStorage de ce navigateur (pour compatibilité)
-            if (!user.first_name && !user.last_name) {
+            if (!user.first_name && !user.last_name && !user.phone && !user.email) {
                 try {
                     const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${user.username}`);
                     if (profileStr) {
@@ -593,6 +597,8 @@ const Store = (() => {
                         firstName = profile.first_name || "";
                         lastName = profile.last_name || "";
                         notifications = !!profile.notifications;
+                        phone = profile.phone || "";
+                        email = profile.email || "";
                     }
                 } catch (e) {
                     console.error("Erreur de lecture fallback localStorage", e);
@@ -605,21 +611,25 @@ const Store = (() => {
                 apartment: user.apartment,
                 first_name: firstName,
                 last_name: lastName,
-                notifications: notifications
+                notifications: notifications,
+                phone: phone,
+                email: email
             };
             Security.setTenantSession(tenant);
             return tenant;
         },
 
-        async updateTenantProfile(username, entrance, apartment, firstName = "", lastName = "", notifications = false) {
+        async updateTenantProfile(username, entrance, apartment, firstName = "", lastName = "", notifications = false, phone = "", email = "") {
             _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
             const cleanFirstName = Security.sanitizeHTML(String(firstName).trim());
             const cleanLastName = Security.sanitizeHTML(String(lastName).trim());
+            const cleanPhone = Security.sanitizeHTML(String(phone).trim());
+            const cleanEmail = Security.sanitizeHTML(String(email).trim());
 
             try {
-                // Tenter de sauvegarder toutes les informations (si les colonnes existent)
+                // Étape 1 : Essayer de tout sauvegarder en base (incluant téléphone et e-mail)
                 const { error } = await supabase
                     .from('residents')
                     .update({
@@ -627,24 +637,44 @@ const Store = (() => {
                         apartment: normalizedApartment,
                         first_name: cleanFirstName,
                         last_name: cleanLastName,
-                        notifications: Boolean(notifications)
+                        notifications: Boolean(notifications),
+                        phone: cleanPhone,
+                        email: cleanEmail
                     })
                     .ilike('username', normalizedUser);
 
                 if (error) throw error;
             } catch (err) {
-                console.warn("Échec de mise à jour des colonnes étendues (first_name, last_name, notifications). Tentative de mise à jour restreinte.", err);
+                console.warn("Échec de mise à jour des colonnes de contact. Tentative de repli sans téléphone/e-mail.", err);
                 
-                // Fallback : mise à jour uniquement des colonnes d'origine
-                const { error: fallbackError } = await supabase
-                    .from('residents')
-                    .update({
-                        entrance: String(entrance),
-                        apartment: normalizedApartment
-                    })
-                    .ilike('username', normalizedUser);
+                try {
+                    // Étape 2 : Repli sans téléphone et e-mail (si ces colonnes n'existent pas encore en DB)
+                    const { error: secondError } = await supabase
+                        .from('residents')
+                        .update({
+                            entrance: String(entrance),
+                            apartment: normalizedApartment,
+                            first_name: cleanFirstName,
+                            last_name: cleanLastName,
+                            notifications: Boolean(notifications)
+                        })
+                        .ilike('username', normalizedUser);
 
-                if (fallbackError) throw fallbackError;
+                    if (secondError) throw secondError;
+                } catch (fallbackErr) {
+                    console.warn("Échec de mise à jour des colonnes de profil. Tentative de mise à jour restreinte d'origine.", fallbackErr);
+                    
+                    // Étape 3 : Repli restreint aux colonnes de base d'origine (entrée et appartement)
+                    const { error: fallbackError } = await supabase
+                        .from('residents')
+                        .update({
+                            entrance: String(entrance),
+                            apartment: normalizedApartment
+                        })
+                        .ilike('username', normalizedUser);
+
+                    if (fallbackError) throw fallbackError;
+                }
             }
 
             // Mettre à jour la session locale
@@ -655,6 +685,8 @@ const Store = (() => {
                 currentTenant.first_name = cleanFirstName;
                 currentTenant.last_name = cleanLastName;
                 currentTenant.notifications = Boolean(notifications);
+                currentTenant.phone = cleanPhone;
+                currentTenant.email = cleanEmail;
                 Security.setTenantSession(currentTenant);
             }
             return true;

@@ -1383,9 +1383,11 @@ document.addEventListener("DOMContentLoaded", () => {
             let firstName = tenant.first_name || "";
             let lastName = tenant.last_name || "";
             let notifications = !!tenant.notifications;
+            let phone = tenant.phone || "";
+            let email = tenant.email || "";
 
             // Fallback en localStorage si non renseigné dans la session (pour compatibilité)
-            if (!firstName && !lastName) {
+            if (!firstName && !lastName && !phone && !email) {
                 try {
                     const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${tenant.username}`);
                     if (profileStr) {
@@ -1393,6 +1395,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         firstName = profile.first_name || "";
                         lastName = profile.last_name || "";
                         notifications = !!profile.notifications;
+                        phone = profile.phone || "";
+                        email = profile.email || "";
                     }
                 } catch (e) {
                     console.error(e);
@@ -1401,6 +1405,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.getElementById("account-firstname").value = firstName;
             document.getElementById("account-lastname").value = lastName;
+            document.getElementById("account-email").value = email;
+            document.getElementById("account-phone").value = phone;
             document.getElementById("account-notifications").checked = notifications;
 
             if (showWelcomeMessage) {
@@ -1640,6 +1646,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const firstName = document.getElementById("account-firstname").value.trim();
             const lastName = document.getElementById("account-lastname").value.trim();
+            const email = document.getElementById("account-email").value.trim();
+            const phone = document.getElementById("account-phone").value.trim();
             const entrance = document.getElementById("account-entrance").value;
             const apartment = document.getElementById("account-apartment").value.trim();
             const notifications = document.getElementById("account-notifications").checked;
@@ -1649,13 +1657,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 // 1. Mettre à jour la table des résidents
-                await Store.updateTenantProfile(tenant.username, entrance, apartment, firstName, lastName, notifications);
+                await Store.updateTenantProfile(tenant.username, entrance, apartment, firstName, lastName, notifications, phone, email);
 
-                // 2. Enregistrer les informations locales (Nom, Prenom, pref notif)
+                // 2. Enregistrer les informations locales (Nom, Prenom, pref notif, email, tel)
                 const profileData = {
                     first_name: firstName,
                     last_name: lastName,
-                    notifications: notifications
+                    notifications: notifications,
+                    phone: phone,
+                    email: email
                 };
                 localStorage.setItem(`leclerc_asc_tenant_profile_${tenant.username}`, JSON.stringify(profileData));
 
@@ -1987,7 +1997,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (cfg.id === "report-entrance") {
                     text = `N° ${ent.id} - ${shortStreet}`;
                 } else if (cfg.id === "account-entrance") {
-                    text = `Entrée ${ent.id} (${shortStreet})`;
+                    text = ent.label;
                 } else {
                     text = ent.label || ent.id;
                 }
