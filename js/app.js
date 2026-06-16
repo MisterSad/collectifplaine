@@ -86,6 +86,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const incidentSuccessMsg = document.getElementById("incident-success-msg");
     const incidentsFeed = document.getElementById("incidents-feed");
 
+    // Modale : Mise à jour d'incident
+    const updateIncidentModal = document.getElementById("update-incident-modal");
+    const updateIncidentForm = document.getElementById("update-incident-form");
+    const updateIncidentIdInput = document.getElementById("update-incident-id");
+    const updateIncidentStatusSelect = document.getElementById("update-incident-status");
+    const updateIncidentDescriptionText = document.getElementById("update-incident-description");
+    const updateIncidentErrorMsg = document.getElementById("update-incident-error-msg");
+    const updateIncidentSuccessMsg = document.getElementById("update-incident-success-msg");
+
     
     // Formulaire Signalement - Éléments Photo
     const reportPhotoInput = document.getElementById("report-photo");
@@ -435,13 +444,13 @@ document.addEventListener("DOMContentLoaded", () => {
         incidents.forEach(incident => {
             const el = document.createElement("div");
             el.className = "report-item";
-            
             const badgeClass = incident.status === 'resolu' ? 'incident-badge incident-badge-repare' : 'incident-badge incident-badge-encours';
             const badgeText = incident.status === 'resolu' ? 'Réparé' : 'En cours';
-
-            // Si connecté, on propose un bouton pour modifier le statut
+ 
+            // Si connecté, on propose un bouton pour modifier le statut et un bouton d'édition
             const tenant = Security.getLoggedInTenant();
             let actionBtnHtml = "";
+            let editBtnHtml = "";
             if (tenant) {
                 const nextStatus = incident.status === 'resolu' ? 'en_cours' : 'resolu';
                 const btnLabel = incident.status === 'resolu' ? 'Remettre en cours' : 'Marquer comme réparé';
@@ -451,15 +460,43 @@ document.addEventListener("DOMContentLoaded", () => {
                         ${btnLabel}
                     </button>
                 `;
+                editBtnHtml = `
+                    <button class="btn-edit-incident" data-id="${incident.id}" style="background:rgba(167,139,250,0.1); color:var(--accent-primary); border:1px solid rgba(167,139,250,0.2); font-size:0.7rem; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600; font-family:inherit; margin:0;">
+                        Mettre à jour
+                    </button>
+                `;
             }
 
+            // Calculer la durée d'existence de l'incident
+            const createdTime = new Date(incident.created_at).getTime();
+            const timeDiff = Date.now() - createdTime;
+            const daysDiff = Math.floor(timeDiff / (24 * 60 * 60 * 1000));
+            const hoursDiff = Math.floor(timeDiff / (60 * 60 * 1000));
+            const minsDiff = Math.floor(timeDiff / (60 * 1000));
+            
+            let ageText = "";
+            if (daysDiff > 0) {
+                ageText = `il y a ${daysDiff} jour${daysDiff > 1 ? 's' : ''}`;
+            } else if (hoursDiff > 0) {
+                ageText = `il y a ${hoursDiff} h`;
+            } else {
+                ageText = `il y a ${minsDiff > 0 ? minsDiff : 1} min`;
+            }
+
+            const ageBadgeHtml = incident.status === 'resolu'
+                ? `<span class="incident-age-badge" style="font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:12px; background:rgba(16, 185, 129, 0.1); color:#10b981; border:1px solid rgba(16, 185, 129, 0.2); display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Résolu</span>`
+                : `<span class="incident-age-badge" style="font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:12px; background:rgba(239, 68, 68, 0.1); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Ouvert ${ageText}</span>`;
+
             el.innerHTML = `
-                <div class="report-header">
+                <div class="report-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
                     <div class="report-meta">
                         <strong>${categoryIcons[incident.category] || `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" class="icon-inline"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`} ${incident.entrance !== 'tous' ? 'Bâtiment ' + incident.entrance : 'Espaces Communs'}</strong>
                         <span class="report-author"></span>
                     </div>
-                    <span class="report-time">${formatTimeAgo(new Date(incident.created_at).getTime())}</span>
+                    <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:flex-end;">
+                        ${ageBadgeHtml}
+                        <span class="report-time">${formatTimeAgo(new Date(incident.created_at).getTime())}</span>
+                    </div>
                 </div>
                 <div class="report-content">
                     <p></p>
@@ -467,25 +504,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${incident.photo_url ? `<div class="report-photo-thumb" style="background-image: url('${incident.photo_url}'); cursor:pointer;" onclick="window.openLightbox('${incident.photo_url}')" title="Agrandir la photo"></div>` : ""}
                 <div style="margin-top:0.75rem; display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; width:100%;">
                     <span class="${badgeClass}">${badgeText}</span>
-                    ${actionBtnHtml}
+                    <div style="display:flex; gap:0.4rem;">
+                        ${actionBtnHtml}
+                        ${editBtnHtml}
+                    </div>
                 </div>
             `;
             el.querySelector(".report-author").textContent = incident.user_display;
             el.querySelector(".report-content p").textContent = incident.description;
-
+ 
             // Rendre toute la tuile cliquable pour agrandir la photo si présente
             if (incident.photo_url) {
                 el.style.cursor = "pointer";
                 el.title = "Cliquez pour agrandir la photo";
                 el.addEventListener("click", (e) => {
-                    if (e.target.closest(".btn-toggle-incident-status")) return;
+                    if (e.target.closest(".btn-toggle-incident-status") || e.target.closest(".btn-edit-incident")) return;
                     window.openLightbox(incident.photo_url);
                 });
             }
-
+ 
             incidentsFeed.appendChild(el);
         });
-
+ 
         // Liaison des boutons de changement d'état
         incidentsFeed.querySelectorAll(".btn-toggle-incident-status").forEach(btn => {
             btn.addEventListener("click", async (e) => {
@@ -500,6 +540,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 } catch (err) {
                     alert("Erreur lors de la mise à jour du statut de l'incident : " + err.message);
                     btn.disabled = false;
+                }
+            });
+        });
+
+        // Liaison des boutons de modification
+        incidentsFeed.querySelectorAll(".btn-edit-incident").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                const incidentItem = incidents.find(i => String(i.id) === String(id));
+                if (incidentItem) {
+                    openUpdateIncidentModal(incidentItem);
                 }
             });
         });
@@ -1054,6 +1106,49 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 incidentErrorMsg.textContent = err.message;
                 incidentErrorMsg.classList.remove("hidden");
+                submitBtn.disabled = false;
+            }
+        });
+    }
+
+    function openUpdateIncidentModal(incident) {
+        if (!updateIncidentModal) return;
+        updateIncidentIdInput.value = incident.id;
+        updateIncidentStatusSelect.value = incident.status;
+        updateIncidentDescriptionText.value = incident.description;
+        
+        updateIncidentErrorMsg.classList.add("hidden");
+        updateIncidentSuccessMsg.classList.add("hidden");
+        openModal(updateIncidentModal);
+    }
+
+    if (updateIncidentForm) {
+        updateIncidentForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            updateIncidentErrorMsg.classList.add("hidden");
+            updateIncidentSuccessMsg.classList.add("hidden");
+
+            const id = updateIncidentIdInput.value;
+            const status = updateIncidentStatusSelect.value;
+            const description = updateIncidentDescriptionText.value;
+
+            const submitBtn = updateIncidentForm.querySelector("button[type='submit']");
+            submitBtn.disabled = true;
+
+            try {
+                await Store.updateIncident(id, { status, description });
+                
+                updateIncidentSuccessMsg.textContent = "Incident mis à jour avec succès.";
+                updateIncidentSuccessMsg.classList.remove("hidden");
+                
+                setTimeout(() => {
+                    closeModal(updateIncidentModal);
+                    submitBtn.disabled = false;
+                    renderIncidents();
+                }, 1500);
+            } catch (err) {
+                updateIncidentErrorMsg.textContent = err.message;
+                updateIncidentErrorMsg.classList.remove("hidden");
                 submitBtn.disabled = false;
             }
         });

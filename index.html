@@ -730,6 +730,43 @@
         </div>
     </div>
 
+    <!-- ============================================ -->
+    <!-- MODALE : METTRE À JOUR UN INCIDENT -->
+    <!-- ============================================ -->
+    <div id="update-incident-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
+        <div class="modal-card glass" tabindex="-1">
+            <div class="modal-header">
+                <h3>Mettre à jour l'Incident</h3>
+                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
+            </div>
+            <form id="update-incident-form">
+                <input type="hidden" id="update-incident-id">
+                <div class="modal-body">
+                    <div id="update-incident-error-msg" class="alert-box alert-danger hidden"></div>
+                    <div id="update-incident-success-msg" class="alert-box alert-success hidden"></div>
+                    
+                    <div class="form-group">
+                        <label for="update-incident-status">Statut de l'incident <span class="required">*</span></label>
+                        <select id="update-incident-status" required>
+                            <option value="nouveau">Nouveau</option>
+                            <option value="en_cours">En cours de traitement</option>
+                            <option value="resolu">Résolu / Réparé</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update-incident-description">Description / Notes de suivi <span class="required">*</span></label>
+                        <textarea id="update-incident-description" rows="4" required placeholder="Décrivez l'évolution du problème..." maxlength="300"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary pulse-button">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- MODALE : ZOOM PHOTO (LIGHTBOX) -->
     <!-- ============================================ -->

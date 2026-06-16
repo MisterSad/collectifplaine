@@ -467,6 +467,18 @@ const Store = (() => {
                             .eq('id', String(payload.incidentId));
                         if (error) throw error;
 
+                    } else if (action === 'updateIncident') {
+                        const allowedFields = {};
+                        if (payload.fields.status !== undefined) allowedFields.status = String(payload.fields.status);
+                        if (payload.fields.description !== undefined) {
+                            allowedFields.description = Security.sanitizeHTML(String(payload.fields.description).trim());
+                        }
+                        const { error } = await supabase
+                            .from('incidents')
+                            .update(allowedFields)
+                            .eq('id', String(payload.incidentId));
+                        if (error) throw error;
+
                     } else if (action === 'addMessage') {
                         const { error: insertError } = await supabase
                             .from('community_messages')
@@ -901,6 +913,43 @@ const Store = (() => {
                 .update({
                     status: String(newStatus)
                 })
+                .eq('id', String(incidentId));
+
+            if (error) throw error;
+            await _fetchAndAssembleState();
+            return true;
+        },
+
+        async updateIncident(incidentId, fields) {
+            if (!Security.getLoggedInTenant()) {
+                throw new Error("Accès refusé : Vous devez être connecté pour modifier un incident.");
+            }
+
+            const allowedFields = {};
+            if (fields.status !== undefined) allowedFields.status = String(fields.status);
+            if (fields.description !== undefined) {
+                allowedFields.description = Security.sanitizeHTML(String(fields.description).trim());
+            }
+
+            if (!navigator.onLine) {
+                _addToSyncQueue('updateIncident', { incidentId, fields });
+
+                const incident = _incidents.find(i => String(i.id) === String(incidentId));
+                if (incident) {
+                    if (fields.status !== undefined) incident.status = String(fields.status);
+                    if (fields.description !== undefined) incident.description = allowedFields.description;
+                }
+
+                localStorage.setItem("leclerc_asc_cached_incidents", JSON.stringify(_incidents));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return true;
+            }
+
+            _ensureSupabase();
+
+            const { error } = await supabase
+                .from('incidents')
+                .update(allowedFields)
                 .eq('id', String(incidentId));
 
             if (error) throw error;
