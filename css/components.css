@@ -272,12 +272,21 @@
     box-shadow: 0 0 4px var(--color-success);
 }
 .incident-badge-encours {
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning-border);
+}
+.incident-badge-encours::before {
+    background: var(--color-warning);
+    box-shadow: 0 0 4px var(--color-warning);
+}
+.incident-badge-nouveau {
     background: var(--color-danger-bg);
     color: var(--color-danger);
     border: 1px solid var(--color-danger-border);
     animation: pulseDanger 2s infinite;
 }
-.incident-badge-encours::before {
+.incident-badge-nouveau::before {
     background: var(--color-danger);
     box-shadow: 0 0 4px var(--color-danger);
 }

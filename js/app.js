@@ -444,8 +444,16 @@ document.addEventListener("DOMContentLoaded", () => {
         incidents.forEach(incident => {
             const el = document.createElement("div");
             el.className = "report-item";
-            const badgeClass = incident.status === 'resolu' ? 'incident-badge incident-badge-repare' : 'incident-badge incident-badge-encours';
-            const badgeText = incident.status === 'resolu' ? 'Réparé' : 'En cours';
+            let badgeClass = "incident-badge incident-badge-nouveau";
+            let badgeText = "Nouveau";
+            
+            if (incident.status === 'en_cours') {
+                badgeClass = "incident-badge incident-badge-encours";
+                badgeText = "En cours";
+            } else if (incident.status === 'resolu') {
+                badgeClass = "incident-badge incident-badge-repare";
+                badgeText = "Réparé";
+            }
  
             // Si connecté, on propose un bouton pour modifier le statut et un bouton d'édition
             const tenant = Security.getLoggedInTenant();
@@ -454,7 +462,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (tenant) {
                 const nextStatus = incident.status === 'resolu' ? 'en_cours' : 'resolu';
                 const btnLabel = incident.status === 'resolu' ? 'Remettre en cours' : 'Marquer comme réparé';
-                const btnStyle = incident.status === 'resolu' ? 'background:rgba(239,68,68,0.1); color:var(--color-danger); border:1px solid rgba(239,68,68,0.2);' : 'background:rgba(16,185,129,0.1); color:var(--accent-primary); border:1px solid rgba(16,185,129,0.2);';
+                const btnStyle = incident.status === 'resolu' 
+                    ? 'background:rgba(239,68,68,0.1); color:var(--color-danger); border:1px solid rgba(239,68,68,0.2);' 
+                    : 'background:rgba(16,185,129,0.1); color:var(--color-success); border:1px solid rgba(16,185,129,0.2);';
                 actionBtnHtml = `
                     <button class="btn-toggle-incident-status" data-id="${incident.id}" data-status="${nextStatus}" style="${btnStyle} font-size:0.7rem; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600; font-family:inherit; margin:0;">
                         ${btnLabel}
@@ -474,18 +484,26 @@ document.addEventListener("DOMContentLoaded", () => {
             const hoursDiff = Math.floor(timeDiff / (60 * 60 * 1000));
             const minsDiff = Math.floor(timeDiff / (60 * 1000));
             
-            let ageText = "";
+            let durationText = "";
             if (daysDiff > 0) {
-                ageText = `il y a ${daysDiff} jour${daysDiff > 1 ? 's' : ''}`;
+                durationText = `${daysDiff} jour${daysDiff > 1 ? 's' : ''}`;
             } else if (hoursDiff > 0) {
-                ageText = `il y a ${hoursDiff} h`;
+                durationText = `${hoursDiff} h`;
             } else {
-                ageText = `il y a ${minsDiff > 0 ? minsDiff : 1} min`;
+                durationText = `${minsDiff > 0 ? minsDiff : 1} min`;
             }
 
             const ageBadgeHtml = incident.status === 'resolu'
                 ? `<span class="incident-age-badge" style="font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:12px; background:rgba(16, 185, 129, 0.1); color:#10b981; border:1px solid rgba(16, 185, 129, 0.2); display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Résolu</span>`
-                : `<span class="incident-age-badge" style="font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:12px; background:rgba(239, 68, 68, 0.1); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Ouvert ${ageText}</span>`;
+                : `<span class="incident-age-badge" style="font-size:0.7rem; font-weight:600; padding:2px 8px; border-radius:12px; background:rgba(239, 68, 68, 0.1); color:#ef4444; border:1px solid rgba(239, 68, 68, 0.2); display:inline-flex; align-items:center; gap:4px;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Depuis ${durationText}</span>`;
+
+            // Formatter la date absolue en français
+            const formattedDate = new Date(incident.created_at).toLocaleString('fr-FR', { 
+                day: 'numeric', 
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
 
             el.innerHTML = `
                 <div class="report-header" style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.75rem;">
@@ -495,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; justify-content:flex-end;">
                         ${ageBadgeHtml}
-                        <span class="report-time">${formatTimeAgo(new Date(incident.created_at).getTime())}</span>
+                        <span class="report-time">le ${formattedDate}</span>
                     </div>
                 </div>
                 <div class="report-content">
