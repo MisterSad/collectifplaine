@@ -75,7 +75,8 @@ const Store = (() => {
 
             if (msgError) throw msgError;
 
-            // 6.             _incidents = incidents || [];
+            // 6. 
+            _incidents = incidents || [];
             _messages = messages || [];
             _elevators = elevators.map(el => {
                 const elReports = reports
