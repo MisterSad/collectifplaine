@@ -179,15 +179,21 @@ const Store = (() => {
 
                 if (error) throw error;
 
-                // 2. Auto-seeding si 0 lignes trouvées
-                if (elevators.length === 0) {
-                    console.log("🚀 [Supabase Seeding] Base vide. Seeding automatique des 9 entrées...");
-                    const seedData = INITIAL_ELEVATOR_DATA.map(el => ({
-                        id: el.id,
-                        status: el.status,
-                        last_status_change: new Date(el.lastStatusChange).toISOString(),
-                        maintenance_notes: el.maintenanceNotes
-                    }));
+                // 2. Auto-seeding / Auto-migration : insérer les entrées de CONFIG.entrances absentes de Supabase
+                const existingIds = new Set(elevators.map(el => String(el.id)));
+                const missingEntrances = CONFIG.entrances.filter(ent => !existingIds.has(String(ent.id)));
+                
+                if (missingEntrances.length > 0) {
+                    console.log(`🚀 [Supabase Seeding] Insertion des ${missingEntrances.length} nouvelles entrées manquantes...`);
+                    const seedData = missingEntrances.map(ent => {
+                        const initial = INITIAL_ELEVATOR_DATA.find(i => String(i.id) === String(ent.id));
+                        return {
+                            id: ent.id,
+                            status: initial ? initial.status : "en_service",
+                            last_status_change: new Date(initial ? initial.lastStatusChange : Date.now()).toISOString(),
+                            maintenance_notes: initial ? initial.maintenanceNotes : ""
+                        };
+                    });
                     
                     const { error: seedError } = await supabase
                         .from('elevators')

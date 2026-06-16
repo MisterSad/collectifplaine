@@ -296,12 +296,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? `<div class="report-counter-tag">${reportCount} signalement${reportCount > 1 ? 's' : ''}</div>` 
                 : "";
 
+            // Chercher les informations de l'entrée dans la configuration
+            const entrance = (typeof CONFIG !== "undefined" && CONFIG.entrances) 
+                ? CONFIG.entrances.find(ent => String(ent.id) === String(elevator.id))
+                : null;
+            const streetName = entrance ? entrance.street : "Avenue Division Leclerc";
+            const displayTitle = entrance ? entrance.shortLabel : `N° ${elevator.id}`;
+
             // Structure interne de la carte
             card.innerHTML = `
                 <div class="card-header">
                     <div class="entrance-label">
-                        <span class="title">N° ${elevator.id}</span>
-                        <span class="road">Avenue Division Leclerc</span>
+                        <span class="title">${displayTitle}</span>
+                        <span class="road">${streetName}</span>
                     </div>
                     <span class="status-badge ${badgeClass}">${statusText}</span>
                 </div>
@@ -1908,7 +1915,19 @@ document.addEventListener("DOMContentLoaded", () => {
             CONFIG.entrances.forEach(ent => {
                 const opt = document.createElement("option");
                 opt.value = ent.id;
-                opt.textContent = `${cfg.prefix}${ent.label || ent.id}${cfg.suffix}`;
+                
+                let text = ent.label || ent.id;
+                if (cfg.id === "report-entrance") {
+                    const shortStreet = ent.street && ent.street.includes("Leclerc") ? "Leclerc" : "Sangnier";
+                    text = `N° ${ent.id} - ${shortStreet}`;
+                } else if (cfg.id === "account-entrance") {
+                    const shortStreet = ent.street && ent.street.includes("Leclerc") ? "Leclerc" : "Sangnier";
+                    text = `Entrée ${ent.id} (${shortStreet})`;
+                } else {
+                    text = ent.label || ent.id;
+                }
+                
+                opt.textContent = text;
                 select.appendChild(opt);
             });
 
