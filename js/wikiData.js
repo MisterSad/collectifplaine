@@ -89,7 +89,7 @@ const WIKI_DATA = [
             
             <h4>🚨 Recours en cas de panne de chauffage ou d'eau chaude collective :</h4>
             <ol>
-                <li><strong>Alerter immédiatement :</strong> Signalez le problème au gardien et à l'amicale des locataires pour vérifier si la panne touche tout l'immeuble.</li>
+                <li><strong>Alerter immédiatement :</strong> Signalez le problème au gardien et aux autres résidents ou via le collectif pour vérifier si la panne touche tout l'immeuble.</li>
                 <li><strong>Mettre en demeure le bailleur :</strong> Si la panne persiste au-delà de 2 ou 3 jours, envoyez une <strong>lettre de mise en demeure en recommandé avec accusé de réception (LRAR)</strong>. Le bailleur dispose alors d'un délai maximal de <strong>21 jours</strong> pour effectuer les réparations (Art. 1724 du Code civil).</li>
                 <li><strong>Demander une indemnisation :</strong> Si la coupure dure plus de 21 jours, vous êtes en droit de demander une réduction de loyer proportionnelle à la gêne subie.</li>
             </ol>
@@ -116,7 +116,7 @@ const WIKI_DATA = [
             </ul>
             
             <h4>💡 En copropriété / Immeuble collectif :</h4>
-            <p>Les traitements individuels sont souvent inefficaces si les appartements voisins sont aussi touchés. L'amicale des locataires peut faire pression sur le bailleur ou le syndic pour commander un **traitement global de tout l'immeuble**, qui doit être pris en charge par le bailleur social ou la copropriété (non récupérable sur les charges des locataires).</p>
+            <p>Les traitements individuels sont souvent inefficaces si les appartements voisins sont aussi touchés. Une action collective des résidents permet de demander au bailleur ou au syndic de commander un **traitement global de tout l'immeuble**, qui doit être pris en charge par le bailleur social ou la copropriété (non récupérable sur les charges des locataires).</p>
         `,
         actionText: "Signaler des nuisibles dans mon bâtiment",
         actionLink: "#/incidents"

@@ -1429,7 +1429,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ---------------------------------------------------------
-    // 5.8 SYSTEME D'AUTHENTIFICATION DE L'AMICALE (LOCATAIRES & PRO)
+    // 5.8 SYSTEME D'AUTHENTIFICATION DE LA RESIDENCE (LOCATAIRES & PRO)
     // ---------------------------------------------------------
 
     /**
