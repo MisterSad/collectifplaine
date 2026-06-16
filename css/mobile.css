@@ -973,3 +973,153 @@ button, a, select, input, textarea, label {
         gap: 0.75rem !important;
     }
 }
+
+/* ============================================================
+   LANDING PAGE - MOBILE ADAPTIVE OVERRIDES
+   ============================================================ */
+@media (max-width: 768px) {
+    #tab-landing {
+        padding: 0.5rem 0 !important;
+    }
+
+    .landing-hero-grid {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .landing-hero-title {
+        font-size: 1.55rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 1rem !important;
+        letter-spacing: -0.02em !important;
+    }
+
+    .landing-content-left .lead-text {
+        font-size: 0.95rem !important;
+        line-height: 1.5 !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .landing-content-left .assoc-badge {
+        font-size: 0.75rem !important;
+        padding: 0.25rem 0.6rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+
+    .landing-rules-card {
+        padding: 1.15rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    .landing-rules-card h3 {
+        font-size: 0.95rem !important;
+        margin-bottom: 0.5rem !important;
+        gap: 0.35rem !important;
+    }
+
+    .landing-rules-card h3 svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .landing-rules-card p {
+        font-size: 0.825rem !important;
+        line-height: 1.4 !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .landing-rules-card ul {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+        padding-left: 1rem !important;
+    }
+
+    .landing-rules-card ul li {
+        margin-bottom: 0.35rem !important;
+    }
+
+    /* Auth Card padding reduction to maximize space */
+    #account-unauthenticated-section {
+        padding: 1.25rem !important;
+        border-radius: var(--radius-md) !important;
+    }
+
+    #account-unauthenticated-section .modal-tabs {
+        margin-bottom: 1.15rem !important;
+        gap: 0.75rem !important;
+    }
+
+    #account-unauthenticated-section .modal-tabs button {
+        font-size: 0.95rem !important;
+    }
+
+    #account-unauthenticated-section .form-group {
+        margin-bottom: 0.85rem !important;
+    }
+
+    #account-unauthenticated-section .form-group label {
+        font-size: 0.775rem !important;
+        margin-bottom: 0.3rem !important;
+    }
+
+    #account-unauthenticated-section input {
+        padding: 0.6rem 0.75rem !important;
+        font-size: 0.85rem !important;
+        border-radius: var(--radius-sm) !important;
+    }
+
+    #account-unauthenticated-section .field-hint {
+        font-size: 0.7rem !important;
+        margin-top: 0.2rem !important;
+        line-height: 1.3 !important;
+    }
+
+    #account-unauthenticated-section button[type="submit"] {
+        padding: 0.65rem 1rem !important;
+        font-size: 0.95rem !important;
+        margin-top: 0.5rem !important;
+    }
+
+    /* Features Section on mobile */
+    #tab-landing section {
+        margin-top: 0.5rem !important;
+        padding-top: 1.75rem !important;
+    }
+
+    #tab-landing section h3 {
+        font-size: 1.15rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    #tab-landing .features-grid {
+        gap: 1rem !important;
+    }
+
+    #tab-landing .feature-card {
+        padding: 1.15rem !important;
+    }
+
+    #tab-landing .feature-card h4 {
+        font-size: 0.95rem !important;
+        margin-bottom: 0.35rem !important;
+    }
+
+    #tab-landing .feature-card p {
+        font-size: 0.8rem !important;
+        line-height: 1.4 !important;
+    }
+
+    #tab-landing .feature-card div {
+        width: 36px !important;
+        height: 36px !important;
+        margin-bottom: 0.85rem !important;
+    }
+
+    #tab-landing .feature-card div svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+}
