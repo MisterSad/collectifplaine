@@ -1844,31 +1844,14 @@ textarea:focus {
 }
 
 .street-cards-container {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
     padding: 0.5rem 0.25rem 1rem;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    transition: max-height var(--transition-normal) ease-out, opacity var(--transition-normal);
-    max-height: 500px;
+    transition: max-height var(--transition-normal) ease-out, opacity var(--transition-normal), padding var(--transition-normal) ease-out;
+    max-height: 2500px;
     opacity: 1;
-}
-
-/* Hide scrollbars but keep functionality */
-.street-cards-container::-webkit-scrollbar {
-    height: 6px;
-}
-.street-cards-container::-webkit-scrollbar-track {
-    background: transparent;
-}
-.street-cards-container::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: var(--radius-pill);
-}
-.street-cards-container::-webkit-scrollbar-thumb:hover {
-    background: var(--border-hover);
+    overflow: hidden;
 }
 
 .street-cards-container.collapsed {
@@ -1879,10 +1862,4 @@ textarea:focus {
     margin: 0;
     overflow: hidden;
     pointer-events: none;
-}
-
-/* Ensure cards don't shrink in horizontal row */
-.street-cards-container .elevator-card {
-    flex: 0 0 280px; /* fixed width for cards in horizontal view */
-    max-width: 280px;
 }

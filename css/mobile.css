@@ -854,6 +854,12 @@ button, a, select, input, textarea, label {
         gap: 1.5rem !important;
     }
 
+    /* Set the street card container to a clean single column grid layout on mobile */
+    .street-cards-container {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+    }
+
     /* Force vertical column card layout inside horizontal scrolls even on mobile */
     .street-cards-container .elevator-card {
         flex-direction: column !important;
