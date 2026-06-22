@@ -2236,9 +2236,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         <span>Objectif : ${goal} signatures (${percent}%)</span>
                     </div>
                 </div>
-                <div class="petition-card-actions">
+                <div class="petition-card-actions" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                     <button type="button" class="btn btn-primary btn-sign-petition ${hasSigned ? 'btn-secondary' : ''}" data-id="${pet.id}" ${hasSigned ? 'disabled' : ''}>
                         ${hasSigned ? '✓ Signée' : 'Signer la pétition'}
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-export-petition" data-id="${pet.id}">
+                        Exporter en PDF
                     </button>
                 </div>
             `;
@@ -2257,6 +2260,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.error("Erreur signature", err);
                         alert("Erreur lors de la signature : " + err.message);
                         signBtn.disabled = false;
+                    }
+                });
+            }
+
+            // Export click listener
+            const exportBtn = card.querySelector(".btn-export-petition");
+            if (exportBtn) {
+                exportBtn.addEventListener("click", async () => {
+                    exportBtn.disabled = true;
+                    try {
+                        await LegalGenerator.exportPetitionSignatures(pet.id);
+                    } catch (err) {
+                        console.error("Erreur export PDF", err);
+                        alert("Erreur lors de l'export PDF : " + err.message);
+                    } finally {
+                        exportBtn.disabled = false;
                     }
                 });
             }

@@ -166,8 +166,135 @@ Dans l'attente d'une intervention rapide de vos services, je vous prie d'agréer
         doc.save(`Mise_En_Demeure_Valdevy_Bat${formData.entrance}_${formData.lastname}.pdf`);
     }
 
+    /**
+     * Exporte une pétition et la liste complète de ses signatures au format PDF
+     */
+    async function exportPetitionSignatures(petitionId) {
+        try {
+            await loadJsPdf();
+        } catch (e) {
+            alert("La librairie d'export PDF n'est pas encore chargée ou est bloquée.");
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const petitions = Store.getPetitions();
+        const petition = petitions.find(p => String(p.id) === String(petitionId));
+        if (!petition) {
+            alert("Pétition introuvable.");
+            return;
+        }
+
+        // Titre de la pétition
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(18);
+        const titleLines = doc.splitTextToSize(petition.title, 180);
+        doc.text(titleLines, 15, 20);
+        
+        let yPos = 20 + (titleLines.length * 7);
+
+        // Métadonnées
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "italic");
+        doc.text(`Lancée le : ${formatDate(petition.created_at)}`, 15, yPos);
+        yPos += 6;
+        doc.text(`Nombre de signatures collectées : ${petition.petition_signatures ? petition.petition_signatures.length : 0}`, 15, yPos);
+        yPos += 10;
+
+        // Description
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        const descLines = doc.splitTextToSize(petition.description || "Aucune description.", 180);
+        doc.text(descLines, 15, yPos);
+        yPos += (descLines.length * 6) + 15;
+
+        // Ligne de séparation
+        doc.setDrawColor(200, 200, 200);
+        doc.line(15, yPos - 5, 195, yPos - 5);
+
+        // Titre de la liste des signatures
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(12);
+        doc.text("Liste des signataires :", 15, yPos);
+        yPos += 10;
+
+        // Liste des signatures
+        const signatures = petition.petition_signatures || [];
+        if (signatures.length === 0) {
+            doc.setFont("helvetica", "italic");
+            doc.setFontSize(10);
+            doc.text("Aucune signature enregistrée pour le moment.", 15, yPos);
+        } else {
+            // Entête du tableau
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(10);
+            doc.text("Date", 15, yPos);
+            doc.text("Signataire (Nom / Pseudo)", 55, yPos);
+            doc.text("Bâtiment", 135, yPos);
+            doc.text("Statut", 175, yPos);
+            
+            yPos += 6;
+            doc.line(15, yPos - 2, 195, yPos - 2);
+            doc.setFont("helvetica", "normal");
+
+            // Trier les signatures par date (plus anciennes d'abord)
+            const sortedSigs = [...signatures].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+            sortedSigs.forEach((sig) => {
+                if (yPos > 275) {
+                    doc.addPage();
+                    yPos = 20;
+                    
+                    // Ré-entête sur la nouvelle page
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Date", 15, yPos);
+                    doc.text("Signataire (Nom / Pseudo)", 55, yPos);
+                    doc.text("Bâtiment", 135, yPos);
+                    doc.text("Statut", 175, yPos);
+                    
+                    yPos += 6;
+                    doc.line(15, yPos - 2, 195, yPos - 2);
+                    doc.setFont("helvetica", "normal");
+                }
+
+                const sigDate = formatDate(sig.created_at);
+                
+                // Récupération des infos du résident
+                let displayName = "Résident anonyme";
+                let entranceName = "Non spécifié";
+                if (sig.residents) {
+                    const res = sig.residents;
+                    if (res.first_name || res.last_name) {
+                        displayName = `${res.first_name || ""} ${res.last_name || ""}`.trim();
+                    } else {
+                        displayName = res.username || "Résident anonyme";
+                    }
+                    entranceName = res.entrance ? `N° ${res.entrance}` : "Non spécifié";
+                }
+
+                doc.text(sigDate, 15, yPos);
+                
+                // Limiter la taille du nom pour éviter les débordements
+                const nameLines = doc.splitTextToSize(displayName, 75);
+                doc.text(nameLines[0], 55, yPos); // Affiche la première ligne
+                
+                doc.text(entranceName, 135, yPos);
+                doc.text("Signé", 175, yPos);
+
+                yPos += 8;
+            });
+        }
+
+        // Export du document
+        const fileTitle = petition.title.replace(/[^a-zA-Z0-9]/g, "_").substring(0, 30);
+        doc.save(`Petition_${fileTitle}_Signatures.pdf`);
+    }
+
     return {
         exportElevatorHistory,
-        generateMiseEnDemeure
+        generateMiseEnDemeure,
+        exportPetitionSignatures
     };
 })();

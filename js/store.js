@@ -80,7 +80,7 @@ const Store = (() => {
             // 6. Récupérer les pétitions et signatures
             const { data: petitions, error: petError } = await supabase
                 .from('petitions')
-                .select('*, petition_signatures(*)')
+                .select('*, petition_signatures(*, residents(username, entrance, first_name, last_name))')
                 .order('created_at', { ascending: false });
 
             if (petError) throw petError;
