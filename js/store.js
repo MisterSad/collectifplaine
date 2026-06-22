@@ -306,11 +306,16 @@ const Store = (() => {
                         };
                     });
                     
-                    const { error: seedError } = await supabase
-                        .from('elevators')
-                        .insert(seedData);
-
-                    if (seedError) throw seedError;
+                    try {
+                        const { error: seedError } = await supabase
+                            .from('elevators')
+                            .insert(seedData);
+                        if (seedError) {
+                            console.warn("⚠️ Échec de l'auto-seeding (attendu si non connecté) :", seedError.message);
+                        }
+                    } catch (e) {
+                        console.warn("⚠️ Erreur lors de l'auto-seeding :", e);
+                    }
                 }
 
                 // 3. Charger et assembler l'état
