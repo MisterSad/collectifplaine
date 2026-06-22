@@ -441,6 +441,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const landingIncidentsCount = document.getElementById("landing-incidents-count");
         const landingSignaturesCount = document.getElementById("landing-signatures-count");
         const landingStatElevators = document.getElementById("landing-stat-elevators");
+        const landingBuildingsCount = document.getElementById("landing-buildings-count");
+
+        // 0. Statistiques Bâtiments (chaque entrée d'immeuble configurée / en base est un bâtiment)
+        if (landingBuildingsCount && typeof CONFIG !== "undefined" && CONFIG.entrances) {
+            landingBuildingsCount.textContent = `${CONFIG.entrances.length} Bâtiments`;
+        }
 
         // 1. Statistiques des Ascenseurs
         if (landingElevatorsCount && landingElevatorsDesc) {

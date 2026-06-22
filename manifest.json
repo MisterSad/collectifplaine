@@ -1,7 +1,7 @@
 {
   "name": "Collectif Plaine",
   "short_name": "Coll. Plaine",
-  "description": "Application de suivi des ascenseurs et d'entraide pour la résidence Division Leclerc",
+  "description": "Application de suivi des ascenseurs et d'entraide pour la résidence Valdévy, Secteur La Plaine",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#121212",
