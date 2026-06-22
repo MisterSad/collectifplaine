@@ -1141,7 +1141,7 @@ const Store = (() => {
 
             // 1. Inscrire l'utilisateur dans Supabase Auth
             // On forme un e-mail factice basé sur le pseudo pour l'authentification
-            const emailFake = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
+            const emailFake = `${normalizedUser.toLowerCase()}@collectifplaine.fr`;
 
             const { data, error: signUpError } = await supabase.auth.signUp({
                 email: emailFake,
@@ -1183,7 +1183,7 @@ const Store = (() => {
         async loginTenant(username, password) {
             _ensureSupabase();
             const normalizedUser = String(username).trim();
-            const emailFake = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
+            const emailFake = `${normalizedUser.toLowerCase()}@collectifplaine.fr`;
 
             // 1. Connexion via Supabase Auth
             const { data, error: loginError } = await supabase.auth.signInWithPassword({

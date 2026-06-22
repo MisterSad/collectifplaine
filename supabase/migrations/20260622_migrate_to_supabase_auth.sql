@@ -26,7 +26,7 @@ BEGIN
   INSERT INTO public.residents (id, username, entrance, apartment, first_name, last_name, notifications, phone, email)
   VALUES (
     new.id,
-    split_part(new.email, '@', 1), -- Récupère le pseudo depuis l'email factice (ex: Sarah48 de Sarah48@collectifplaine.local)
+    split_part(new.email, '@', 1), -- Récupère le pseudo depuis l'email factice (ex: Sarah48 de Sarah48@collectifplaine.fr)
     COALESCE(new.raw_user_meta_data->>'entrance', '38'),
     COALESCE(new.raw_user_meta_data->>'apartment', ''),
     '',
