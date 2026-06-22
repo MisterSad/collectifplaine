@@ -2217,13 +2217,21 @@ document.addEventListener("DOMContentLoaded", () => {
             const hasSigned = signatures.some(s => s.resident_id === tenant.id);
             const dateStr = new Date(pet.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
+            // Calcul du délai de mise en ligne (30 jours)
+            const deadline = new Date(new Date(pet.created_at).getTime() + 30 * 24 * 60 * 60 * 1000);
+            const isEnded = new Date() >= deadline;
+            const daysLeft = Math.max(0, Math.ceil((deadline - new Date()) / (24 * 60 * 60 * 1000)));
+            const statusMeta = isEnded 
+                ? `<span class="color-danger" style="font-weight: 600;">Terminée</span>` 
+                : `<span class="color-success" style="font-weight: 600;">En cours (${daysLeft} j. restants)</span>`;
+
             const card = document.createElement("div");
             card.className = "petition-card glass";
             card.innerHTML = `
                 <div class="petition-card-header">
                     <div>
                         <h3 class="petition-title">${Security.sanitizeHTML(pet.title)}</h3>
-                        <div class="petition-meta">Lancée le ${dateStr}</div>
+                        <div class="petition-meta">Lancée le ${dateStr} • ${statusMeta}</div>
                     </div>
                 </div>
                 <p class="petition-desc">${Security.sanitizeHTML(pet.description).replace(/\n/g, "<br>")}</p>
@@ -2240,9 +2248,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button type="button" class="btn btn-primary btn-sign-petition ${hasSigned ? 'btn-secondary' : ''}" data-id="${pet.id}" ${hasSigned ? 'disabled' : ''}>
                         ${hasSigned ? '✓ Signée' : 'Signer la pétition'}
                     </button>
-                    <button type="button" class="btn btn-secondary btn-export-petition" data-id="${pet.id}">
-                        Exporter en PDF
-                    </button>
+                    ${isAdmin ? `
+                        <button type="button" class="btn btn-secondary btn-export-petition" data-id="${pet.id}" ${!isEnded ? 'disabled title="La pétition est encore en cours de mise en ligne (30 jours max)"' : ''}>
+                            Exporter en PDF
+                        </button>
+                    ` : ''}
                 </div>
             `;
 

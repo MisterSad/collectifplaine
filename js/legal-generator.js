@@ -177,8 +177,13 @@ Dans l'attente d'une intervention rapide de vos services, je vous prie d'agréer
             return;
         }
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+        // Vérification de sécurité (seul l'administrateur a le droit d'exporter)
+        const loggedTenant = Security.getLoggedInTenant();
+        const isAdmin = loggedTenant && loggedTenant.username === 'Tavares50';
+        if (!isAdmin) {
+            alert("Accès refusé : Seul l'administrateur peut exporter les signatures.");
+            return;
+        }
 
         const petitions = Store.getPetitions();
         const petition = petitions.find(p => String(p.id) === String(petitionId));
@@ -186,6 +191,17 @@ Dans l'attente d'une intervention rapide de vos services, je vous prie d'agréer
             alert("Pétition introuvable.");
             return;
         }
+
+        // Vérification de sécurité sur le délai de mise en ligne (30 jours)
+        const deadline = new Date(new Date(petition.created_at).getTime() + 30 * 24 * 60 * 60 * 1000);
+        const isEnded = new Date() >= deadline;
+        if (!isEnded) {
+            alert("Accès refusé : La pétition est encore en cours et ne peut pas être exportée.");
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
 
         // Titre de la pétition
         doc.setFont("helvetica", "bold");
