@@ -32,6 +32,27 @@ const CONFIG = {
         { id: "539", label: "39 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 39", hasElevator: false },
         { id: "541", label: "41 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 41", hasElevator: false },
         { id: "543", label: "43 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 43", hasElevator: false },
-        { id: "545", label: "45 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 45", hasElevator: false }
+        { id: "545", label: "45 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 45", hasElevator: false },
+        { id: "530", label: "30 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 30", hasElevator: false },
+        { id: "532", label: "32 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 32", hasElevator: false },
+        { id: "534", label: "34 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 34", hasElevator: false },
+        { id: "536", label: "36 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 36", hasElevator: false },
+        { id: "538", label: "38 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 38", hasElevator: false },
+        { id: "606", label: "6 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 6", hasElevator: false },
+        { id: "608", label: "8 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 8", hasElevator: false },
+        { id: "610", label: "10 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 10", hasElevator: false },
+        { id: "612", label: "12 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 12", hasElevator: false },
+        { id: "614", label: "14 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 14", hasElevator: false },
+        { id: "704", label: "4 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 4", hasElevator: false },
+        { id: "706", label: "6 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 6", hasElevator: false },
+        { id: "708", label: "8 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 8", hasElevator: false },
+        { id: "710", label: "10 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 10", hasElevator: false },
+        { id: "712", label: "12 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 12", hasElevator: false },
+        { id: "714", label: "14 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 14", hasElevator: false },
+        { id: "716", label: "16 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 16", hasElevator: false },
+        { id: "718", label: "18 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 18", hasElevator: false },
+        { id: "720", label: "20 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 20", hasElevator: false },
+        { id: "722", label: "22 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 22", hasElevator: false },
+        { id: "724", label: "24 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 24", hasElevator: false }
     ]
 };
