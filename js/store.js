@@ -1134,37 +1134,34 @@ const Store = (() => {
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
 
-            // 1. Vérifier si le pseudo existe déjà dans Supabase
-            const { data: existingUser, error: searchError } = await supabase
-                .from('residents')
-                .select('username')
-                .ilike('username', normalizedUser)
-                .maybeSingle();
-                
-            if (searchError) throw searchError;
-            if (existingUser) {
-                throw new Error("Ce pseudo est déjà utilisé par un autre résident.");
+            // 1. Inscrire l'utilisateur dans Supabase Auth
+            // On forme un e-mail factice basé sur le pseudo pour l'authentification
+            const emailFake = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
+
+            const { data, error: signUpError } = await supabase.auth.signUp({
+                email: emailFake,
+                password: password,
+                options: {
+                    data: {
+                        entrance: String(entrance),
+                        apartment: normalizedApartment
+                    }
+                }
+            });
+
+            if (signUpError) {
+                if (signUpError.message.includes("already exists") || signUpError.message.includes("taken")) {
+                    throw new Error("Ce pseudo est déjà utilisé par un autre résident.");
+                }
+                throw signUpError;
             }
 
-            // 2. Hacher le mot de passe localement avant envoi
-            const passwordHash = await Security.hashPassword(password, normalizedUser);
-            const userId = "u_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+            const authUser = data.user;
+            if (!authUser) throw new Error("Erreur de création de compte résident.");
 
-            // 3. Insérer le nouvel utilisateur dans la table
-            const { error: insertError } = await supabase
-                .from('residents')
-                .insert({
-                    id: userId,
-                    username: normalizedUser,
-                    password_hash: passwordHash,
-                    entrance: String(entrance),
-                    apartment: normalizedApartment
-                });
-
-            if (insertError) throw insertError;
-
-            // 4. Initialiser la session locale
+            // 2. Initialiser la session locale
             const tenant = {
+                id: authUser.id,
                 username: normalizedUser,
                 entrance: String(entrance),
                 apartment: normalizedApartment,
@@ -1181,53 +1178,71 @@ const Store = (() => {
         async loginTenant(username, password) {
             _ensureSupabase();
             const normalizedUser = String(username).trim();
+            const emailFake = `${normalizedUser.toLowerCase()}@collectifplaine.local`;
 
-            // 1. Rechercher l'utilisateur
-            const { data: user, error } = await supabase
+            // 1. Connexion via Supabase Auth
+            const { data, error: loginError } = await supabase.auth.signInWithPassword({
+                email: emailFake,
+                password: password
+            });
+
+            if (loginError) {
+                throw new Error("Pseudo ou mot de passe incorrect.");
+            }
+
+            const authUser = data.user;
+            if (!authUser) throw new Error("Utilisateur introuvable après connexion.");
+
+            // 2. Charger les informations de profil complémentaires depuis la table residents
+            const { data: dbResident, error: dbError } = await supabase
                 .from('residents')
                 .select('*')
-                .ilike('username', normalizedUser)
+                .eq('id', authUser.id)
                 .maybeSingle();
 
-            if (error) throw error;
-            if (!user) {
-                throw new Error("Pseudo ou mot de passe incorrect.");
-            }
+            if (dbError) throw dbError;
 
-            // 2. Vérifier le mot de passe
-            const calculatedHash = await Security.hashPassword(password, user.username);
-            if (calculatedHash !== user.password_hash) {
-                throw new Error("Pseudo ou mot de passe incorrect.");
-            }
+            // Si pas encore de profil inséré par le trigger, on construit à partir des metadonnées
+            const finalResident = dbResident || {
+                id: authUser.id,
+                username: normalizedUser,
+                entrance: authUser.user_metadata?.entrance || "38",
+                apartment: authUser.user_metadata?.apartment || "",
+                first_name: "",
+                last_name: "",
+                notifications: false,
+                phone: "",
+                email: ""
+            };
 
-            // 3. Initialiser la session
-            let firstName = user.first_name || "";
-            let lastName = user.last_name || "";
-            let notifications = !!user.notifications;
-            let phone = user.phone || "";
-            let email = user.email || "";
+            let firstName = finalResident.first_name || "";
+            let lastName = finalResident.last_name || "";
+            let notifications = !!finalResident.notifications;
+            let phone = finalResident.phone || "";
+            let email = finalResident.email || "";
 
-            // Si non présents en DB, charger depuis le localStorage de ce navigateur (pour compatibilité)
-            if (!user.first_name && !user.last_name && !user.phone && !user.email) {
-                try {
-                    const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${user.username}`);
-                    if (profileStr) {
-                        const profile = JSON.parse(profileStr);
-                        firstName = profile.first_name || "";
-                        lastName = profile.last_name || "";
+            // Charger depuis le localStorage individuellement si non présents en DB (pour compatibilité)
+            try {
+                const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${normalizedUser}`);
+                if (profileStr) {
+                    const profile = JSON.parse(profileStr);
+                    if (!firstName) firstName = profile.first_name || "";
+                    if (!lastName) lastName = profile.last_name || "";
+                    if (finalResident.notifications === undefined || finalResident.notifications === null) {
                         notifications = !!profile.notifications;
-                        phone = profile.phone || "";
-                        email = profile.email || "";
                     }
-                } catch (e) {
-                    console.error("Erreur de lecture fallback localStorage", e);
+                    if (!phone) phone = profile.phone || "";
+                    if (!email) email = profile.email || "";
                 }
+            } catch (e) {
+                console.error("Erreur de lecture fallback localStorage", e);
             }
 
             const tenant = {
-                username: user.username,
-                entrance: user.entrance,
-                apartment: user.apartment,
+                id: finalResident.id || authUser.id,
+                username: finalResident.username || normalizedUser,
+                entrance: finalResident.entrance,
+                apartment: finalResident.apartment,
                 first_name: firstName,
                 last_name: lastName,
                 notifications: notifications,
@@ -1278,56 +1293,72 @@ const Store = (() => {
                     email: cleanEmail
                 }));
 
-                return true;
+                return { success: true, offline: true };
             }
 
             _ensureSupabase();
 
+            let dbWarning = null;
+            const tenantSession = Security.getLoggedInTenant();
+
             try {
                 // Étape 1 : Essayer de tout sauvegarder en base (incluant téléphone et e-mail)
-                const { error } = await supabase
-                    .from('residents')
-                    .update({
+                const query = supabase.from('residents').update({
+                    entrance: String(entrance),
+                    apartment: normalizedApartment,
+                    first_name: cleanFirstName,
+                    last_name: cleanLastName,
+                    notifications: Boolean(notifications),
+                    phone: cleanPhone,
+                    email: cleanEmail
+                });
+
+                if (tenantSession && tenantSession.id) {
+                    query.eq('id', tenantSession.id);
+                } else {
+                    query.ilike('username', normalizedUser);
+                }
+
+                const { error } = await query;
+                if (error) throw error;
+            } catch (err) {
+                console.warn("Échec de mise à jour des colonnes de contact. Tentative de repli sans téléphone/e-mail.", err);
+                dbWarning = 'missing_columns';
+                
+                try {
+                    // Étape 2 : Repli sans téléphone et e-mail (si ces colonnes n'existent pas encore en DB)
+                    const fallbackQuery = supabase.from('residents').update({
                         entrance: String(entrance),
                         apartment: normalizedApartment,
                         first_name: cleanFirstName,
                         last_name: cleanLastName,
-                        notifications: Boolean(notifications),
-                        phone: cleanPhone,
-                        email: cleanEmail
-                    })
-                    .ilike('username', normalizedUser);
+                        notifications: Boolean(notifications)
+                    });
 
-                if (error) throw error;
-            } catch (err) {
-                console.warn("Échec de mise à jour des colonnes de contact. Tentative de repli sans téléphone/e-mail.", err);
-                
-                try {
-                    // Étape 2 : Repli sans téléphone et e-mail (si ces colonnes n'existent pas encore en DB)
-                    const { error: secondError } = await supabase
-                        .from('residents')
-                        .update({
-                            entrance: String(entrance),
-                            apartment: normalizedApartment,
-                            first_name: cleanFirstName,
-                            last_name: cleanLastName,
-                            notifications: Boolean(notifications)
-                        })
-                        .ilike('username', normalizedUser);
+                    if (tenantSession && tenantSession.id) {
+                        fallbackQuery.eq('id', tenantSession.id);
+                    } else {
+                        fallbackQuery.ilike('username', normalizedUser);
+                    }
 
+                    const { error: secondError } = await fallbackQuery;
                     if (secondError) throw secondError;
                 } catch (fallbackErr) {
                     console.warn("Échec de mise à jour des colonnes de profil. Tentative de mise à jour restreinte d'origine.", fallbackErr);
                     
                     // Étape 3 : Repli restreint aux colonnes de base d'origine (entrée et appartement)
-                    const { error: fallbackError } = await supabase
-                        .from('residents')
-                        .update({
-                            entrance: String(entrance),
-                            apartment: normalizedApartment
-                        })
-                        .ilike('username', normalizedUser);
+                    const basicQuery = supabase.from('residents').update({
+                        entrance: String(entrance),
+                        apartment: normalizedApartment
+                    });
 
+                    if (tenantSession && tenantSession.id) {
+                        basicQuery.eq('id', tenantSession.id);
+                    } else {
+                        basicQuery.ilike('username', normalizedUser);
+                    }
+
+                    const { error: fallbackError } = await basicQuery;
                     if (fallbackError) throw fallbackError;
                 }
             }
@@ -1344,18 +1375,32 @@ const Store = (() => {
                 currentTenant.email = cleanEmail;
                 Security.setTenantSession(currentTenant);
             }
-            return true;
+            return { success: true, warning: dbWarning };
         },
 
         async logoutTenant() {
+            _ensureSupabase();
+            try {
+                await supabase.auth.signOut();
+            } catch (err) {
+                console.warn("Échec de déconnexion distante de Supabase Auth", err);
+            }
             Security.logoutTenant();
+            return true;
         },
 
         async deleteTenantAccount(username) {
             _ensureSupabase();
             const normalizedUser = String(username).trim();
 
-            // 1. Supprimer le résident de la table Supabase
+            // 1. Essayer de supprimer l'utilisateur d'auth.users via RPC (cascade sur la table residents)
+            try {
+                await supabase.rpc('delete_user');
+            } catch (err) {
+                console.warn("Échec de suppression via RPC, tentative de suppression directe dans la table residents", err);
+            }
+
+            // 2. Supprimer directement de la table par sécurité / compatibilité
             const { error } = await supabase
                 .from('residents')
                 .delete()
@@ -1363,7 +1408,7 @@ const Store = (() => {
 
             if (error) throw error;
 
-            // 2. Nettoyer les données locales de profil et de session
+            // 3. Nettoyer les données locales de profil et de session
             localStorage.removeItem(`leclerc_asc_tenant_profile_${normalizedUser}`);
             Security.logoutTenant();
             

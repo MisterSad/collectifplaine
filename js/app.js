@@ -1499,21 +1499,21 @@ document.addEventListener("DOMContentLoaded", () => {
             let phone = tenant.phone || "";
             let email = tenant.email || "";
 
-            // Fallback en localStorage si non renseigné dans la session (pour compatibilité)
-            if (!firstName && !lastName && !phone && !email) {
-                try {
-                    const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${tenant.username}`);
-                    if (profileStr) {
-                        const profile = JSON.parse(profileStr);
-                        firstName = profile.first_name || "";
-                        lastName = profile.last_name || "";
+            // Fallback en localStorage individuellement si non renseigné dans la session (pour compatibilité)
+            try {
+                const profileStr = localStorage.getItem(`leclerc_asc_tenant_profile_${tenant.username}`);
+                if (profileStr) {
+                    const profile = JSON.parse(profileStr);
+                    if (!firstName) firstName = profile.first_name || "";
+                    if (!lastName) lastName = profile.last_name || "";
+                    if (tenant.notifications === undefined || tenant.notifications === null) {
                         notifications = !!profile.notifications;
-                        phone = profile.phone || "";
-                        email = profile.email || "";
                     }
-                } catch (e) {
-                    console.error(e);
+                    if (!phone) phone = profile.phone || "";
+                    if (!email) email = profile.email || "";
                 }
+            } catch (e) {
+                console.error("Erreur de lecture fallback localStorage dans refreshAccountTab", e);
             }
 
             document.getElementById("account-firstname").value = firstName;
@@ -1796,7 +1796,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 // 1. Mettre à jour la table des résidents
-                await Store.updateTenantProfile(tenant.username, entrance, apartment, firstName, lastName, notifications, phone, email);
+                const result = await Store.updateTenantProfile(tenant.username, entrance, apartment, firstName, lastName, notifications, phone, email);
 
                 // 2. Enregistrer les informations locales (Nom, Prenom, pref notif, email, tel)
                 const profileData = {
@@ -1808,8 +1808,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
                 localStorage.setItem(`leclerc_asc_tenant_profile_${tenant.username}`, JSON.stringify(profileData));
 
-                accountProfileSuccess.textContent = "Profil locataire mis à jour avec succès !";
-                accountProfileSuccess.classList.remove("hidden");
+                if (result && result.warning === 'missing_columns') {
+                    accountProfileError.textContent = "⚠️ Profil mis à jour localement, mais les champs Email et Téléphone n'ont pas pu être enregistrés en base (colonnes manquantes). Veuillez appliquer la migration SQL sur Supabase.";
+                    accountProfileError.classList.remove("hidden");
+                } else {
+                    accountProfileSuccess.textContent = "Profil locataire mis à jour avec succès !";
+                    accountProfileSuccess.classList.remove("hidden");
+                }
 
                 // Gérer l'abonnement aux notifications locales si cochées
                 if (notifications) {
@@ -1991,7 +1996,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // S'abonner aux alertes temps réel si l'utilisateur est déjà connecté en session
             if (Security.getLoggedInTenant()) {
-                subscribeToRealtimeNotifications();
+                if (typeof supabase !== 'undefined' && supabase && supabase.auth) {
+                    try {
+                        const { data: { session } } = await supabase.auth.getSession();
+                        if (!session) {
+                            Security.logoutTenant();
+                            renderAccountNav();
+                        } else {
+                            subscribeToRealtimeNotifications();
+                        }
+                    } catch (e) {
+                        console.warn("Échec de vérification asynchrone de la session Supabase", e);
+                        subscribeToRealtimeNotifications();
+                    }
+                } else {
+                    subscribeToRealtimeNotifications();
+                }
             }
         } catch (err) {
             console.error("Erreur d'initialisation Supabase", err);

@@ -8,18 +8,6 @@ const Security = (() => {
     const RATE_LIMIT_KEY = "leclerc_asc_rate_limit";
     
     // Sel cryptographique fixe pour renforcer le hachage des mots de passe locataires
-    const CRYPTO_SALT = "AmicaleLocatairesLeclercCachan2026_Salt$#@!";
-
-    /**
-     * Calcule le hash SHA-256 d'une chaîne de caractères via l'API Web Crypto native
-     */
-    async function _sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        return hashHex;
-    }
 
     return {
         /**
@@ -35,19 +23,6 @@ const Security = (() => {
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#x27;')
                 .replace(/\//g, '&#x2F;');
-        },
-
-        /**
-         * Calcule un hash sécurisé SHA-256 salé pour un mot de passe utilisateur
-         * Utilise le pseudo de l'utilisateur comme sel dynamique secondaire,
-         * ce qui garantit des hashes distincts pour deux mots de passe identiques.
-         */
-        async hashPassword(password, username) {
-            if (!password || typeof password !== 'string') return '';
-            const normalizedUser = String(username).toLowerCase().trim();
-            // Combinaison : Mot de passe + Pseudo unique + Sel fixe
-            const messageToHash = password + normalizedUser + CRYPTO_SALT;
-            return await _sha256(messageToHash);
         },
 
         /**
@@ -219,6 +194,7 @@ const Security = (() => {
          */
         setTenantSession(tenant) {
             const sessionData = {
+                id: tenant.id || "",
                 username: tenant.username,
                 entrance: tenant.entrance,
                 apartment: tenant.apartment,
