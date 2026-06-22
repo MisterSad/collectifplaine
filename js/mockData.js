@@ -90,5 +90,21 @@ const INITIAL_ELEVATOR_DATA = [
         maintenanceNotes: "",
         tenantReports: [],
         history: []
+    },
+    {
+        id: "531",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "531b",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
     }
 ];

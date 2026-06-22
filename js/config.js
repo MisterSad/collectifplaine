@@ -23,6 +23,15 @@ const CONFIG = {
         { id: "402", label: "2 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 2", hasElevator: false },
         { id: "404", label: "4 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 4", hasElevator: false },
         { id: "406", label: "6 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 6", hasElevator: false },
-        { id: "408", label: "8 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 8", hasElevator: false }
+        { id: "408", label: "8 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 8", hasElevator: false },
+        { id: "531", label: "31 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 31", hasElevator: true },
+        { id: "531b", label: "31 bis avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 31 bis", hasElevator: true },
+        { id: "533", label: "33 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 33", hasElevator: false },
+        { id: "535", label: "35 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 35", hasElevator: false },
+        { id: "537", label: "37 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 37", hasElevator: false },
+        { id: "539", label: "39 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 39", hasElevator: false },
+        { id: "541", label: "41 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 41", hasElevator: false },
+        { id: "543", label: "43 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 43", hasElevator: false },
+        { id: "545", label: "45 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 45", hasElevator: false }
     ]
 };
