@@ -7,6 +7,8 @@ const Store = (() => {
     let _elevators = [];
     let _incidents = [];
     let _messages = [];
+    let _petitions = [];
+    let _polls = [];
 
     /**
      * Vérifie de manière robuste si le client Supabase est initialisé.
@@ -75,9 +77,27 @@ const Store = (() => {
 
             if (msgError) throw msgError;
 
-            // 6. 
+            // 6. Récupérer les pétitions et signatures
+            const { data: petitions, error: petError } = await supabase
+                .from('petitions')
+                .select('*, petition_signatures(*)')
+                .order('created_at', { ascending: false });
+
+            if (petError) throw petError;
+
+            // 7. Récupérer les scrutins (sondages / votes)
+            const { data: polls, error: pollError } = await supabase
+                .from('polls')
+                .select('*, poll_votes(*)')
+                .order('created_at', { ascending: false });
+
+            if (pollError) throw pollError;
+
+            // 8. Assigner l'état local
             _incidents = incidents || [];
             _messages = messages || [];
+            _petitions = petitions || [];
+            _polls = polls || [];
             _elevators = elevators.map(el => {
                 const elReports = reports
                     ? reports.filter(r => String(r.entrance) === String(el.id)).map(r => ({
@@ -161,6 +181,8 @@ const Store = (() => {
                 localStorage.setItem("leclerc_asc_cached_elevators", JSON.stringify(_elevators));
                 localStorage.setItem("leclerc_asc_cached_incidents", JSON.stringify(_incidents));
                 localStorage.setItem("leclerc_asc_cached_messages", JSON.stringify(_messages));
+                localStorage.setItem("leclerc_asc_cached_petitions", JSON.stringify(_petitions));
+                localStorage.setItem("leclerc_asc_cached_polls", JSON.stringify(_polls));
             } catch (e) {
                 console.error("Erreur de sauvegarde dans le cache local", e);
             }
@@ -173,10 +195,14 @@ const Store = (() => {
                 const cachedElevators = localStorage.getItem("leclerc_asc_cached_elevators");
                 const cachedIncidents = localStorage.getItem("leclerc_asc_cached_incidents");
                 const cachedMessages = localStorage.getItem("leclerc_asc_cached_messages");
+                const cachedPetitions = localStorage.getItem("leclerc_asc_cached_petitions");
+                const cachedPolls = localStorage.getItem("leclerc_asc_cached_polls");
                 
                 if (cachedElevators) _elevators = JSON.parse(cachedElevators);
                 if (cachedIncidents) _incidents = JSON.parse(cachedIncidents);
                 if (cachedMessages) _messages = JSON.parse(cachedMessages);
+                if (cachedPetitions) _petitions = JSON.parse(cachedPetitions);
+                if (cachedPolls) _polls = JSON.parse(cachedPolls);
                 
                 window.dispatchEvent(new CustomEvent("storeUpdated"));
                 
@@ -268,10 +294,14 @@ const Store = (() => {
                     const cachedElevators = localStorage.getItem("leclerc_asc_cached_elevators");
                     const cachedIncidents = localStorage.getItem("leclerc_asc_cached_incidents");
                     const cachedMessages = localStorage.getItem("leclerc_asc_cached_messages");
+                    const cachedPetitions = localStorage.getItem("leclerc_asc_cached_petitions");
+                    const cachedPolls = localStorage.getItem("leclerc_asc_cached_polls");
                     
                     if (cachedElevators) _elevators = JSON.parse(cachedElevators);
                     if (cachedIncidents) _incidents = JSON.parse(cachedIncidents);
                     if (cachedMessages) _messages = JSON.parse(cachedMessages);
+                    if (cachedPetitions) _petitions = JSON.parse(cachedPetitions);
+                    if (cachedPolls) _polls = JSON.parse(cachedPolls);
                     
                     window.dispatchEvent(new CustomEvent("storeUpdated"));
                     return;
@@ -1417,6 +1447,104 @@ const Store = (() => {
             localStorage.removeItem(`leclerc_asc_tenant_profile_${normalizedUser}`);
             Security.logoutTenant();
             
+            return true;
+        },
+
+        getPetitions() {
+            return JSON.parse(JSON.stringify(_petitions));
+        },
+
+        getPolls() {
+            return JSON.parse(JSON.stringify(_polls));
+        },
+
+        async createPetition(title, description) {
+            const loggedTenant = Security.getLoggedInTenant();
+            if (!loggedTenant || loggedTenant.username !== 'Tavares50') {
+                throw new Error("Accès refusé : Seul l'administrateur peut effectuer cette action.");
+            }
+
+            _ensureSupabase();
+
+            const { error } = await supabase
+                .from('petitions')
+                .insert({
+                    title: Security.sanitizeHTML(String(title).trim()),
+                    description: Security.sanitizeHTML(String(description).trim()),
+                    created_by: loggedTenant.id
+                });
+
+            if (error) throw error;
+
+            await _fetchAndAssembleState();
+            return true;
+        },
+
+        async signPetition(petitionId) {
+            const loggedTenant = Security.getLoggedInTenant();
+            if (!loggedTenant) {
+                throw new Error("Accès refusé : Vous devez être connecté pour signer une pétition.");
+            }
+
+            _ensureSupabase();
+
+            const { error } = await supabase
+                .from('petition_signatures')
+                .insert({
+                    petition_id: petitionId,
+                    resident_id: loggedTenant.id
+                });
+
+            if (error) throw error;
+
+            await _fetchAndAssembleState();
+            return true;
+        },
+
+        async createPoll(title, description, type, options, endsAt) {
+            const loggedTenant = Security.getLoggedInTenant();
+            if (!loggedTenant || loggedTenant.username !== 'Tavares50') {
+                throw new Error("Accès refusé : Seul l'administrateur peut effectuer cette action.");
+            }
+
+            _ensureSupabase();
+
+            const { error } = await supabase
+                .from('polls')
+                .insert({
+                    title: Security.sanitizeHTML(String(title).trim()),
+                    description: Security.sanitizeHTML(String(description).trim()),
+                    type: String(type),
+                    options: options,
+                    created_by: loggedTenant.id,
+                    ends_at: new Date(endsAt).toISOString()
+                });
+
+            if (error) throw error;
+
+            await _fetchAndAssembleState();
+            return true;
+        },
+
+        async submitVote(pollId, optionIndex) {
+            const loggedTenant = Security.getLoggedInTenant();
+            if (!loggedTenant) {
+                throw new Error("Accès refusé : Vous devez être connecté pour voter.");
+            }
+
+            _ensureSupabase();
+
+            const { error } = await supabase
+                .from('poll_votes')
+                .insert({
+                    poll_id: pollId,
+                    resident_id: loggedTenant.id,
+                    option_index: parseInt(optionIndex, 10)
+                });
+
+            if (error) throw error;
+
+            await _fetchAndAssembleState();
             return true;
         }
     };

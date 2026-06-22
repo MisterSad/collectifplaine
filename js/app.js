@@ -1695,7 +1695,9 @@ document.addEventListener("DOMContentLoaded", () => {
         "#/guides": "tab-guides",
         "#/charges": "tab-charges",
         "#/compte": "tab-compte",
-        "#/stats": "tab-stats"
+        "#/stats": "tab-stats",
+        "#/petitions": "tab-petitions",
+        "#/votes": "tab-votes"
     };
 
     const pageTitles = {
@@ -1705,7 +1707,9 @@ document.addEventListener("DOMContentLoaded", () => {
         "#/guides": "Guides",
         "#/charges": "Audit des Charges",
         "#/compte": "Mon Compte",
-        "#/stats": "Statistiques"
+        "#/stats": "Statistiques",
+        "#/petitions": "Pétitions Collectives",
+        "#/votes": "Sondages & Votes"
     };
 
     function updateAdminStatsLinkVisibility() {
@@ -1713,7 +1717,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isAdmin = tenant && tenant.username === "Tavares50";
         
         const sidebarStatsLink = document.getElementById("sidebar-stats-link");
-        const mobileStatsLink = document.getElementById("mobile-stats-link");
+        const mobileStatsLink = document.getElementById("more-menu-stats-link");
         
         if (isAdmin) {
             if (sidebarStatsLink) sidebarStatsLink.classList.remove("hidden");
@@ -1981,6 +1985,384 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function renderPetitionsPage() {
+        const tenant = Security.getLoggedInTenant();
+        if (!tenant) return;
+
+        const btnCreateTrigger = document.getElementById("btn-create-petition-trigger");
+        const creatorCard = document.getElementById("petition-creator-card");
+        const createForm = document.getElementById("petition-create-form");
+        const btnCancel = document.getElementById("btn-cancel-petition");
+        const listContainer = document.getElementById("petitions-list-container");
+
+        const isAdmin = tenant && tenant.username === "Tavares50";
+
+        // Admin creation trigger visibility
+        if (btnCreateTrigger) {
+            if (isAdmin) {
+                btnCreateTrigger.classList.remove("hidden");
+            } else {
+                btnCreateTrigger.classList.add("hidden");
+            }
+        }
+
+        // Toggle creation card
+        if (btnCreateTrigger && creatorCard && !btnCreateTrigger.dataset.listenerAttached) {
+            btnCreateTrigger.dataset.listenerAttached = "true";
+            btnCreateTrigger.addEventListener("click", () => {
+                creatorCard.classList.toggle("hidden");
+            });
+        }
+
+        if (btnCancel && creatorCard) {
+            btnCancel.addEventListener("click", () => {
+                creatorCard.classList.add("hidden");
+                createForm.reset();
+            });
+        }
+
+        // Form submit listener
+        if (createForm && !createForm.dataset.listenerAttached) {
+            createForm.dataset.listenerAttached = "true";
+            createForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const title = document.getElementById("petition-title").value.trim();
+                const desc = document.getElementById("petition-desc").value.trim();
+
+                const submitBtn = createForm.querySelector("button[type='submit']");
+                submitBtn.disabled = true;
+
+                try {
+                    await Store.createPetition(title, desc);
+                    createForm.reset();
+                    if (creatorCard) creatorCard.classList.add("hidden");
+                    if (window.showSystemToast) {
+                        window.showSystemToast("Succès", "La pétition a bien été créée.", "OK");
+                    } else {
+                        alert("Pétition créée avec succès !");
+                    }
+                } catch (err) {
+                    console.error("Erreur de création de pétition", err);
+                    alert("Impossible de créer la pétition : " + err.message);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // Render petitions list
+        if (!listContainer) return;
+        const petitions = Store.getPetitions();
+
+        if (petitions.length === 0) {
+            listContainer.innerHTML = `<div class="no-data-msg" style="padding: 2rem; text-align: center;">Aucune pétition en cours.</div>`;
+            return;
+        }
+
+        listContainer.innerHTML = "";
+
+        petitions.forEach(pet => {
+            const signatures = pet.petition_signatures || [];
+            const goal = 50; // default goal
+            const percent = Math.min(100, Math.round((signatures.length / goal) * 100));
+            const hasSigned = signatures.some(s => s.resident_id === tenant.id);
+            const dateStr = new Date(pet.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+
+            const card = document.createElement("div");
+            card.className = "petition-card glass";
+            card.innerHTML = `
+                <div class="petition-card-header">
+                    <div>
+                        <h3 class="petition-title">${Security.sanitizeHTML(pet.title)}</h3>
+                        <div class="petition-meta">Lancée le ${dateStr}</div>
+                    </div>
+                </div>
+                <p class="petition-desc">${Security.sanitizeHTML(pet.description).replace(/\n/g, "<br>")}</p>
+                <div class="petition-progress-container">
+                    <div class="petition-progress-bar-bg">
+                        <div class="petition-progress-bar-fill" style="width: ${percent}%;"></div>
+                    </div>
+                    <div class="petition-progress-labels">
+                        <span><strong>${signatures.length}</strong> soutiens</span>
+                        <span>Objectif : ${goal} signatures (${percent}%)</span>
+                    </div>
+                </div>
+                <div class="petition-card-actions">
+                    <button type="button" class="btn btn-primary btn-sign-petition ${hasSigned ? 'btn-secondary' : ''}" data-id="${pet.id}" ${hasSigned ? 'disabled' : ''}>
+                        ${hasSigned ? '✓ Signée' : 'Signer la pétition'}
+                    </button>
+                </div>
+            `;
+
+            // Sign click listener
+            const signBtn = card.querySelector(".btn-sign-petition");
+            if (signBtn && !hasSigned) {
+                signBtn.addEventListener("click", async () => {
+                    signBtn.disabled = true;
+                    try {
+                        await Store.signPetition(pet.id);
+                        if (window.showSystemToast) {
+                            window.showSystemToast("Succès", "Votre signature a été enregistrée.", "OK");
+                        }
+                    } catch (err) {
+                        console.error("Erreur signature", err);
+                        alert("Erreur lors de la signature : " + err.message);
+                        signBtn.disabled = false;
+                    }
+                });
+            }
+
+            listContainer.appendChild(card);
+        });
+    }
+
+    function renderVotesPage() {
+        const tenant = Security.getLoggedInTenant();
+        if (!tenant) return;
+
+        const btnCreateTrigger = document.getElementById("btn-create-poll-trigger");
+        const creatorCard = document.getElementById("poll-creator-card");
+        const createForm = document.getElementById("poll-create-form");
+        const btnCancel = document.getElementById("btn-cancel-poll");
+        const listContainer = document.getElementById("polls-list-container");
+
+        const isAdmin = tenant && tenant.username === "Tavares50";
+
+        // Admin trigger visibility
+        if (btnCreateTrigger) {
+            if (isAdmin) {
+                btnCreateTrigger.classList.remove("hidden");
+            } else {
+                btnCreateTrigger.classList.add("hidden");
+            }
+        }
+
+        // Toggle creator card
+        if (btnCreateTrigger && creatorCard && !btnCreateTrigger.dataset.listenerAttached) {
+            btnCreateTrigger.dataset.listenerAttached = "true";
+            btnCreateTrigger.addEventListener("click", () => {
+                creatorCard.classList.toggle("hidden");
+            });
+        }
+
+        if (btnCancel && creatorCard) {
+            btnCancel.addEventListener("click", () => {
+                creatorCard.classList.add("hidden");
+                createForm.reset();
+            });
+        }
+
+        // Form submit
+        if (createForm && !createForm.dataset.listenerAttached) {
+            createForm.dataset.listenerAttached = "true";
+            createForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const title = document.getElementById("poll-title").value.trim();
+                const type = document.getElementById("poll-type").value;
+                const desc = document.getElementById("poll-desc").value.trim();
+                const optionsStr = document.getElementById("poll-options").value;
+                const endsAt = document.getElementById("poll-ends-at").value;
+
+                const options = optionsStr.split(",").map(o => o.trim()).filter(Boolean);
+                if (options.length < 2) {
+                    alert("Veuillez saisir au moins 2 choix possibles séparés par des virgules.");
+                    return;
+                }
+
+                const submitBtn = createForm.querySelector("button[type='submit']");
+                submitBtn.disabled = true;
+
+                try {
+                    await Store.createPoll(title, desc, type, options, endsAt);
+                    createForm.reset();
+                    if (creatorCard) creatorCard.classList.add("hidden");
+                    if (window.showSystemToast) {
+                        window.showSystemToast("Succès", "Le scrutin a été publié.", "OK");
+                    } else {
+                        alert("Scrutin publié avec succès !");
+                    }
+                } catch (err) {
+                    console.error("Erreur création scrutin", err);
+                    alert("Impossible de créer le scrutin : " + err.message);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        // Render polls list
+        if (!listContainer) return;
+        const polls = Store.getPolls();
+
+        if (polls.length === 0) {
+            listContainer.innerHTML = `<div class="no-data-msg" style="padding: 2rem; text-align: center;">Aucun scrutin ou sondage disponible.</div>`;
+            return;
+        }
+
+        listContainer.innerHTML = "";
+
+        polls.forEach(poll => {
+            const votes = poll.poll_votes || [];
+            const endsAtTime = new Date(poll.ends_at).getTime();
+            const now = Date.now();
+            const isActive = endsAtTime > now && poll.status === 'active';
+            const hasVoted = votes.some(v => v.resident_id === tenant.id);
+            
+            // Format end date
+            const endOptions = { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" };
+            const endDateStr = new Date(poll.ends_at).toLocaleDateString("fr-FR", endOptions);
+
+            const card = document.createElement("div");
+            card.className = "poll-card glass";
+
+            // Header details
+            const typeLabel = poll.type === 'vote_resolution' ? 'Vote de Résolution' : 'Sondage';
+            const typeBadgeClass = poll.type === 'vote_resolution' ? 'poll-badge-vote' : 'poll-badge-sondage';
+            const statusLabel = isActive ? 'Actif' : 'Clos';
+            const statusBadgeClass = isActive ? 'badge-functional' : 'poll-badge-closed';
+
+            let bodyHTML = "";
+
+            if (!isActive || hasVoted) {
+                // Show results
+                bodyHTML = `<div class="poll-results-container">`;
+                
+                const totalVotes = votes.length;
+                let winningVotes = -1;
+                
+                // Find highest vote count to highlight winning option
+                const counts = poll.options.map((opt, idx) => {
+                    const cnt = votes.filter(v => v.option_index === idx).length;
+                    if (cnt > winningVotes) winningVotes = cnt;
+                    return cnt;
+                });
+
+                poll.options.forEach((opt, idx) => {
+                    const optVotes = counts[idx];
+                    const pct = totalVotes > 0 ? Math.round((optVotes / totalVotes) * 100) : 0;
+                    const isWinning = totalVotes > 0 && optVotes === winningVotes;
+                    const fillClass = isWinning ? 'winning' : 'normal';
+
+                    bodyHTML += `
+                        <div class="poll-result-row">
+                            <div class="poll-result-info">
+                                <span class="option-label">${Security.sanitizeHTML(opt)}</span>
+                                <span class="option-votes">${optVotes} voix (${pct}%)</span>
+                            </div>
+                            <div class="poll-result-bar-bg">
+                                <div class="poll-result-bar-fill ${fillClass}" style="width: ${pct}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                bodyHTML += `
+                    <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; justify-content: space-between;">
+                        <span>Total de participants : <strong>${totalVotes}</strong></span>
+                        <span>${isActive ? 'Prend fin le ' + endDateStr : 'Scrutin clos'}</span>
+                    </div>
+                </div>`;
+            } else {
+                // Show voting form
+                bodyHTML = `
+                    <form class="poll-options-form">
+                        ${poll.options.map((opt, idx) => `
+                            <label class="poll-option-radio-label">
+                                <input type="radio" name="poll-vote-option-${poll.id}" value="${idx}" required>
+                                <span class="poll-option-text">${Security.sanitizeHTML(opt)}</span>
+                            </label>
+                        `).join("")}
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">Clôture le ${endDateStr}</span>
+                            <button type="submit" class="btn btn-primary" style="font-size: 0.825rem; padding: 0.45rem 1.25rem; min-height: 38px;">Voter</button>
+                        </div>
+                    </form>
+                `;
+            }
+
+            card.innerHTML = `
+                <div class="poll-card-header">
+                    <div style="flex-grow: 1;">
+                        <h3 class="poll-title">${Security.sanitizeHTML(poll.title)}</h3>
+                        <div class="poll-meta" style="margin-top: 0.35rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                            <span class="poll-badge ${typeBadgeClass}">${typeLabel}</span>
+                            <span class="status-badge ${statusBadgeClass}" style="padding: 0.15rem 0.45rem; font-size: 0.6rem;">${statusLabel}</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="poll-desc">${Security.sanitizeHTML(poll.description).replace(/\n/g, "<br>")}</p>
+                ${bodyHTML}
+            `;
+
+            // Submit vote listener
+            const voteForm = card.querySelector(".poll-options-form");
+            if (voteForm) {
+                voteForm.addEventListener("submit", async (e) => {
+                    e.preventDefault();
+                    const selectedOption = card.querySelector(`input[name="poll-vote-option-${poll.id}"]:checked`);
+                    if (!selectedOption) return;
+
+                    const optionIdx = parseInt(selectedOption.value, 10);
+                    const submitBtn = voteForm.querySelector("button[type='submit']");
+                    submitBtn.disabled = true;
+
+                    try {
+                        await Store.submitVote(poll.id, optionIdx);
+                        if (window.showSystemToast) {
+                            window.showSystemToast("Merci", "Votre vote a été comptabilisé.", "OK");
+                        }
+                    } catch (err) {
+                        console.error("Erreur de vote", err);
+                        alert("Erreur lors de l'enregistrement du vote : " + err.message);
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+
+            listContainer.appendChild(card);
+        });
+    }
+
+    function setupMobileMoreMenu() {
+        const mobileMoreBtn = document.getElementById("mobile-more-btn");
+        const mobileMoreMenu = document.getElementById("mobile-more-menu");
+        const btnCloseMoreMenu = document.getElementById("btn-close-more-menu");
+
+        if (!mobileMoreBtn || !mobileMoreMenu) return;
+
+        // Reset click listener
+        const newBtn = mobileMoreBtn.cloneNode(true);
+        mobileMoreBtn.parentNode.replaceChild(newBtn, mobileMoreBtn);
+
+        newBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            mobileMoreMenu.classList.remove("hidden");
+        });
+
+        const closeMenu = () => {
+            mobileMoreMenu.classList.add("hidden");
+        };
+
+        if (btnCloseMoreMenu) {
+            btnCloseMoreMenu.addEventListener("click", closeMenu);
+        }
+
+        // Close on backdrop click
+        mobileMoreMenu.addEventListener("click", (e) => {
+            if (e.target === mobileMoreMenu) {
+                closeMenu();
+            }
+        });
+
+        // Close on link click
+        const menuLinks = mobileMoreMenu.querySelectorAll(".more-menu-item");
+        menuLinks.forEach(link => {
+            link.addEventListener("click", () => {
+                closeMenu();
+            });
+        });
+    }
+
     function handleRouting() {
         const tenant = Security.getLoggedInTenant();
         let hash = window.location.hash;
@@ -2082,6 +2464,10 @@ document.addEventListener("DOMContentLoaded", () => {
             renderWiki();
         } else if (targetPanelId === "tab-stats") {
             renderStatsPage();
+        } else if (targetPanelId === "tab-petitions") {
+            renderPetitionsPage();
+        } else if (targetPanelId === "tab-votes") {
+            renderVotesPage();
         }
     }
 
@@ -2286,14 +2672,20 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("storeUpdated", () => {
         renderDashboard();
         updateAdminStatsLinkVisibility();
-        if (window.location.hash === "#/stats") {
+        const hash = window.location.hash;
+        if (hash === "#/stats") {
             renderStatsPage();
+        } else if (hash === "#/petitions") {
+            renderPetitionsPage();
+        } else if (hash === "#/votes") {
+            renderVotesPage();
         }
     });
 
     async function initApp() {
         initTheme();
         populateAllEntrancesDropdowns();
+        setupMobileMoreMenu();
         handleRouting();
         renderAuthHeader();
         

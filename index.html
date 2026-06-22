@@ -60,6 +60,12 @@
                 <a href="#/guides" class="menu-link" data-page="page-guides">
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span class="menu-text">Guides</span>
                 </a>
+                <a href="#/petitions" class="menu-link" data-page="page-petitions">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> <span class="menu-text">Pétitions</span>
+                </a>
+                <a href="#/votes" class="menu-link" data-page="page-votes">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> <span class="menu-text">Sondages & Votes</span>
+                </a>
                 <a href="#/charges" class="menu-link" data-page="page-charges">
                     <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> <span class="menu-text">Charges</span>
                 </a>
@@ -602,6 +608,105 @@
                 </div>
             </div>
         </div>
+
+        <!-- ============================================ -->
+        <!-- CONTENU DE L'ONGLET : PÉTITIONS -->
+        <!-- ============================================ -->
+        <div id="tab-petitions" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-petitions" style="padding: 1rem 0;">
+            <div class="section-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading);">Pétitions Collectives</h2>
+                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">Soutenez les initiatives et les requêtes adressées au bailleur.</p>
+                </div>
+                <!-- Formulaire de création visible uniquement par l'administrateur Tavares50 -->
+                <button type="button" id="btn-create-petition-trigger" class="btn btn-primary hidden" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    ✍️ Nouvelle Pétition
+                </button>
+            </div>
+
+            <!-- Formulaire de création de pétition (Masqué par défaut) -->
+            <div id="petition-creator-card" class="card glass hidden" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-heading);">Créer une nouvelle pétition</h4>
+                <form id="petition-create-form">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="petition-title">Titre de la pétition <span class="required">*</span></label>
+                        <input type="text" id="petition-title" required placeholder="Ex: Réparation immédiate des interphones du bâtiment 44">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label for="petition-desc">Description et arguments <span class="required">*</span></label>
+                        <textarea id="petition-desc" required placeholder="Exprimez clairement les motifs de la demande, la réglementation concernée et les attentes envers le bailleur..." style="height: 100px; resize: vertical;"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                        <button type="button" id="btn-cancel-petition" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Annuler</button>
+                        <button type="submit" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Publier</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="petitions-list-container" class="petitions-list-container">
+                <!-- Généré dynamiquement -->
+                <div class="loading-placeholder">Chargement des pétitions...</div>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- CONTENU DE L'ONGLET : SONDAGES & VOTES -->
+        <!-- ============================================ -->
+        <div id="tab-votes" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-votes" style="padding: 1rem 0;">
+            <div class="section-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading);">Sondages & Votes</h2>
+                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">Exprimez-vous sur les sondages du quotidien et votez sur les décisions de l'amicale.</p>
+                </div>
+                <!-- Formulaire de création visible uniquement par l'administrateur Tavares50 -->
+                <button type="button" id="btn-create-poll-trigger" class="btn btn-primary hidden" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    📊 Nouveau Scrutin
+                </button>
+            </div>
+
+            <!-- Formulaire de création de vote (Masqué par défaut) -->
+            <div id="poll-creator-card" class="card glass hidden" style="margin-bottom: 2rem; padding: 1.5rem;">
+                <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-heading);">Créer un nouveau vote ou sondage</h4>
+                <form id="poll-create-form">
+                    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label for="poll-title">Intitulé de la question <span class="required">*</span></label>
+                            <input type="text" id="poll-title" required placeholder="Ex: Souhaitez-vous l'organisation d'une fête des voisins le 26 juin ?">
+                        </div>
+                        <div class="form-group">
+                            <label for="poll-type">Type de scrutin</label>
+                            <select id="poll-type" required>
+                                <option value="sondage" selected>Sondage consultatif</option>
+                                <option value="vote_resolution">Vote de résolution amicale</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="poll-desc">Détails / Contexte <span class="required">*</span></label>
+                        <textarea id="poll-desc" required placeholder="Expliquez le contexte, les enjeux ou les résolutions liées à ce scrutin..." style="height: 70px; resize: vertical;"></textarea>
+                    </div>
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                        <div class="form-group">
+                            <label for="poll-options">Choix possibles (séparés par des virgules) <span class="required">*</span></label>
+                            <input type="text" id="poll-options" required placeholder="Ex: Oui, Non, Abstention">
+                        </div>
+                        <div class="form-group">
+                            <label for="poll-ends-at">Date de fin du scrutin <span class="required">*</span></label>
+                            <input type="datetime-local" id="poll-ends-at" required>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                        <button type="button" id="btn-cancel-poll" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Annuler</button>
+                        <button type="submit" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Publier le scrutin</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="polls-list-container" class="polls-list-container">
+                <!-- Généré dynamiquement -->
+                <div class="loading-placeholder">Chargement des scrutins...</div>
+            </div>
+        </div>
             </main>
         </div>
 
@@ -615,23 +720,70 @@
                 <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                 <span class="mobile-text">Incidents</span>
             </a>
+            <!-- BOUTON CENTRAL + MOBILE -->
+            <button type="button" class="mobile-link" id="mobile-more-btn" style="border: none; background: none; outline: none; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
+                <span class="mobile-icon more-icon" style="background: var(--accent-gradient); color: white; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35); transition: transform 0.2s ease;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+                <span class="mobile-text">Plus</span>
+            </button>
             <a href="#/guides" class="mobile-link" data-page="page-guides">
                 <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 <span class="mobile-text">Guides</span>
-            </a>
-            <a href="#/charges" class="mobile-link" data-page="page-charges">
-                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-                <span class="mobile-text">Charges</span>
             </a>
             <a href="#/compte" class="mobile-link" data-page="page-profile" id="mobile-account-link">
                 <span class="mobile-icon" id="mobile-account-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
                 <span class="mobile-text" id="mobile-account-text">Compte</span>
             </a>
-            <a href="#/stats" class="mobile-link hidden" data-page="page-stats" id="mobile-stats-link">
-                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-                <span class="mobile-text">Stats</span>
-            </a>
         </nav>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MENU FLOTTANT MOBILE "PLUS" (BOTTOM SHEET) -->
+    <!-- ============================================ -->
+    <div id="mobile-more-menu" class="more-menu-backdrop hidden">
+        <div class="more-menu-content glass">
+            <div class="more-menu-drag-handle"></div>
+            <div class="more-menu-header">
+                <h4>Fonctionnalités</h4>
+                <button type="button" class="btn-close-more-menu" id="btn-close-more-menu">&times;</button>
+            </div>
+            <div class="more-menu-links">
+                <!-- Pétitions -->
+                <a href="#/petitions" class="more-menu-item">
+                    <span class="item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+                    <div class="item-details">
+                        <span class="item-title">Pétitions Collectives</span>
+                        <span class="item-desc">Soutenir les actions et requêtes du collectif.</span>
+                    </div>
+                </a>
+                
+                <!-- Sondages & Votes -->
+                <a href="#/votes" class="more-menu-item">
+                    <span class="item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+                    <div class="item-details">
+                        <span class="item-title">Sondages & Votes</span>
+                        <span class="item-desc">Donner votre avis et voter sur les décisions de l'amicale.</span>
+                    </div>
+                </a>
+                
+                <!-- Charges -->
+                <a href="#/charges" class="more-menu-item">
+                    <span class="item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                    <div class="item-details">
+                        <span class="item-title">Audit des Charges</span>
+                        <span class="item-desc">Consulter le dossier des charges de copropriété.</span>
+                    </div>
+                </a>
+                
+                <!-- Statistiques (Masqué si pas admin) -->
+                <a href="#/stats" class="more-menu-item hidden" id="more-menu-stats-link">
+                    <span class="item-icon" style="color: var(--color-danger);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                    <div class="item-details">
+                        <span class="item-title" style="color: var(--text-primary);">Statistiques Admin</span>
+                        <span class="item-desc">Indicateurs de pannes (Accès Tavares50).</span>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- ============================================ -->
