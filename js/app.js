@@ -3146,7 +3146,7 @@ document.addEventListener("DOMContentLoaded", () => {
         wikiArticlesList.innerHTML = filtered.map(article => {
             return `
                 <div class="wiki-card">
-                    <button class="wiki-card-header" aria-expanded="false" data-target="${article.id}">
+                    <button class="wiki-card-header" aria-expanded="false" data-target="${article.id}" aria-controls="body-${article.id}">
                         <div class="wiki-card-header-main">
                             <div class="wiki-card-meta">
                                 <span class="wiki-cat-badge">${categoryLabels[article.category] || article.category}</span>
