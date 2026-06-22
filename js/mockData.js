@@ -106,5 +106,69 @@ const INITIAL_ELEVATOR_DATA = [
         maintenanceNotes: "",
         tenantReports: [],
         history: []
+    },
+    {
+        id: "802",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "804",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "816",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "844",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "902",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "904",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "906",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
+    },
+    {
+        id: "1015",
+        status: "en_service",
+        lastStatusChange: Date.now(),
+        maintenanceNotes: "",
+        tenantReports: [],
+        history: []
     }
 ];
