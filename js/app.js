@@ -2550,7 +2550,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!tenant) {
             // Configuration de l'affichage pour utilisateur non connecté
             document.body.classList.add("unauth-layout");
-            if (hash !== "#/landing") {
+            if (hash !== "#/landing" && hash !== "#/compte") {
                 window.location.hash = "#/landing";
                 return;
             }

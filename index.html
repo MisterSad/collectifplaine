@@ -97,93 +97,56 @@
         <!-- CONTENU DE L'ONGLET : LANDING PAGE (DÉCONNECTÉ) -->
         <!-- ============================================ -->
         <div id="tab-landing" class="page-panel active" role="tabpanel" aria-labelledby="tab-landing" style="padding: 1rem 0;">
+            <!-- Header de la Landing Page -->
+            <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.01); border-radius: var(--radius-md);">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="background: var(--accent-gradient); color: white; width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="3" width="14" height="18" rx="2" ry="2" />
+                            <line x1="9" y1="21" x2="9" y2="17" />
+                            <line x1="15" y1="21" x2="15" y2="17" />
+                            <line x1="9" y1="17" x2="15" y2="17" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 style="font-size: 1.2rem; font-weight: 800; margin: 0; letter-spacing: -0.01em; color: var(--text-primary); font-family: var(--font-heading);">Collectif Plaine</h1>
+                    </div>
+                </div>
+                <div>
+                    <a href="#/compte" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: var(--radius-md);">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Connexion / Inscription
+                    </a>
+                </div>
+            </header>
+
             <div class="landing-hero-grid">
                 
                 <!-- Colonne Gauche : Proposition de valeur & Mission -->
-                <div class="landing-content-left">
-                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
-                        <div class="brand-icon" style="background: var(--accent-gradient); color: white; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">
-                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="5" y="3" width="14" height="18" rx="2" ry="2" />
-                                <line x1="9" y1="21" x2="9" y2="17" />
-                                <line x1="15" y1="21" x2="15" y2="17" />
-                                <line x1="9" y1="17" x2="15" y2="17" />
-                                <rect x="8" y="6" width="2" height="2" rx="0.5" fill="currentColor" />
-                                <rect x="14" y="6" width="2" height="2" rx="0.5" fill="currentColor" />
-                                <rect x="8" y="10" width="2" height="2" rx="0.5" fill="currentColor" />
-                                <rect x="14" y="10" width="2" height="2" rx="0.5" fill="currentColor" />
-                                <rect x="8" y="14" width="2" height="2" rx="0.5" fill="currentColor" />
-                                <rect x="14" y="14" width="2" height="2" rx="0.5" fill="currentColor" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 style="font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.02em;">Collectif Plaine</h1>
-                            <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Hub d'Action Locataire</span>
-                        </div>
-                    </div>
- 
-                    <div class="assoc-badge" style="margin-bottom: 1rem;">Entraide & Dialogue Locataires</div>
-                    <h2 class="landing-hero-title" style="font-size: 2.2rem; font-weight: 850; line-height: 1.15; margin-bottom: 1.5rem; letter-spacing: -0.03em; background: linear-gradient(135deg, #ffffff 30%, var(--text-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Agissons ensemble pour notre cadre de vie : le hub d'entraide des locataires</h2>
+                <div class="landing-content-left" style="justify-content: center; height: 100%;">
+                    <div class="assoc-badge" style="margin-bottom: 1rem; align-self: flex-start;">Entraide & Dialogue Locataires</div>
+                    <h2 class="landing-hero-title" style="font-size: 2.2rem; font-weight: 850; line-height: 1.15; margin-bottom: 1.5rem; letter-spacing: -0.03em; background: linear-gradient(135deg, #ffffff 30%, var(--text-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 0;">Agissons ensemble pour notre cadre de vie : le hub d'entraide des locataires</h2>
                     
-                    <p class="lead-text" style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+                    <p class="lead-text" style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">
                         Pour préserver la qualité de vie dans notre résidence, l'entraide et le partage d'informations sont essentiels. Ce hub permet aux locataires de Cachan de recenser les dysfonctionnements (ascenseurs, équipements, parties communes) afin d'assurer un suivi précis et de faciliter le dialogue avec le bailleur Valdévy pour y remédier.
                     </p>
- 
-                    <div class="card glass landing-rules-card" style="padding: 1.5rem; border-left: 3px solid var(--accent-primary); margin-bottom: 2rem;">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary);">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-primary);"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7L2 12h6L5 7z"/><path d="M19 7l-3 5h6l-3-5z"/><path d="M12 22H4"/><path d="M12 22h8"/></svg>
-                            Le cadre réglementaire : garantir un logement de qualité
-                        </h3>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.75rem;">
-                            La législation française (notamment la loi du 6 juillet 1989) définit des règles claires pour assurer le confort et la sécurité des locataires :
-                        </p>
-                        <ul style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; padding-left: 1.25rem;">
-                            <li style="margin-bottom: 0.5rem;"><strong>Entretien et réparations :</strong> le bailleur veille au bon fonctionnement des équipements communs et à la décence des logements.</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Jouissance paisible :</strong> chaque résident doit pouvoir bénéficier sereinement de ses équipements (chauffage, ascenseur, etc.).</li>
-                            <li><strong>Sécurité des accès :</strong> le maintien en bon état des fermetures et éclairages contribue à la tranquillité de tous.</li>
-                        </ul>
-                    </div>
                 </div>
 
-                <!-- Colonne Droite : Formulaire Connexion / Inscription -->
+                <!-- Colonne Droite : Le Cadre Réglementaire (Loi de 1989) -->
                 <div class="landing-content-right">
-                    <div id="account-unauthenticated-section" class="card glass" style="margin: 0; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
-                        <!-- Section Connexion / Inscription -->
-                        <div class="modal-tabs" style="display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; padding-bottom: 0.5rem;">
-                            <button class="modal-tab-btn active" id="account-tab-login" type="button" style="background: none; border: none; color: inherit; font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Connexion</button>
-                            <button class="modal-tab-btn" id="account-tab-register" type="button" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Créer un compte</button>
-                        </div>
-                        
-                        <div id="account-auth-error" class="alert-box alert-danger hidden" style="margin-bottom: 1rem;"></div>
-                        <div id="account-auth-success" class="alert-box alert-success hidden" style="margin-bottom: 1rem;"></div>
-
-                        <!-- Formulaire de Connexion -->
-                        <form id="account-login-form">
-                            <div class="form-group" style="margin-bottom: 1.25rem;">
-                                <label for="account-login-username">Votre Pseudo <span class="required">*</span></label>
-                                <input type="text" id="account-login-username" required placeholder="Ex: Marc50" autocomplete="username">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 1.5rem;">
-                                <label for="account-login-password">Votre Mot de passe <span class="required">*</span></label>
-                                <input type="password" id="account-login-password" required placeholder="Saisir votre mot de passe" autocomplete="current-password">
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
-                        </form>
-
-                        <!-- Formulaire d'Inscription (Masqué par défaut) -->
-                        <form id="account-register-form" class="hidden">
-                            <div class="form-group" style="margin-bottom: 1.25rem;">
-                                <label for="account-register-username">Choisir un Pseudo <span class="required">*</span></label>
-                                <input type="text" id="account-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
-                                <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 1.5rem;">
-                                <label for="account-register-password">Mot de passe de sécurité <span class="required">*</span></label>
-                                <input type="password" id="account-register-password" required placeholder="Créer votre mot de passe (min 8 car.)" autocomplete="new-password">
-                                <span class="field-hint">Minimum 8 caractères, au moins une lettre et un chiffre.</span>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
-                        </form>
+                    <div class="card glass feature-card" style="padding: 2rem; border-radius: var(--radius-lg); background: rgba(255, 255, 255, 0.01); margin: 0; box-shadow: 0 8px 32px rgba(0,0,0,0.25);">
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-family: var(--font-heading);">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-primary); flex-shrink: 0;"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7L2 12h6L5 7z"/><path d="M19 7l-3 5h6l-3-5z"/><path d="M12 22H4"/><path d="M12 22h8"/></svg>
+                            Le cadre réglementaire
+                        </h3>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.75rem;">
+                            La législation française (loi du 6 juillet 1989) définit des règles claires pour assurer le confort et la sécurité des locataires :
+                        </p>
+                        <ul style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; padding-left: 1.25rem; margin: 0;">
+                            <li style="margin-bottom: 0.5rem;"><strong>Entretien et réparations :</strong> le bailleur veille au bon fonctionnement des équipements communs et à la décence des logements.</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Jouissance paisible :</strong> chaque résident doit pouvoir bénéficier de ses équipements (chauffage, ascenseur, etc.).</li>
+                            <li><strong>Sécurité des accès :</strong> le maintien en bon état des fermetures et éclairages contribue à la tranquillité de tous.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -562,6 +525,70 @@
         </div>
 
         <div id="tab-compte" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-compte">
+            <div id="account-unauthenticated-section" class="hidden">
+                <!-- Header du Panneau Compte (Déconnecté) -->
+                <header class="unauth-only-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.01); border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div style="background: var(--accent-gradient); color: white; width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="3" width="14" height="18" rx="2" ry="2" />
+                                <line x1="9" y1="21" x2="9" y2="17" />
+                                <line x1="15" y1="21" x2="15" y2="17" />
+                                <line x1="9" y1="17" x2="15" y2="17" />
+                            </svg>
+                        </div>
+                        <div>
+                            <span style="font-size: 1.2rem; font-weight: 800; margin: 0; letter-spacing: -0.01em; color: var(--text-primary); font-family: var(--font-heading);">Collectif Plaine</span>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="#/landing" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: var(--radius-md);">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                            Retour à l'accueil
+                        </a>
+                    </div>
+                </header>
+
+                <div class="card glass" style="max-width: 600px; margin: 2rem auto; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+                    <!-- Section Connexion / Inscription -->
+                    <div class="modal-tabs" style="display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; padding-bottom: 0.5rem;">
+                        <button class="modal-tab-btn active" id="account-tab-login" type="button" style="background: none; border: none; color: inherit; font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Connexion</button>
+                        <button class="modal-tab-btn" id="account-tab-register" type="button" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Créer un compte</button>
+                    </div>
+                    
+                    <div id="account-auth-error" class="alert-box alert-danger hidden" style="margin-bottom: 1rem;"></div>
+                    <div id="account-auth-success" class="alert-box alert-success hidden" style="margin-bottom: 1rem;"></div>
+
+                    <!-- Formulaire de Connexion -->
+                    <form id="account-login-form">
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="account-login-username">Votre Pseudo <span class="required">*</span></label>
+                            <input type="text" id="account-login-username" required placeholder="Ex: Marc50" autocomplete="username">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="account-login-password">Votre Mot de passe <span class="required">*</span></label>
+                            <input type="password" id="account-login-password" required placeholder="Saisir votre mot de passe" autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                    </form>
+
+                    <!-- Formulaire d'Inscription (Masqué par défaut) -->
+                    <form id="account-register-form" class="hidden">
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label for="account-register-username">Choisir un Pseudo <span class="required">*</span></label>
+                            <input type="text" id="account-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
+                            <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.5rem;">
+                            <label for="account-register-password">Mot de passe de sécurité <span class="required">*</span></label>
+                            <input type="password" id="account-register-password" required placeholder="Créer votre mot de passe (min 8 car.)" autocomplete="new-password">
+                            <span class="field-hint">Minimum 8 caractères, au moins une lettre et un chiffre.</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
+                    </form>
+                </div>
+            </div>
+
             <div id="account-authenticated-section" class="card glass hidden" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
                 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
                     <div id="account-avatar" class="user-avatar" style="width: 48px; height: 48px; font-size: 1.2rem;"></div>
