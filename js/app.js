@@ -10,6 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Éléments Globaux
     const adminBanner = document.getElementById("admin-banner");
     
+    // Variables pour les graphiques de la page de statistiques
+    let statsChartMonthly = null;
+    let statsChartStreets = null;
+    let statsChartElevators = null;
+    
     // Onglet Mon Compte
     const tabCompte = document.getElementById("tab-compte");
     const accountUnauthSection = document.getElementById("account-unauthenticated-section");
@@ -1665,7 +1670,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "#/incidents": "tab-incidents",
         "#/guides": "tab-guides",
         "#/charges": "tab-charges",
-        "#/compte": "tab-compte"
+        "#/compte": "tab-compte",
+        "#/stats": "tab-stats"
     };
 
     const pageTitles = {
@@ -1674,12 +1680,281 @@ document.addEventListener("DOMContentLoaded", () => {
         "#/incidents": "Incidents",
         "#/guides": "Guides",
         "#/charges": "Audit des Charges",
-        "#/compte": "Mon Compte"
+        "#/compte": "Mon Compte",
+        "#/stats": "Statistiques"
     };
+
+    function updateAdminStatsLinkVisibility() {
+        const tenant = Security.getLoggedInTenant();
+        const isAdmin = tenant && tenant.username === "Tavares50";
+        
+        const sidebarStatsLink = document.getElementById("sidebar-stats-link");
+        const mobileStatsLink = document.getElementById("mobile-stats-link");
+        
+        if (isAdmin) {
+            if (sidebarStatsLink) sidebarStatsLink.classList.remove("hidden");
+            if (mobileStatsLink) mobileStatsLink.classList.remove("hidden");
+        } else {
+            if (sidebarStatsLink) sidebarStatsLink.classList.add("hidden");
+            if (mobileStatsLink) mobileStatsLink.classList.add("hidden");
+        }
+    }
+
+    function renderStatsPage() {
+        const elevators = Store.getElevators();
+        const activeReports = elevators.reduce((acc, el) => acc + (el.tenantReports ? el.tenantReports.length : 0), 0);
+        
+        // 1. Total pannes
+        let totalBreakdowns = 0;
+        elevators.forEach(e => {
+            if (e.history) {
+                totalBreakdowns += e.history.filter(h => h.status === 'en_panne').length;
+            }
+        });
+
+        // 2. Durée moyenne de résolution
+        let totalResolutionTimeMs = 0;
+        let resolvedBreakdownsCount = 0;
+        
+        elevators.forEach(e => {
+            if (!e.history || e.history.length === 0) return;
+            const sortedHist = [...e.history].sort((a, b) => a.timestamp - b.timestamp);
+            
+            let activeBreakdownStart = null;
+            
+            sortedHist.forEach(event => {
+                if (event.status === 'en_panne') {
+                    if (activeBreakdownStart === null) {
+                        activeBreakdownStart = event.timestamp;
+                    }
+                } else if (event.status === 'en_service') {
+                    if (activeBreakdownStart !== null) {
+                        const durationMs = event.timestamp - activeBreakdownStart;
+                        totalResolutionTimeMs += durationMs;
+                        resolvedBreakdownsCount++;
+                        activeBreakdownStart = null;
+                    }
+                }
+            });
+        });
+        
+        const avgResolutionHours = resolvedBreakdownsCount > 0 
+            ? (totalResolutionTimeMs / (1000 * 60 * 60 * resolvedBreakdownsCount)).toFixed(1)
+            : 0;
+
+        function formatAvgDuration(hours) {
+            if (hours == 0) return "N/A";
+            if (hours < 24) return `${hours} h`;
+            const days = (hours / 24).toFixed(1);
+            return `${days} j`;
+        }
+
+        // 3. Taux de disponibilité global
+        let oldestTimestamp = Date.now();
+        let hasHistory = false;
+        elevators.forEach(e => {
+            if (e.history && e.history.length > 0) {
+                hasHistory = true;
+                e.history.forEach(h => {
+                    if (h.timestamp < oldestTimestamp) oldestTimestamp = h.timestamp;
+                });
+            }
+        });
+        
+        const trackingPeriodDays = Math.ceil((Date.now() - oldestTimestamp) / (1000 * 60 * 60 * 24)) || 1;
+        const period = Math.max(30, trackingPeriodDays);
+        
+        let totalDowntimeDays = 0;
+        elevators.forEach(e => {
+            totalDowntimeDays += e.downtimeDays || 0;
+        });
+        
+        const totalPossibleDays = elevators.length * period;
+        const availabilityRate = totalPossibleDays > 0
+            ? (100 * (1 - totalDowntimeDays / totalPossibleDays)).toFixed(2)
+            : 100.00;
+
+        // Mettre à jour le DOM des KPIs
+        const kpiAvailability = document.getElementById("kpi-availability");
+        const kpiAvailabilityPeriod = document.getElementById("kpi-availability-period");
+        const kpiBreakdowns = document.getElementById("kpi-breakdowns");
+        const kpiResolutionTime = document.getElementById("kpi-resolution-time");
+        const kpiActiveReports = document.getElementById("kpi-active-reports");
+
+        if (kpiAvailability) kpiAvailability.textContent = `${availabilityRate}%`;
+        if (kpiAvailabilityPeriod) kpiAvailabilityPeriod.textContent = `Calculée sur ${period} jours`;
+        if (kpiBreakdowns) kpiBreakdowns.textContent = totalBreakdowns;
+        if (kpiResolutionTime) kpiResolutionTime.textContent = formatAvgDuration(parseFloat(avgResolutionHours));
+        if (kpiActiveReports) kpiActiveReports.textContent = activeReports;
+
+        // ── GRAPHISME 1 : PANNES PAR MOIS ──
+        const ctxMonthly = document.getElementById('stats-chart-monthly');
+        if (ctxMonthly) {
+            if (statsChartMonthly) statsChartMonthly.destroy();
+
+            const monthLabels = [];
+            const monthCounts = [];
+            const now = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const monthName = d.toLocaleString('fr-FR', { month: 'short' });
+                const label = `${monthName} ${d.getFullYear().toString().slice(-2)}`;
+                monthLabels.push(label);
+                
+                let count = 0;
+                elevators.forEach(e => {
+                    if (e.history) {
+                        e.history.forEach(h => {
+                            if (h.status === 'en_panne') {
+                                const hDate = new Date(h.timestamp);
+                                if (hDate.getFullYear() === d.getFullYear() && hDate.getMonth() === d.getMonth()) {
+                                    count++;
+                                }
+                            }
+                        });
+                    }
+                });
+                monthCounts.push(count);
+            }
+
+            statsChartMonthly = new Chart(ctxMonthly, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Nombre de pannes',
+                        data: monthCounts,
+                        backgroundColor: 'rgba(59, 130, 246, 0.65)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1.5,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1, precision: 0, color: 'var(--text-muted)' },
+                            grid: { color: 'var(--border-color)' }
+                        },
+                        x: {
+                            ticks: { color: 'var(--text-muted)' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // ── GRAPHISME 2 : PANNES PAR RUE ──
+        const ctxStreets = document.getElementById('stats-chart-streets');
+        if (ctxStreets) {
+            if (statsChartStreets) statsChartStreets.destroy();
+
+            const breakdownsByStreet = {};
+            elevators.forEach(e => {
+                const entrance = CONFIG.entrances.find(ent => String(ent.id) === String(e.id));
+                const street = entrance ? entrance.street : "Inconnu";
+                const count = e.history ? e.history.filter(h => h.status === 'en_panne').length : 0;
+                breakdownsByStreet[street] = (breakdownsByStreet[street] || 0) + count;
+            });
+
+            const filteredStreets = Object.entries(breakdownsByStreet).filter(([_, count]) => count > 0);
+            
+            const labels = filteredStreets.length > 0 ? filteredStreets.map(item => item[0]) : ["Aucune panne"];
+            const dataPoints = filteredStreets.length > 0 ? filteredStreets.map(item => item[1]) : [0];
+            const colors = [
+                '#3b82f6', '#10b981', '#f59e0b', '#ef4444', 
+                '#8b5cf6', '#ec4899', '#06b6d4', '#6366f1'
+            ];
+
+            statsChartStreets = new Chart(ctxStreets, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataPoints,
+                        backgroundColor: colors.slice(0, Math.max(1, labels.length)),
+                        borderWidth: 1,
+                        borderColor: 'var(--bg-secondary)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'var(--text-primary)',
+                                boxWidth: 12,
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ── GRAPHISME 3 : TOP 5 DES PIRES ASCENSEURS ──
+        const ctxElevators = document.getElementById('stats-chart-elevators');
+        if (ctxElevators) {
+            if (statsChartElevators) statsChartElevators.destroy();
+
+            const elevatorDowntimes = elevators.map(e => {
+                const entrance = CONFIG.entrances.find(ent => String(ent.id) === String(e.id));
+                const label = entrance ? entrance.label : `Entrée ${e.id}`;
+                const downtime = e.downtimeDays || 0;
+                return { label, downtime };
+            }).sort((a, b) => b.downtime - a.downtime).slice(0, 5);
+
+            statsChartElevators = new Chart(ctxElevators, {
+                type: 'bar',
+                data: {
+                    labels: elevatorDowntimes.map(item => item.label),
+                    datasets: [{
+                        label: "Jours d'indisponibilité",
+                        data: elevatorDowntimes.map(item => item.downtime),
+                        backgroundColor: 'rgba(239, 68, 68, 0.65)',
+                        borderColor: '#ef4444',
+                        borderWidth: 1.5,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { precision: 0, color: 'var(--text-muted)' },
+                            grid: { color: 'var(--border-color)' }
+                        },
+                        y: {
+                            ticks: { color: 'var(--text-muted)' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+    }
 
     function handleRouting() {
         const tenant = Security.getLoggedInTenant();
         let hash = window.location.hash;
+
+        updateAdminStatsLinkVisibility();
 
         if (!tenant) {
             // Configuration de l'affichage pour utilisateur non connecté
@@ -1691,6 +1966,16 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             // Configuration de l'affichage pour utilisateur connecté
             document.body.classList.remove("unauth-layout");
+            
+            // Sécurité : restreindre l'accès à la page de statistiques
+            if (hash === "#/stats") {
+                const isAdmin = tenant && tenant.username === "Tavares50";
+                if (!isAdmin) {
+                    window.location.hash = "#/ascenseurs";
+                    return;
+                }
+            }
+
             if (!hash || hash === "#/landing" || hash === "#/accueil") {
                 window.location.hash = "#/ascenseurs";
                 return;
@@ -1700,7 +1985,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const targetPanelId = pageRouteMap[hash];
 
         if (!targetPanelId) {
-            // Redirection vers l'onglet principal adapté si le hash est inconnu
             window.location.hash = tenant ? "#/ascenseurs" : "#/landing";
             return;
         }
@@ -1738,20 +2022,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (activePanel && activePanel !== targetPanel) {
-            // Effet de fondu sortant du panneau actif actuel
             activePanel.classList.remove("active");
             
-            // Masquage retardé pour permettre la fin de l'effet d'opacité
             setTimeout(() => {
                 activePanel.classList.add("hidden");
                 targetPanel.classList.remove("hidden");
-                // Déclencher l'entrée du nouveau panneau
                 setTimeout(() => {
                     targetPanel.classList.add("active");
                 }, 20);
             }, 150);
         } else {
-            // Premier chargement ou aucun panneau actif préalable
             allPanels.forEach(panel => {
                 panel.classList.remove("active");
                 panel.classList.add("hidden");
@@ -1769,6 +2049,8 @@ document.addEventListener("DOMContentLoaded", () => {
             refreshAccountTab();
         } else if (targetPanelId === "tab-guides") {
             renderWiki();
+        } else if (targetPanelId === "tab-stats") {
+            renderStatsPage();
         }
     }
 
@@ -1972,6 +2254,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     window.addEventListener("storeUpdated", () => {
         renderDashboard();
+        updateAdminStatsLinkVisibility();
+        if (window.location.hash === "#/stats") {
+            renderStatsPage();
+        }
     });
 
     async function initApp() {

@@ -66,6 +66,9 @@
                 <a href="#/compte" class="menu-link" data-page="page-profile" id="sidebar-account-link">
                     <span class="menu-icon" id="sidebar-account-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="menu-text" id="sidebar-account-text">Mon Compte</span>
                 </a>
+                <a href="#/stats" class="menu-link hidden" data-page="page-stats" id="sidebar-stats-link">
+                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> <span class="menu-text">Statistiques</span>
+                </a>
             </nav>
             <div class="sidebar-theme-toggle" style="margin-top: auto; padding: 1rem 0.9rem 0.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
                 <span style="display: flex; align-items: center; gap: 0.5rem;">
@@ -503,6 +506,102 @@
                 </button>
             </div>
         </div>
+
+        <!-- ============================================ -->
+        <!-- CONTENU DE L'ONGLET : STATISTIQUES (ADMIN UNIQUEMENT) -->
+        <!-- ============================================ -->
+        <div id="tab-stats" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-stats" style="padding: 1rem 0;">
+            <div class="stats-header" style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0; font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-family: var(--font-heading);">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-primary);"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        Tableau de Bord Statistique
+                    </h2>
+                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">Indicateurs de performance de la copropriété et suivi des pannes.</p>
+                </div>
+                <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--color-danger); font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--radius-pill); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.35rem;">
+                    🛡️ Accès Admin Restreint (Tavares50)
+                </div>
+            </div>
+
+            <!-- Grille des KPIs -->
+            <div class="stats-kpi-grid">
+                <div class="card glass kpi-card">
+                    <div class="kpi-icon-wrapper success">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Disponibilité Moyenne</span>
+                        <h3 class="kpi-value" id="kpi-availability">0.0%</h3>
+                        <span class="kpi-subtext" id="kpi-availability-period">Calculée sur 30j</span>
+                    </div>
+                </div>
+
+                <div class="card glass kpi-card">
+                    <div class="kpi-icon-wrapper danger">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Total des Pannes</span>
+                        <h3 class="kpi-value" id="kpi-breakdowns">0</h3>
+                        <span class="kpi-subtext" id="kpi-breakdowns-sub">Événements enregistrés</span>
+                    </div>
+                </div>
+
+                <div class="card glass kpi-card">
+                    <div class="kpi-icon-wrapper warning">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Temps Moyen de Résolution</span>
+                        <h3 class="kpi-value" id="kpi-resolution-time">0h</h3>
+                        <span class="kpi-subtext">Durée panne ➔ réparation</span>
+                    </div>
+                </div>
+
+                <div class="card glass kpi-card">
+                    <div class="kpi-icon-wrapper info">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Signalements Actifs</span>
+                        <h3 class="kpi-value" id="kpi-active-reports">0</h3>
+                        <span class="kpi-subtext" id="kpi-active-reports-sub">En attente de traitement</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grille des graphiques -->
+            <div class="stats-charts-grid">
+                <div class="card glass chart-card">
+                    <div class="chart-header">
+                        <h4>Historique des Pannes par Mois</h4>
+                    </div>
+                    <div class="stats-chart-wrapper">
+                        <canvas id="stats-chart-monthly"></canvas>
+                    </div>
+                </div>
+
+                <div class="card glass chart-card">
+                    <div class="chart-header">
+                        <h4>Répartition des Pannes par Rue</h4>
+                    </div>
+                    <div class="stats-chart-wrapper">
+                        <canvas id="stats-chart-streets"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphique pleine largeur -->
+            <div class="card glass chart-card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
+                <div class="chart-header">
+                    <h4>Top 5 des Ascenseurs les plus pénalisés (Jours d'indisponibilité accumulés)</h4>
+                </div>
+                <div class="stats-chart-wrapper" style="height: 250px;">
+                    <canvas id="stats-chart-elevators"></canvas>
+                </div>
+            </div>
+        </div>
             </main>
         </div>
 
@@ -527,6 +626,10 @@
             <a href="#/compte" class="mobile-link" data-page="page-profile" id="mobile-account-link">
                 <span class="mobile-icon" id="mobile-account-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
                 <span class="mobile-text" id="mobile-account-text">Compte</span>
+            </a>
+            <a href="#/stats" class="mobile-link hidden" data-page="page-stats" id="mobile-stats-link">
+                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                <span class="mobile-text">Stats</span>
             </a>
         </nav>
     </div>
