@@ -429,6 +429,149 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         renderIncidents();
+        updateLandingPageStats();
+    }
+
+    /**
+     * Met à jour dynamiquement les statistiques de la landing page (non connecté)
+     */
+    function updateLandingPageStats() {
+        const landingElevatorsCount = document.getElementById("landing-elevators-count");
+        const landingElevatorsDesc = document.getElementById("landing-stat-elevators-desc");
+        const landingIncidentsCount = document.getElementById("landing-incidents-count");
+        const landingSignaturesCount = document.getElementById("landing-signatures-count");
+        const landingStatElevators = document.getElementById("landing-stat-elevators");
+
+        // 1. Statistiques des Ascenseurs
+        if (landingElevatorsCount && landingElevatorsDesc) {
+            try {
+                const elevators = Store.getElevators();
+                const stats = Store.getStats();
+                const total = elevators.length || 6;
+                const enService = stats.en_service || 0;
+                const enPanne = stats.en_panne || 0;
+
+                landingElevatorsCount.textContent = `${enService}/${total}`;
+                
+                if (enPanne > 0) {
+                    landingElevatorsDesc.innerHTML = `<span class="color-danger" style="font-weight:600;">⚠️ ${enPanne} en panne</span>`;
+                    if (landingStatElevators) {
+                        landingStatElevators.style.color = "var(--color-danger)";
+                    }
+                } else if (stats.en_maintenance > 0) {
+                    landingElevatorsDesc.innerHTML = `<span class="color-warning" style="font-weight:600;">🔧 ${stats.en_maintenance} en maintenance</span>`;
+                    if (landingStatElevators) {
+                        landingStatElevators.style.color = "var(--color-warning)";
+                    }
+                } else {
+                    landingElevatorsDesc.innerHTML = `<span class="color-success">✓ Tous opérationnels</span>`;
+                    if (landingStatElevators) {
+                        landingStatElevators.style.color = "var(--color-success)";
+                    }
+                }
+
+                // Mettre à jour également le badge de la carte ascenseurs
+                const badgeElevator = document.getElementById("badge-elevator-status");
+                if (badgeElevator) {
+                    if (enPanne > 0) {
+                        badgeElevator.textContent = `${enPanne} en panne`;
+                        badgeElevator.style.background = "rgba(239, 68, 68, 0.1)";
+                        badgeElevator.style.color = "var(--color-danger)";
+                        badgeElevator.style.borderColor = "rgba(239, 68, 68, 0.2)";
+                    } else if (stats.en_maintenance > 0) {
+                        badgeElevator.textContent = `${stats.en_maintenance} maint.`;
+                        badgeElevator.style.background = "rgba(245, 158, 11, 0.1)";
+                        badgeElevator.style.color = "var(--color-warning)";
+                        badgeElevator.style.borderColor = "rgba(245, 158, 11, 0.2)";
+                    } else {
+                        badgeElevator.textContent = "100% OK";
+                        badgeElevator.style.background = "var(--color-success-bg)";
+                        badgeElevator.style.color = "var(--color-success)";
+                        badgeElevator.style.borderColor = "var(--color-success-border)";
+                    }
+                }
+            } catch (e) {
+                console.warn("Erreur calcul stats ascenseurs landing", e);
+            }
+        }
+
+        // 2. Statistiques des Incidents Actifs
+        if (landingIncidentsCount) {
+            try {
+                const incidents = Store.getIncidents();
+                const activeIncidents = incidents.filter(i => i.status !== 'resolu').length;
+                landingIncidentsCount.textContent = activeIncidents;
+                
+                // Mettre à jour également le badge de la carte incident
+                const badgeIncidents = document.getElementById("badge-incidents-status");
+                if (badgeIncidents) {
+                    if (activeIncidents > 0) {
+                        badgeIncidents.textContent = `${activeIncidents} Actif${activeIncidents > 1 ? 's' : ''}`;
+                        badgeIncidents.style.background = "rgba(239, 68, 68, 0.1)";
+                        badgeIncidents.style.color = "var(--color-danger)";
+                        badgeIncidents.style.borderColor = "rgba(239, 68, 68, 0.2)";
+                    } else {
+                        badgeIncidents.textContent = "Aucun";
+                        badgeIncidents.style.background = "var(--color-success-bg)";
+                        badgeIncidents.style.color = "var(--color-success)";
+                        badgeIncidents.style.borderColor = "var(--color-success-border)";
+                    }
+                }
+            } catch (e) {
+                console.warn("Erreur calcul stats incidents landing", e);
+            }
+        }
+
+        // 3. Statistiques Mobilisation (Pétitions & Signatures)
+        if (landingSignaturesCount) {
+            try {
+                const petitions = Store.getPetitions();
+                const totalSignatures = petitions.reduce((sum, p) => sum + (p.petition_signatures ? p.petition_signatures.length : 0), 0);
+                const activePetitions = petitions.length;
+
+                landingSignaturesCount.textContent = totalSignatures;
+
+                // Mettre à jour également le badge de la carte pétitions
+                const badgePetitions = document.getElementById("badge-petitions-status");
+                if (badgePetitions) {
+                    if (activePetitions > 0) {
+                        badgePetitions.textContent = `${activePetitions} Pétition${activePetitions > 1 ? 's' : ''}`;
+                        badgePetitions.style.background = "rgba(99, 102, 241, 0.1)";
+                        badgePetitions.style.color = "#6366f1";
+                        badgePetitions.style.borderColor = "rgba(99, 102, 241, 0.2)";
+                    } else {
+                        badgePetitions.textContent = "Aucune";
+                        badgePetitions.style.background = "rgba(107, 114, 128, 0.1)";
+                        badgePetitions.style.color = "var(--text-muted)";
+                        badgePetitions.style.borderColor = "rgba(107, 114, 128, 0.2)";
+                    }
+                }
+            } catch (e) {
+                console.warn("Erreur calcul stats pétitions landing", e);
+            }
+        }
+
+        // 4. Statistiques des Votes / Sondages Actifs
+        try {
+            const polls = Store.getPolls();
+            const activePolls = polls.filter(p => new Date(p.ends_at) > new Date()).length;
+            const badgeVotes = document.getElementById("badge-votes-status");
+            if (badgeVotes) {
+                if (activePolls > 0) {
+                    badgeVotes.textContent = `${activePolls} Actif${activePolls > 1 ? 's' : ''}`;
+                    badgeVotes.style.background = "rgba(245, 158, 11, 0.1)";
+                    badgeVotes.style.color = "#d97706";
+                    badgeVotes.style.borderColor = "rgba(245, 158, 11, 0.2)";
+                } else {
+                    badgeVotes.textContent = "Clos";
+                    badgeVotes.style.background = "rgba(107, 114, 128, 0.1)";
+                    badgeVotes.style.color = "var(--text-muted)";
+                    badgeVotes.style.borderColor = "rgba(107, 114, 128, 0.2)";
+                }
+            }
+        } catch (e) {
+            console.warn("Erreur calcul stats votes landing", e);
+        }
     }
 
     /**

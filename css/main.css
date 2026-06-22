@@ -550,6 +550,26 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), var(--accent-glow-dim) !important;
 }
 
+/* Aperçu de statistiques sur la landing page */
+.landing-stats-preview {
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur)) !important;
+    transition: box-shadow var(--transition-normal) ease, border-color var(--transition-normal) ease !important;
+}
+
+.landing-stats-preview:hover {
+    border-color: var(--accent-primary-border) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45) !important;
+}
+
+.landing-stat-item {
+    transition: transform var(--transition-fast) ease !important;
+}
+
+.landing-stat-item:hover {
+    transform: translateY(-2px);
+}
+
 @media (max-width: 992px) {
     .landing-hero-grid {
         grid-template-columns: 1fr;
@@ -563,3 +583,4 @@ h1, h2, h3, h4, h5, h6 {
         width: 100%;
     }
 }
+

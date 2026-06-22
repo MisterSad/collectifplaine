@@ -1122,4 +1122,21 @@ button, a, select, input, textarea, label {
         width: 16px !important;
         height: 16px !important;
     }
+
+    #tab-landing .landing-stats-preview {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 1rem 0.5rem !important;
+        padding: 1rem 0.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+
+    #tab-landing .landing-stat-item {
+        border-left: none !important;
+        padding: 0.25rem !important;
+    }
+
+    #tab-landing .landing-stat-item:nth-child(even) {
+        border-left: 1px solid var(--border-color) !important;
+    }
 }
+

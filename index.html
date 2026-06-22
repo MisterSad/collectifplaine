@@ -190,43 +190,141 @@
 
             <!-- Section Fonctionnalités -->
             <section style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 3rem;">
-                <h3 style="font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 2.5rem; letter-spacing: -0.01em; color: var(--text-primary);">Les outils du collectif pour agir</h3>
-                <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <h3 style="font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 0.5rem; color: var(--text-primary); font-family: var(--font-heading);">Les outils de l'Amicale pour agir</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted); text-align: center; max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.5;">
+                    Découvrez l'ensemble des services collaboratifs mis en place pour améliorer le quotidien de notre résidence et défendre nos droits de locataires.
+                </p>
+
+                <!-- Aperçu du Tableau de Bord en Direct (Live Stats Preview) -->
+                <div class="landing-stats-preview glass" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: 2.5rem; background: rgba(255, 255, 255, 0.02);">
+                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Résidence</div>
+                        <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                            🏢 <span>6 Bâtiments</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Division Leclerc, Cachan</div>
+                    </div>
+                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem; border-left: 1px solid var(--border-color);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">État Ascenseurs</div>
+                        <div id="landing-stat-elevators" style="font-size: 1.25rem; font-weight: 800; color: var(--color-success); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                            🛗 <span id="landing-elevators-count">--/--</span>
+                        </div>
+                        <div id="landing-stat-elevators-desc" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Chargement...</div>
+                    </div>
+                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem; border-left: 1px solid var(--border-color);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Incidents Actifs</div>
+                        <div id="landing-stat-incidents" style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                            ⚠️ <span id="landing-incidents-count">--</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">En attente de résolution</div>
+                    </div>
+                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem; border-left: 1px solid var(--border-color);">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Mobilisation</div>
+                        <div id="landing-stat-engagement" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-primary); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                            ✍️ <span id="landing-signatures-count">--</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Signatures récoltées</div>
+                    </div>
+                </div>
+
+                <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
                     
                     <!-- Feature 1: Ascenseurs -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg);">
+                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
                         <div style="background: rgba(37, 99, 235, 0.1); color: var(--accent-primary); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/><polyline points="9 10 12 7 15 10"/><polyline points="9 14 12 17 15 14"/></svg>
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/><polyline points="9 10 12 7 15 10"/><polyline points="9 14 12 17 15 14"/></svg>
                         </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Suivi des Ascenseurs</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">Signalez les pannes instantanément avec photos horodatées. Un registre d'indisponibilité est compilé automatiquement pour négocier des remboursements de charges.</p>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                            Suivi des Ascenseurs
+                            <span id="badge-elevator-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: var(--accent-primary-dim); color: var(--accent-primary); border: 1px solid var(--accent-primary-border);">En direct</span>
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
+                            Signalez les pannes instantanément avec photos horodatées. Un registre d'indisponibilité est compilé automatiquement pour exiger des remboursements de charges.
+                        </p>
                     </div>
 
                     <!-- Feature 2: Incidents -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg);">
+                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
                         <div style="background: rgba(239, 68, 68, 0.1); color: var(--color-danger); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                         </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Registre d'Incidents</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">Déclarez tout dysfonctionnement des parties communes (portes fracturées, coupures d'eau ou de chauffage) pour centraliser nos doléances.</p>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                            Registre d'Incidents
+                            <span id="badge-incidents-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(239,68,68,0.1); color: var(--color-danger); border: 1px solid rgba(239,68,68,0.2);">Actif</span>
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
+                            Déclarez tout dysfonctionnement des parties communes (portes fracturées, coupures d'eau/chauffage, éclairage) pour centraliser nos doléances.
+                        </p>
                     </div>
 
-                    <!-- Feature 3: Charges -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg);">
+                    <!-- Feature 3: Pétitions -->
+                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
+                        <div style="background: rgba(99, 102, 241, 0.1); color: #6366f1; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.1);">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                            Pétitions Collectives
+                            <span id="badge-petitions-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(99,102,241,0.1); color: #6366f1; border: 1px solid rgba(99,102,241,0.2);">Pétitions</span>
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
+                            Signez et lancez des pétitions communes pour faire réagir le bailleur face aux dysfonctionnements répétés ou aux absences de réponse.
+                        </p>
+                    </div>
+
+                    <!-- Feature 4: Sondages & Votes -->
+                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
+                        <div style="background: rgba(245, 158, 11, 0.1); color: #d97706; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        </div>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                            Sondages & Votes
+                            <span id="badge-votes-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.2);">Avis</span>
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
+                            Donnez votre avis sur les sondages du quotidien et participez aux votes collectifs de l'amicale pour décider ensemble des actions à mener.
+                        </p>
+                    </div>
+
+                    <!-- Feature 5: Guides & Droits -->
+                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
                         <div style="background: rgba(16, 185, 129, 0.1); color: var(--color-success); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Audit des Charges</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">Vérifiez et épluchez les lignes de régularisation de charges (bientôt disponible) afin de contester les montants réclamés de manière abusive.</p>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                            Droits & Guides
+                            <span class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: var(--color-success-bg); color: var(--color-success); border: 1px solid var(--color-success-border);">Loi 1989</span>
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
+                            Consultez vos droits et obligations face au bailleur (charges récupérables, réparations locatives, décence) selon la législation française.
+                        </p>
                     </div>
 
-                    <!-- Feature 4: Offline Sync -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg);">
-                        <div style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                    <!-- Feature 6: Audit des Charges -->
+                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
+                        <div style="background: rgba(6, 182, 212, 0.1); color: #0891b2; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.1);">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                         </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary);">Saisie Hors-ligne</h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">Signalez les anomalies même sans connexion (depuis la cage d'ascenseur). Les données se synchronisent d'elles-mêmes dès le réseau retrouvé.</p>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                            Audit des Charges
+                            <span class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(6,182,212,0.1); color: #0891b2; border: 1px solid rgba(6,182,212,0.2);">Bientôt</span>
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
+                            Outil d'analyse pour éplucher les régularisations de charges annuelles, identifier les surfacturations et contester les charges abusives.
+                        </p>
+                    </div>
+
+                    <!-- Feature 7: Saisie Hors-ligne -->
+                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
+                        <div style="background: rgba(107, 114, 128, 0.1); color: var(--text-muted); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(107, 114, 128, 0.08);">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.5M5 12.5a10.94 10.94 0 0 1 5.83-2.84M8.53 16.03a6 6 0 0 1 6.94 0M12 20h.01"/></svg>
+                        </div>
+                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
+                            Saisie Hors-ligne
+                            <span class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(107,114,128,0.1); color: var(--text-muted); border: 1px solid rgba(107,114,128,0.2);">PWA</span>
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
+                            Signalez les anomalies même sans réseau (dans la cabine ou le parking). L'application synchronise vos données dès que vous captez à nouveau.
+                        </p>
                     </div>
                 </div>
             </section>
