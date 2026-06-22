@@ -196,6 +196,14 @@ document.addEventListener("DOMContentLoaded", () => {
         document.documentElement.setAttribute("data-theme", theme);
         localStorage.setItem("theme", theme);
         updateThemeToggleUI(theme);
+
+        // Re-render open charts to apply new theme colors
+        if (window.location.hash === "#/stats") {
+            renderStatsPage();
+        }
+        if (activeDetailsEntranceId && detailsModal && !detailsModal.classList.contains("hidden")) {
+            openDetailsModal(activeDetailsEntranceId);
+        }
     }
 
     function updateThemeToggleUI(theme) {
@@ -1331,6 +1339,11 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 ctx.parentElement.style.display = 'block';
                 
+                // Récupérer les couleurs réelles du thème CSS actif
+                const rootStyle = getComputedStyle(document.documentElement);
+                const mutedColor = rootStyle.getPropertyValue('--text-muted').trim() || '#888888';
+                const gridColor = rootStyle.getPropertyValue('--border-color').trim() || '#dddddd';
+
                 // Préparation des données pour le graphique : Taux de disponibilité (simplifié pour démo)
                 // On crée des points sur les 30 derniers jours
                 const labels = [];
@@ -1369,7 +1382,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        scales: { y: { beginAtZero: true, max: 100 } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { color: mutedColor },
+                                grid: { color: gridColor }
+                            },
+                            x: {
+                                ticks: { color: mutedColor },
+                                grid: { display: false }
+                            }
+                        },
                         plugins: { legend: { display: false } }
                     }
                 });
@@ -1704,6 +1728,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const elevators = Store.getElevators();
         const activeReports = elevators.reduce((acc, el) => acc + (el.tenantReports ? el.tenantReports.length : 0), 0);
         
+        // Récupérer les couleurs réelles du thème CSS actif
+        const rootStyle = getComputedStyle(document.documentElement);
+        const textColor = rootStyle.getPropertyValue('--text-primary').trim() || '#000000';
+        const mutedColor = rootStyle.getPropertyValue('--text-muted').trim() || '#888888';
+        const gridColor = rootStyle.getPropertyValue('--border-color').trim() || '#dddddd';
+        const secondaryBgColor = rootStyle.getPropertyValue('--bg-secondary').trim() || '#ffffff';
+
         // 1. Total pannes
         let totalBreakdowns = 0;
         elevators.forEach(e => {
@@ -1837,11 +1868,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { stepSize: 1, precision: 0, color: 'var(--text-muted)' },
-                            grid: { color: 'var(--border-color)' }
+                            ticks: { stepSize: 1, precision: 0, color: mutedColor },
+                            grid: { color: gridColor }
                         },
                         x: {
-                            ticks: { color: 'var(--text-muted)' },
+                            ticks: { color: mutedColor },
                             grid: { display: false }
                         }
                     },
@@ -1882,7 +1913,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         data: dataPoints,
                         backgroundColor: colors.slice(0, Math.max(1, labels.length)),
                         borderWidth: 1,
-                        borderColor: 'var(--bg-secondary)'
+                        borderColor: secondaryBgColor
                     }]
                 },
                 options: {
@@ -1892,7 +1923,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         legend: {
                             position: 'bottom',
                             labels: {
-                                color: 'var(--text-primary)',
+                                color: textColor,
                                 boxWidth: 12,
                                 font: { size: 10 }
                             }
@@ -1934,11 +1965,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     scales: {
                         x: {
                             beginAtZero: true,
-                            ticks: { precision: 0, color: 'var(--text-muted)' },
-                            grid: { color: 'var(--border-color)' }
+                            ticks: { precision: 0, color: mutedColor },
+                            grid: { color: gridColor }
                         },
                         y: {
-                            ticks: { color: 'var(--text-muted)' },
+                            ticks: { color: mutedColor },
                             grid: { display: false }
                         }
                     },
