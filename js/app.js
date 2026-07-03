@@ -922,11 +922,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const tenant = Security.getLoggedInTenant();
         if (!tenant) return;
 
-        if (typeof supabase === 'undefined' || !supabase || (typeof Store !== 'undefined' && Store.isLocalDemoMode)) {
-            console.log("[Realtime] Bypassing realtime subscription in local demo mode.");
-            return;
-        }
-
         console.log(`[Realtime] Abonnement aux alertes et mises à jour de pannes...`);
 
         realtimeChannel = supabase
@@ -2865,58 +2860,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    function showDemoBanner() {
-        if (document.getElementById("db-demo-banner")) return;
-        
-        const banner = document.createElement("div");
-        banner.id = "db-demo-banner";
-        banner.style.cssText = `
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: #ffffff;
-            text-align: center;
-            padding: 0.75rem 1rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            position: relative;
-            z-index: 9999;
-            animation: slideDown 0.3s ease-out;
-        `;
-        
-        if (!document.getElementById("demo-banner-style")) {
-            const style = document.createElement("style");
-            style.id = "demo-banner-style";
-            style.textContent = `
-                @keyframes slideDown {
-                    from { transform: translateY(-100%); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-            `;
-            document.head.appendChild(style);
-        }
-
-        banner.innerHTML = `
-            <span style="font-size: 1.1rem;">⚠️</span>
-            <span><strong>Mode Démo / Local actif</strong> — La base de données cloud (Supabase) n'est pas joignable (projet suspendu ou problème réseau). Vos modifications seront temporairement sauvegardées dans le navigateur.</span>
-            <button id="close-demo-banner" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; line-height: 1; margin-left: auto; padding: 0 0.5rem; font-weight: bold;">&times;</button>
-        `;
-        
-        document.body.insertBefore(banner, document.body.firstChild);
-        
-        document.getElementById("close-demo-banner").addEventListener("click", () => {
-            banner.style.transition = "all 0.3s ease";
-            banner.style.height = "0";
-            banner.style.padding = "0";
-            banner.style.opacity = "0";
-            banner.style.overflow = "hidden";
-            setTimeout(() => banner.remove(), 300);
-        });
-    }
-
     async function initApp() {
         initTheme();
         populateAllEntrancesDropdowns();
@@ -2935,10 +2878,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // Charger les ascenseurs depuis le cloud Supabase
             await Store.init();
-            
-            if (Store.isLocalDemoMode) {
-                showDemoBanner();
-            }
             
             renderDashboard();
 
