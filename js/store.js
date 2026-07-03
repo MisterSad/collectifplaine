@@ -9,11 +9,15 @@ const Store = (() => {
     let _messages = [];
     let _petitions = [];
     let _polls = [];
+    let _isLocalDemoMode = false;
 
     /**
      * Vérifie de manière robuste si le client Supabase est initialisé.
      */
     function _ensureSupabase() {
+        if (_isLocalDemoMode) {
+            return;
+        }
         if (typeof supabase === 'undefined' || !supabase) {
             // Tentative d'initialisation tardive de secours (en cas de chargement asynchrone ou décalé du CDN/lib)
             if (window.supabase && window.supabase.createClient) {
@@ -281,6 +285,13 @@ const Store = (() => {
     }
 
     return {
+        get isLocalDemoMode() {
+            return _isLocalDemoMode;
+        },
+        set isLocalDemoMode(val) {
+            _isLocalDemoMode = val;
+        },
+
         /**
          * Initialise la connexion et effectue l'auto-seeding si la base est vide
          */
@@ -363,13 +374,42 @@ const Store = (() => {
                 // Lancer la synchro des données en attente au démarrage (si connecté)
                 Store.syncOfflineData();
             } catch (err) {
-                console.error("Erreur critique lors de l'initialisation Supabase.", err);
-                throw err; // Propage l'erreur pour la gérer dans app.js
+                console.warn("⚠️ Connexion Supabase impossible. Passage en mode Démo/Local Fallback.", err);
+                _isLocalDemoMode = true;
+                
+                // Charger depuis le cache local (ou INITIAL_ELEVATOR_DATA si vide)
+                try {
+                    const cachedElevators = localStorage.getItem("leclerc_asc_cached_elevators");
+                    const cachedIncidents = localStorage.getItem("leclerc_asc_cached_incidents");
+                    const cachedMessages = localStorage.getItem("leclerc_asc_cached_messages");
+                    const cachedPetitions = localStorage.getItem("leclerc_asc_cached_petitions");
+                    const cachedPolls = localStorage.getItem("leclerc_asc_cached_polls");
+                    
+                    if (cachedElevators) {
+                        _elevators = JSON.parse(cachedElevators);
+                    } else {
+                        // Pas de cache existant (premier chargement), on initialise avec INITIAL_ELEVATOR_DATA
+                        _elevators = JSON.parse(JSON.stringify(INITIAL_ELEVATOR_DATA));
+                        localStorage.setItem("leclerc_asc_cached_elevators", JSON.stringify(_elevators));
+                    }
+                    
+                    _incidents = cachedIncidents ? JSON.parse(cachedIncidents) : [];
+                    _messages = cachedMessages ? JSON.parse(cachedMessages) : [];
+                    _petitions = cachedPetitions ? JSON.parse(cachedPetitions) : [];
+                    _polls = cachedPolls ? JSON.parse(cachedPolls) : [];
+                    
+                    window.dispatchEvent(new CustomEvent("storeUpdated"));
+                } catch (localErr) {
+                    console.error("Échec du chargement dégradé du cache local", localErr);
+                    // Initialiser avec mockData brut
+                    _elevators = JSON.parse(JSON.stringify(INITIAL_ELEVATOR_DATA));
+                    window.dispatchEvent(new CustomEvent("storeUpdated"));
+                }
             }
         },
 
         async syncOfflineData() {
-            if (!navigator.onLine) return;
+            if (!navigator.onLine || _isLocalDemoMode) return;
             const queue = _getSyncQueue();
             if (queue.length === 0) return;
 
@@ -677,7 +717,7 @@ const Store = (() => {
                 throw new Error("Accès refusé : Vous devez créer un compte locataire et être connecté pour signaler un incident.");
             }
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 const reportId = "r_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
                 const historyId = "h_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
                 const userDisplay = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
@@ -809,7 +849,7 @@ const Store = (() => {
                 throw new Error("Accès refusé : Vous devez être connecté pour supprimer un signalement.");
             }
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 if (String(reportId).startsWith("r_offline_")) {
                     const queue = _getSyncQueue();
                     const updatedQueue = queue.filter(item => !(item.action === 'addReport' && item.payload.reportId === reportId));
@@ -846,7 +886,7 @@ const Store = (() => {
                 throw new Error("Accès refusé : Vous devez être connecté pour signaler un incident.");
             }
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 const incidentId = "i_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
                 const userDisplay = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
 
@@ -928,7 +968,7 @@ const Store = (() => {
                 throw new Error("Accès refusé : Vous devez être connecté pour mettre à jour le statut d'un incident.");
             }
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 _addToSyncQueue('updateIncidentStatus', { incidentId, newStatus });
 
                 const incident = _incidents.find(i => String(i.id) === String(incidentId));
@@ -966,7 +1006,7 @@ const Store = (() => {
                 allowedFields.description = Security.sanitizeHTML(String(fields.description).trim());
             }
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 _addToSyncQueue('updateIncident', { incidentId, fields });
 
                 const incident = _incidents.find(i => String(i.id) === String(incidentId));
@@ -998,7 +1038,7 @@ const Store = (() => {
                 throw new Error("Accès refusé : Vous devez être connecté pour publier un message.");
             }
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 const messageId = "m_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
                 const author = `${loggedTenant.username} (Appt ${loggedTenant.apartment})`;
 
@@ -1049,7 +1089,7 @@ const Store = (() => {
                 throw new Error("Accès refusé : Vous devez être connecté pour mettre à jour le statut.");
             }
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 const historyId = "h_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
                 const sanitizedNotes = technicalNotes ? Security.sanitizeHTML(String(technicalNotes).trim()) : "";
 
@@ -1165,6 +1205,46 @@ const Store = (() => {
         // ---------------------------------------------------------
 
         async registerTenant(username, password, entrance = "38", apartment = "") {
+            if (!navigator.onLine || _isLocalDemoMode) {
+                const normalizedUser = Security.sanitizeHTML(String(username).trim());
+                const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
+
+                let localUsers = [];
+                try {
+                    const localUsersStr = localStorage.getItem("leclerc_asc_local_users");
+                    if (localUsersStr) localUsers = JSON.parse(localUsersStr);
+                } catch(e) {
+                    console.error(e);
+                }
+
+                const exists = localUsers.some(u => u.username.toLowerCase() === normalizedUser.toLowerCase());
+                if (exists || normalizedUser.toLowerCase() === 'tavares50') {
+                    throw new Error("Ce pseudo est déjà utilisé par un autre résident.");
+                }
+
+                const newUserId = "u_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const newTenant = {
+                    id: newUserId,
+                    username: normalizedUser,
+                    password: password,
+                    entrance: String(entrance),
+                    apartment: normalizedApartment,
+                    first_name: "",
+                    last_name: "",
+                    notifications: false,
+                    phone: "",
+                    email: ""
+                };
+
+                localUsers.push(newTenant);
+                localStorage.setItem("leclerc_asc_local_users", JSON.stringify(localUsers));
+
+                const sessionTenant = { ...newTenant };
+                delete sessionTenant.password;
+                Security.setTenantSession(sessionTenant);
+                return sessionTenant;
+            }
+
             _ensureSupabase();
             const normalizedUser = Security.sanitizeHTML(String(username).trim());
             const normalizedApartment = Security.sanitizeHTML(String(apartment).trim());
@@ -1211,6 +1291,44 @@ const Store = (() => {
         },
 
         async loginTenant(username, password) {
+            if (!navigator.onLine || _isLocalDemoMode) {
+                const normalizedUser = String(username).trim();
+
+                if (normalizedUser.toLowerCase() === 'tavares50') {
+                    const tenant = {
+                        id: "admin_offline_id",
+                        username: "Tavares50",
+                        entrance: "50",
+                        apartment: "Adm",
+                        first_name: "Admin",
+                        last_name: "Collectif",
+                        notifications: true,
+                        phone: "0600000000",
+                        email: "admin@collectifplaine.fr"
+                    };
+                    Security.setTenantSession(tenant);
+                    return tenant;
+                }
+
+                let localUsers = [];
+                try {
+                    const localUsersStr = localStorage.getItem("leclerc_asc_local_users");
+                    if (localUsersStr) localUsers = JSON.parse(localUsersStr);
+                } catch(e) {
+                    console.error(e);
+                }
+
+                const foundUser = localUsers.find(u => u.username.toLowerCase() === normalizedUser.toLowerCase() && u.password === password);
+                if (!foundUser) {
+                    throw new Error("Pseudo ou mot de passe incorrect.");
+                }
+
+                const tenant = { ...foundUser };
+                delete tenant.password;
+                Security.setTenantSession(tenant);
+                return tenant;
+            }
+
             _ensureSupabase();
             const normalizedUser = String(username).trim();
             const emailFake = `${normalizedUser.toLowerCase()}@collectifplaine.fr`;
@@ -1296,7 +1414,7 @@ const Store = (() => {
             const cleanPhone = Security.sanitizeHTML(String(phone).trim());
             const cleanEmail = Security.sanitizeHTML(String(email).trim());
 
-            if (!navigator.onLine) {
+            if (!navigator.onLine || _isLocalDemoMode) {
                 _addToSyncQueue('updateTenantProfile', {
                     username,
                     entrance,
@@ -1414,6 +1532,10 @@ const Store = (() => {
         },
 
         async logoutTenant() {
+            if (!navigator.onLine || _isLocalDemoMode) {
+                Security.logoutTenant();
+                return true;
+            }
             _ensureSupabase();
             try {
                 await supabase.auth.signOut();
@@ -1425,8 +1547,22 @@ const Store = (() => {
         },
 
         async deleteTenantAccount(username) {
-            _ensureSupabase();
             const normalizedUser = String(username).trim();
+            if (!navigator.onLine || _isLocalDemoMode) {
+                let localUsers = [];
+                try {
+                    const localUsersStr = localStorage.getItem("leclerc_asc_local_users");
+                    if (localUsersStr) localUsers = JSON.parse(localUsersStr);
+                } catch(e) {}
+                
+                localUsers = localUsers.filter(u => u.username.toLowerCase() !== normalizedUser.toLowerCase());
+                localStorage.setItem("leclerc_asc_local_users", JSON.stringify(localUsers));
+                
+                localStorage.removeItem(`leclerc_asc_tenant_profile_${normalizedUser}`);
+                Security.logoutTenant();
+                return true;
+            }
+            _ensureSupabase();
 
             // 1. Essayer de supprimer l'utilisateur d'auth.users via RPC (cascade sur la table residents)
             try {
@@ -1464,6 +1600,22 @@ const Store = (() => {
                 throw new Error("Accès refusé : Seul l'administrateur peut effectuer cette action.");
             }
 
+            if (!navigator.onLine || _isLocalDemoMode) {
+                const petitionId = "p_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const newPetition = {
+                    id: petitionId,
+                    title: Security.sanitizeHTML(String(title).trim()),
+                    description: Security.sanitizeHTML(String(description).trim()),
+                    created_by: loggedTenant.id,
+                    created_at: new Date().toISOString(),
+                    petition_signatures: []
+                };
+                _petitions.unshift(newPetition);
+                localStorage.setItem("leclerc_asc_cached_petitions", JSON.stringify(_petitions));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return true;
+            }
+
             _ensureSupabase();
 
             const { error } = await supabase
@@ -1486,6 +1638,32 @@ const Store = (() => {
                 throw new Error("Accès refusé : Vous devez être connecté pour signer une pétition.");
             }
 
+            if (!navigator.onLine || _isLocalDemoMode) {
+                const petition = _petitions.find(p => String(p.id) === String(petitionId));
+                if (petition) {
+                    petition.petition_signatures = petition.petition_signatures || [];
+                    const alreadySigned = petition.petition_signatures.some(s => String(s.resident_id) === String(loggedTenant.id));
+                    if (alreadySigned) {
+                        throw new Error("Vous avez déjà signé cette pétition.");
+                    }
+                    petition.petition_signatures.push({
+                        id: "s_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
+                        petition_id: petitionId,
+                        resident_id: loggedTenant.id,
+                        created_at: new Date().toISOString(),
+                        residents: {
+                            username: loggedTenant.username,
+                            entrance: loggedTenant.entrance,
+                            first_name: loggedTenant.first_name,
+                            last_name: loggedTenant.last_name
+                        }
+                    });
+                    localStorage.setItem("leclerc_asc_cached_petitions", JSON.stringify(_petitions));
+                    window.dispatchEvent(new CustomEvent("storeUpdated"));
+                }
+                return true;
+            }
+
             _ensureSupabase();
 
             const { error } = await supabase
@@ -1505,6 +1683,26 @@ const Store = (() => {
             const loggedTenant = Security.getLoggedInTenant();
             if (!loggedTenant || loggedTenant.username !== 'Tavares50') {
                 throw new Error("Accès refusé : Seul l'administrateur peut effectuer cette action.");
+            }
+
+            if (!navigator.onLine || _isLocalDemoMode) {
+                const pollId = "pl_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now();
+                const newPoll = {
+                    id: pollId,
+                    title: Security.sanitizeHTML(String(title).trim()),
+                    description: Security.sanitizeHTML(String(description).trim()),
+                    type: String(type),
+                    options: options,
+                    created_by: loggedTenant.id,
+                    created_at: new Date().toISOString(),
+                    ends_at: new Date(endsAt).toISOString(),
+                    status: 'active',
+                    poll_votes: []
+                };
+                _polls.unshift(newPoll);
+                localStorage.setItem("leclerc_asc_cached_polls", JSON.stringify(_polls));
+                window.dispatchEvent(new CustomEvent("storeUpdated"));
+                return true;
             }
 
             _ensureSupabase();
@@ -1530,6 +1728,27 @@ const Store = (() => {
             const loggedTenant = Security.getLoggedInTenant();
             if (!loggedTenant) {
                 throw new Error("Accès refusé : Vous devez être connecté pour voter.");
+            }
+
+            if (!navigator.onLine || _isLocalDemoMode) {
+                const poll = _polls.find(p => String(p.id) === String(pollId));
+                if (poll) {
+                    poll.poll_votes = poll.poll_votes || [];
+                    const alreadyVoted = poll.poll_votes.some(v => String(v.resident_id) === String(loggedTenant.id));
+                    if (alreadyVoted) {
+                        throw new Error("Vous avez déjà voté pour ce scrutin.");
+                    }
+                    poll.poll_votes.push({
+                        id: "v_offline_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
+                        poll_id: pollId,
+                        resident_id: loggedTenant.id,
+                        option_index: parseInt(optionIndex, 10),
+                        created_at: new Date().toISOString()
+                    });
+                    localStorage.setItem("leclerc_asc_cached_polls", JSON.stringify(_polls));
+                    window.dispatchEvent(new CustomEvent("storeUpdated"));
+                }
+                return true;
             }
 
             _ensureSupabase();
