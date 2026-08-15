@@ -7,9 +7,9 @@ Bienvenue sur le projet **Collectif Plaine**. Ce document fournit l'ensemble des
 ## 1. Vue d'Ensemble & Mission du Projet
 
 - **Projet :** Collectif Plaine (*Hub d'Action Collective & Suivi Technique des Locataires*)
-- **Périmètre :** Résidence Division Leclerc / La Plaine à Cachan (Bailleur social *Valdévy*).
+- **Périmètre :** Résidence Division Leclerc (Bâtiments 38 à 52) à Cachan (Bailleur social *Valdévy*).
 - **Fonctionnalités Clés :**
-  1. Suivi en direct et historique des pannes des 76 cages d'escalier / ascenseurs.
+  1. Suivi en direct et historique des pannes des 8 ascenseurs (Avenue Division Leclerc).
   2. Registre et signalement des incidents des parties communes (portes, propreté, chauffage, éclairage).
   3. Démocratie participative (Pétitions collectives certifiées & Scrutins/Votes de résidents).
   4. Wiki juridique interactif (Loi du 6 juillet 1989, Décret charges récupérables, etc.).
@@ -57,7 +57,7 @@ COLLECTIF PLAINE/
 │   └── mobile.css                  # Responsive & Bottom Navigation Mobile PWA
 ├── js/
 │   ├── config/
-│   │   ├── config.js               # Annuaire immuable des 76 entrées & constantes
+│   │   ├── config.js               # Annuaire immuable des 8 entrées Leclerc & constantes
 │   │   └── mockData.js             # Données de secours initiales hors-ligne
 │   ├── core/
 │   │   ├── db-client.js            # Initialisation singleton Supabase Client

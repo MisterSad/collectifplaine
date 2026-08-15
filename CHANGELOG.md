@@ -24,6 +24,7 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
   - Droits de création et gestion de pétitions/scrutins réservés aux administrateurs.
 - **Indexation Optimale PostgreSQL :** Création des index sur clés étrangères et critères de tri chronologique (`created_at DESC`, `entrance`, `status`).
 - **Calcul Précis des Heures d'Indisponibilité :** Calcul mathématique exact des durées d'arrêt en heures (`downtimeHours`) et en jours (`downtimeDays`) sans arrondi journalier abusif.
+- **Périmètre Résidence Restreint à l'Avenue Division Leclerc :** Annuaire et tables de données configurés pour les 8 immeubles de l'Avenue de la Division Leclerc (entrées 38, 40, 42, 44, 46, 48, 50, 52).
 - **Documentation Complète 2026 :** Création des fichiers [`AGENTS.md`](file:///Users/andrevieira/Documents/GitHub/COLLECTIF%20PLAINE/AGENTS.md), [`ARCHITECTURE.md`](file:///Users/andrevieira/Documents/GitHub/COLLECTIF%20PLAINE/ARCHITECTURE.md) et [`CHANGELOG.md`](file:///Users/andrevieira/Documents/GitHub/COLLECTIF%20PLAINE/CHANGELOG.md).
 
 #### 🔒 Corrigé (Vulnérabilités Audit SEV-01 à SEV-15)

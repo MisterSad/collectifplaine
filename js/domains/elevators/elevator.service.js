@@ -22,11 +22,17 @@ class ElevatorService {
      * @returns {Promise<Array<Object>>}
      */
     async loadAll() {
+        const validIds = new Set(CONFIG.entrances.map(e => String(e.id)));
+
         // 1. Tenter de charger le cache local pour un rendu instantané
         const cached = await Storage.getCache('elevators_state');
         if (cached && Array.isArray(cached) && cached.length > 0) {
-            cached.forEach(el => this.elevators.set(String(el.id), el));
-            EventBus.emit(EVENTS.ELEVATORS_UPDATED, this.getAll());
+            const validCached = cached.filter(el => validIds.has(String(el.id)));
+            if (validCached.length > 0) {
+                this.elevators.clear();
+                validCached.forEach(el => this.elevators.set(String(el.id), el));
+                EventBus.emit(EVENTS.ELEVATORS_UPDATED, this.getAll());
+            }
         }
 
         if (!navigator.onLine) {
@@ -52,8 +58,9 @@ class ElevatorService {
 
             if (elError) throw elError;
 
-            // Assemblage des ascenseurs
-            const baseList = dbElevators && dbElevators.length > 0 ? dbElevators : getInitialElevatorsMock();
+            // Assemblage des ascenseurs (uniquement les entrées configurées)
+            const rawList = dbElevators && dbElevators.length > 0 ? dbElevators : getInitialElevatorsMock();
+            const baseList = rawList.filter(el => validIds.has(String(el.id)));
             const reportsList = dbReports || [];
             const historiesList = dbHistories || [];
 

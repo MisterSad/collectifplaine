@@ -1,6 +1,6 @@
 /**
  * @fileoverview Contrôleur d'interface pour le domaine Ascenseurs & Pannes (Style Soft-Pill & Tracking 2026).
- * Gère le rendu des cartes de suivi 24px, la recherche instantanée, les segmented pills et les modales.
+ * Gère le rendu des 8 ascenseurs de l'Avenue Division Leclerc, la recherche instantanée, les segmented pills et les modales.
  */
 
 import { Elevator } from './elevator.service.js';
@@ -60,7 +60,7 @@ class ElevatorUIController {
             grid.innerHTML = `
                 <div class="loading-placeholder glass-card" style="padding: 2.5rem; text-align: center; grid-column: 1 / -1;">
                     <div style="display: inline-block; width: 28px; height: 28px; border: 3px solid var(--accent-primary); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 0.75rem;"></div>
-                    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Chargement des 76 ascenseurs en direct...</div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Chargement des ascenseurs en direct...</div>
                 </div>
             `;
             return;

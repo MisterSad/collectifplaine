@@ -82,7 +82,7 @@ Stocke les profils des utilisateurs résidents et leur niveau de privilège.
 - `username` (`text`, UNIQUE, NOT NULL)
 - `first_name` (`text`)
 - `last_name` (`text`)
-- `entrance` (`text`) — Numéro d'entrée du bâtiment (38 à 76)
+- `entrance` (`text`) — Numéro d'entrée du bâtiment (38 à 52)
 - `apartment` (`text`) — Numéro d'appartement
 - `phone` (`text`) — Coordonnées privées protégées
 - `email` (`text`) — Coordonnées privées protégées
@@ -92,7 +92,7 @@ Stocke les profils des utilisateurs résidents et leur niveau de privilège.
 
 ### 3.2. Table `public.elevators`
 Représente l'état courant des ascenseurs pour chaque entrée.
-- `id` (`text`, PRIMARY KEY) — Numéro de l'entrée (ex: `"38"`, `"50"`, `"76"`)
+- `id` (`text`, PRIMARY KEY) — Numéro de l'entrée (ex: `"38"`, `"50"`, `"52"`)
 - `status` (`text`, CHECK `IN ('en_service', 'en_panne')`)
 - `last_status_change` (`timestamp with time zone`, DEFAULT `now()`)
 - `maintenance_notes` (`text`)
@@ -164,7 +164,7 @@ Registre des incidents affectant les parties communes de la résidence.
 - **`router.js` :** Routage SPA par hash d'URL (`#/ascenseurs`, `#/incidents`, `#/petitions`, `#/stats`, etc.) avec protection de l'onglet admin.
 
 ### 5.2. Couche Domaines (`js/domains/`)
-- **`elevators/` :** Calculs précis des heures d'arrêt (`downtimeHours`), abonnement Realtime Supabase, grille des 76 entrées et graphiques d'indisponibilité.
+- **`elevators/` :** Calculs précis des heures d'arrêt (`downtimeHours`), abonnement Realtime Supabase, grille des 8 ascenseurs Leclerc et graphiques d'indisponibilité.
 - **`incidents/` :** Gestion des signalements, upload Supabase Storage, filtrage par catégorie et visionneuse de photos sécurisée.
 - **`democracy/` :** Gestion des pétitions citoyennes avec jauges d'avancement et des scrutins à vote unique avec pourcentages en temps réel.
 - **`wiki/` :** Base documentaire juridique basée sur les décrets et la loi du 6 juillet 1989 avec moteur de recherche textuel.

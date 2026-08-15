@@ -1,13 +1,13 @@
 /**
  * @fileoverview Configuration globale et immuable de l'application Collectif Plaine.
- * Définit l'annuaire exhaustif des 76 entrées de la copropriété et les constantes métier.
+ * Définit l'annuaire des 8 entrées de l'Avenue de la Division Leclerc et les constantes métier.
  */
 
 /**
  * @typedef {Object} EntranceConfig
- * @property {string} id - Identifiant unique de l'entrée (ex: "38", "531b")
+ * @property {string} id - Identifiant unique de l'entrée (ex: "38", "50")
  * @property {string} label - Libellé complet de l'adresse
- * @property {string} street - Nom de la rue ou de l'allée
+ * @property {string} street - Nom de la rue ou de l'avenue
  * @property {string} shortLabel - Libellé raccourci pour l'affichage (ex: "N° 38")
  * @property {boolean} hasElevator - Présence d'un ascenseur dans la cage d'escalier
  */
@@ -29,75 +29,7 @@ export const CONFIG = Object.freeze({
         { id: "46", label: "46 avenue Division Leclerc", street: "Avenue Division Leclerc", shortLabel: "N° 46", hasElevator: true },
         { id: "48", label: "48 avenue Division Leclerc", street: "Avenue Division Leclerc", shortLabel: "N° 48", hasElevator: true },
         { id: "50", label: "50 avenue Division Leclerc", street: "Avenue Division Leclerc", shortLabel: "N° 50", hasElevator: true },
-        { id: "52", label: "52 avenue Division Leclerc", street: "Avenue Division Leclerc", shortLabel: "N° 52", hasElevator: true },
-        { id: "2",  label: "2 rue Marc Sangnier", street: "Rue Marc Sangnier", shortLabel: "N° 2", hasElevator: true },
-        { id: "4",  label: "4 rue Marc Sangnier", street: "Rue Marc Sangnier", shortLabel: "N° 4", hasElevator: true },
-        { id: "14", label: "14 rue Marc Sangnier", street: "Rue Marc Sangnier", shortLabel: "N° 14", hasElevator: true },
-        { id: "301", label: "1 allée Pierre de Ronsard", street: "Allée Pierre de Ronsard", shortLabel: "N° 1", hasElevator: false },
-        { id: "303", label: "3 allée Pierre de Ronsard", street: "Allée Pierre de Ronsard", shortLabel: "N° 3", hasElevator: false },
-        { id: "305", label: "5 allée Pierre de Ronsard", street: "Allée Pierre de Ronsard", shortLabel: "N° 5", hasElevator: false },
-        { id: "307", label: "7 allée Pierre de Ronsard", street: "Allée Pierre de Ronsard", shortLabel: "N° 7", hasElevator: false },
-        { id: "309", label: "9 allée Pierre de Ronsard", street: "Allée Pierre de Ronsard", shortLabel: "N° 9", hasElevator: false },
-        { id: "402", label: "2 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 2", hasElevator: false },
-        { id: "404", label: "4 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 4", hasElevator: false },
-        { id: "406", label: "6 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 6", hasElevator: false },
-        { id: "408", label: "8 allée Pierre de Montreuil", street: "Allée Pierre de Montreuil", shortLabel: "N° 8", hasElevator: false },
-        { id: "531", label: "31 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 31", hasElevator: true },
-        { id: "531b", label: "31 bis avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 31 bis", hasElevator: true },
-        { id: "533", label: "33 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 33", hasElevator: false },
-        { id: "535", label: "35 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 35", hasElevator: false },
-        { id: "537", label: "37 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 37", hasElevator: false },
-        { id: "539", label: "39 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 39", hasElevator: false },
-        { id: "541", label: "41 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 41", hasElevator: false },
-        { id: "543", label: "43 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 43", hasElevator: false },
-        { id: "545", label: "45 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 45", hasElevator: false },
-        { id: "530", label: "30 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 30", hasElevator: false },
-        { id: "532", label: "32 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 32", hasElevator: false },
-        { id: "534", label: "34 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 34", hasElevator: false },
-        { id: "536", label: "36 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 36", hasElevator: false },
-        { id: "538", label: "38 avenue du Maréchal de Lattre de Tassigny", street: "Avenue du Maréchal de Lattre de Tassigny", shortLabel: "N° 38", hasElevator: false },
-        { id: "606", label: "6 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 6", hasElevator: false },
-        { id: "608", label: "8 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 8", hasElevator: false },
-        { id: "610", label: "10 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 10", hasElevator: false },
-        { id: "612", label: "12 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 12", hasElevator: false },
-        { id: "614", label: "14 rue Albert Camus", street: "Rue Albert Camus", shortLabel: "N° 14", hasElevator: false },
-        { id: "704", label: "4 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 4", hasElevator: false },
-        { id: "706", label: "6 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 6", hasElevator: false },
-        { id: "708", label: "8 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 8", hasElevator: false },
-        { id: "710", label: "10 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 10", hasElevator: false },
-        { id: "712", label: "12 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 12", hasElevator: false },
-        { id: "714", label: "14 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 14", hasElevator: false },
-        { id: "716", label: "16 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 16", hasElevator: false },
-        { id: "718", label: "18 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 18", hasElevator: false },
-        { id: "720", label: "20 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 20", hasElevator: false },
-        { id: "722", label: "22 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 22", hasElevator: false },
-        { id: "724", label: "24 rue du Moulin de Cachan", street: "Rue du Moulin de Cachan", shortLabel: "N° 24", hasElevator: false },
-        { id: "802", label: "2 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 2", hasElevator: true },
-        { id: "804", label: "4 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 4", hasElevator: true },
-        { id: "816", label: "16 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 16", hasElevator: true },
-        { id: "844", label: "44 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 44", hasElevator: true },
-        { id: "806", label: "6 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 6", hasElevator: false },
-        { id: "808", label: "8 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 8", hasElevator: false },
-        { id: "810", label: "10 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 10", hasElevator: false },
-        { id: "812", label: "12 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 12", hasElevator: false },
-        { id: "814", label: "14 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 14", hasElevator: false },
-        { id: "818", label: "18 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 18", hasElevator: false },
-        { id: "820", label: "20 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 20", hasElevator: false },
-        { id: "822", label: "22 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 22", hasElevator: false },
-        { id: "822b", label: "22 bis allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 22 bis", hasElevator: false },
-        { id: "824", label: "24 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 24", hasElevator: false },
-        { id: "826", label: "26 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 26", hasElevator: false },
-        { id: "828", label: "28 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 28", hasElevator: false },
-        { id: "830", label: "30 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 30", hasElevator: false },
-        { id: "832", label: "32 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 32", hasElevator: false },
-        { id: "836", label: "36 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 36", hasElevator: false },
-        { id: "838", label: "38 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 38", hasElevator: false },
-        { id: "840", label: "40 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 40", hasElevator: false },
-        { id: "842", label: "42 allée Eugène Belgrand", street: "Allée Eugène Belgrand", shortLabel: "N° 42", hasElevator: false },
-        { id: "902", label: "2 allée des Lours", street: "Allée des Lours", shortLabel: "N° 2", hasElevator: true },
-        { id: "904", label: "4 allée des Lours", street: "Allée des Lours", shortLabel: "N° 4", hasElevator: true },
-        { id: "906", label: "6 allée des Lours", street: "Allée des Lours", shortLabel: "N° 6", hasElevator: true },
-        { id: "1015", label: "15 rue François Rude", street: "Rue François Rude", shortLabel: "N° 15", hasElevator: true }
+        { id: "52", label: "52 avenue Division Leclerc", street: "Avenue Division Leclerc", shortLabel: "N° 52", hasElevator: true }
     ]
 });
 
