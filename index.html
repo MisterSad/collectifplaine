@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     
-    <!-- Sécurité : Politique de Sécurité du Contenu (CSP) stricte -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; script-src 'self'; img-src 'self' data: https://iblfurgquymrcyzefwzy.supabase.co; connect-src 'self' https://iblfurgquymrcyzefwzy.supabase.co wss://iblfurgquymrcyzefwzy.supabase.co;">
+    <!-- Sécurité : Politique de Sécurité du Contenu (CSP) renforcée -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://iblfurgquymrcyzefwzy.supabase.co https://api.qrserver.com; connect-src 'self' https://iblfurgquymrcyzefwzy.supabase.co wss://iblfurgquymrcyzefwzy.supabase.co;">
     
     <title>Collectif Plaine - Valdévy, Secteur La Plaine</title>
     
@@ -1351,14 +1351,7 @@
     <script src="js/chart.min.js"></script>
     <script src="js/jspdf.umd.min.js"></script>
  
-    <!-- Scripts Javascript Applicatifs (Modulaires) -->
-    <script src="js/config.js"></script>
-    <script src="js/security.js"></script>
-    <script src="js/mockData.js"></script>
-    <script src="js/wikiData.js"></script>
-    <script src="js/db-client.js"></script>
-    <script src="js/store.js"></script>
-    <script src="js/legal-generator.js"></script>
-    <script src="js/app.js"></script>
+    <!-- Point d'Entrée Applicatif Moderne (ES Modules) -->
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

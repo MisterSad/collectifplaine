@@ -1,4 +1,4 @@
-const CACHE_NAME = 'collectif-plaine-v38';
+const CACHE_NAME = 'collectif-plaine-v40';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -6,27 +6,44 @@ const ASSETS_TO_CACHE = [
   '/css/main.css',
   '/css/components.css',
   '/css/mobile.css',
-  '/js/config.js',
-  '/js/security.js',
-  '/js/mockData.js',
-  '/js/wikiData.js',
-  '/js/db-client.js',
   '/js/db-lib.js',
-  '/js/store.js',
-  '/js/app.js',
-  '/js/legal-generator.js',
   '/js/chart.min.js',
   '/js/jspdf.umd.min.js',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  '/js/config/config.js',
+  '/js/config/mockData.js',
+  '/js/core/db-client.js',
+  '/js/core/auth.js',
+  '/js/core/storage.js',
+  '/js/core/event-bus.js',
+  '/js/core/router.js',
+  '/js/domains/elevators/elevator.service.js',
+  '/js/domains/elevators/elevator.ui.js',
+  '/js/domains/incidents/incident.service.js',
+  '/js/domains/incidents/incident.ui.js',
+  '/js/domains/democracy/petitions.service.js',
+  '/js/domains/democracy/polls.service.js',
+  '/js/domains/democracy/democracy.ui.js',
+  '/js/domains/wiki/wiki.data.js',
+  '/js/domains/wiki/wiki.ui.js',
+  '/js/domains/legal/legal-generator.js',
+  '/js/utils/security.js',
+  '/js/utils/date-helpers.js',
+  '/js/utils/audio-feedback.js',
+  '/js/main.js',
   '/icons/icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching app shell');
-      return cache.addAll(ASSETS_TO_CACHE);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      console.log('[Service Worker] Mise en cache des ressources applicatives');
+      for (const asset of ASSETS_TO_CACHE) {
+        try {
+          await cache.add(asset);
+        } catch (e) {
+          console.warn(`[Service Worker] Impossible de mettre en cache: ${asset}`, e);
+        }
+      }
     })
   );
   self.skipWaiting();
@@ -37,7 +54,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keyList) => {
       return Promise.all(keyList.map((key) => {
         if (key !== CACHE_NAME) {
-          console.log('[Service Worker] Removing old cache', key);
+          console.log('[Service Worker] Suppression ancien cache', key);
           return caches.delete(key);
         }
       }));
@@ -47,12 +64,12 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignore les requêtes vers Supabase (API) pour ne pas interférer avec les données temps réel
+  // Ignorer les requêtes Supabase (API / Websockets)
   if (event.request.url.includes('supabase.co')) {
     return;
   }
 
-  // Stratégie "Network First" pour index.html / navigation pour forcer la mise à jour si connecté
+  // Stratégie "Network First" pour la navigation avec fallback hors-ligne garanti
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -63,14 +80,16 @@ self.addEventListener('fetch', (event) => {
           });
           return response;
         })
-        .catch(() => {
-          return caches.match(event.request) || caches.match('/index.html');
+        .catch(async () => {
+          const cached = await caches.match(event.request);
+          if (cached) return cached;
+          return caches.match('/index.html');
         })
     );
     return;
   }
 
-  // Stratégie "Stale-While-Revalidate" pour les autres assets locaux (css, js, images)
+  // Stratégie "Stale-While-Revalidate" pour les assets statiques locaux
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       const fetchPromise = fetch(event.request).then((networkResponse) => {
@@ -82,7 +101,7 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       }).catch((err) => {
-        console.log('[Service Worker] Échec de récupération réseau, utilisation du cache si disponible', err);
+        console.log('[Service Worker] Réseau indisponible, utilisation du cache', err);
       });
 
       return cachedResponse || fetchPromise;
@@ -90,7 +109,6 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Écouter les messages pour forcer l'activation du nouveau Service Worker
 self.addEventListener('message', (event) => {
   if (event.data && event.data.action === 'skipWaiting') {
     self.skipWaiting();

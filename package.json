@@ -1,20 +1,22 @@
 {
-  "name": "collectif-locataires-leclerc-ascenseurs",
-  "version": "1.0.0",
-  "description": "Application responsive, mobile-first et sécurisée pour le suivi des ascenseurs Leclerc à Cachan.",
+  "name": "collectif-plaine",
+  "version": "2.0.0",
+  "description": "Application responsive, mobile-first et sécurisée pour le suivi des ascenseurs et la défense des locataires à Cachan.",
   "main": "index.html",
+  "type": "module",
   "scripts": {
-    "start": "npx -y serve ."
+    "start": "python3 -m http.server 3000",
+    "dev": "npx -y serve .",
+    "check": "node --check js/main.js"
   },
   "keywords": [
     "security-by-design",
+    "zero-trust",
     "mobile-first",
-    "elevator-tracker",
-    "vanilla-js"
+    "pwa",
+    "vanilla-js",
+    "es-modules"
   ],
   "author": "Collectif Locataires de La Plaine",
-  "license": "ISC",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.108.2"
-  }
+  "license": "ISC"
 }

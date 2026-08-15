@@ -1,8 +1,8 @@
 /**
- * Collectif Plaine - Base de Données du Wiki du Locataire
- * Références et textes basés rigoureusement sur la législation française.
+ * @fileoverview Base de données documentaire et juridique du Wiki du Locataire (Loi 1989 / Décrets).
  */
-const WIKI_DATA = [
+
+export const WIKI_DATA = [
     {
         id: "charges-recup",
         category: "charges",
@@ -157,7 +157,7 @@ const WIKI_DATA = [
             <p>Pour quitter votre logement, vous devez donner congé au bailleur par lettre recommandée avec accusé de réception (LRAR), par acte d'huissier ou par remise en main propre contre récépissé.</p>
             
             <h4>📍 Cachan est en zone tendue : préavis de 1 mois</h4>
-            <p>En règle générale, le préavis is de 3 mois pour un logement vide. Cependant, si le logement est situé en **zone tendue** (ce qui est le cas de la commune de **Cachan** et de l'ensemble de la métropole parisienne), le délai de préavis est ramené à <strong>1 mois</strong>.</p>
+            <p>En règle générale, le préavis est de 3 mois pour un logement vide. Cependant, si le logement est situé en **zone tendue** (ce qui est le cas de la commune de **Cachan** et de l'ensemble de la métropole parisienne), le délai de préavis est ramené à <strong>1 mois</strong>.</p>
             
             <div class="wiki-info-box">
                 <h4>💡 Bon à savoir :</h4>

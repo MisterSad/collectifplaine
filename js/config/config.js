@@ -1,8 +1,26 @@
 /**
- * Collectif Plaine - Fichier de Configuration Globale
- * Sert de source unique de vérité pour l'ensemble des adresses et entrées de la résidence.
+ * @fileoverview Configuration globale et immuable de l'application Collectif Plaine.
+ * Définit l'annuaire exhaustif des 76 entrées de la copropriété et les constantes métier.
  */
-const CONFIG = {
+
+/**
+ * @typedef {Object} EntranceConfig
+ * @property {string} id - Identifiant unique de l'entrée (ex: "38", "531b")
+ * @property {string} label - Libellé complet de l'adresse
+ * @property {string} street - Nom de la rue ou de l'allée
+ * @property {string} shortLabel - Libellé raccourci pour l'affichage (ex: "N° 38")
+ * @property {boolean} hasElevator - Présence d'un ascenseur dans la cage d'escalier
+ */
+
+export const CONFIG = Object.freeze({
+    appName: "Collectif Plaine",
+    appVersion: "2.0.0",
+    storageBucket: "reports_photos",
+    adminUsername: "Tavares50",
+    maxPhotoSizeMB: 3,
+    syncIntervalMs: 30000,
+    
+    /** @type {EntranceConfig[]} */
     entrances: [
         { id: "38", label: "38 avenue Division Leclerc", street: "Avenue Division Leclerc", shortLabel: "N° 38", hasElevator: true },
         { id: "40", label: "40 avenue Division Leclerc", street: "Avenue Division Leclerc", shortLabel: "N° 40", hasElevator: true },
@@ -81,4 +99,28 @@ const CONFIG = {
         { id: "906", label: "6 allée des Lours", street: "Allée des Lours", shortLabel: "N° 6", hasElevator: true },
         { id: "1015", label: "15 rue François Rude", street: "Rue François Rude", shortLabel: "N° 15", hasElevator: true }
     ]
-};
+});
+
+/**
+ * Mappage des catégories d'incidents avec libellés et icônes.
+ */
+export const INCIDENT_CATEGORIES = Object.freeze({
+    porte: { label: "Porte bloquée / ne ferme plus", icon: "🚪" },
+    vigik: { label: "Lecteur VIGIK / Interphone en panne", icon: "🔑" },
+    proprete: { label: "Propreté / Encombrants", icon: "🧹" },
+    chauffage: { label: "Chauffage / Eau Chaude", icon: "🔥" },
+    eclairage: { label: "Éclairage défectueux", icon: "💡" },
+    securite: { label: "Sécurité / Nuisance", icon: "🛡️" },
+    autre: { label: "Autre incident", icon: "⚠️" }
+});
+
+/**
+ * Types de dysfonctionnements d'ascenseur.
+ */
+export const ELEVATOR_ISSUE_TYPES = Object.freeze({
+    arrêt: "Hors service / Arrêt complet",
+    portes: "Problème d'ouverture/fermeture des portes",
+    boutons: "Boutons ou cabine inactifs",
+    bruit: "Bruit anormal ou vibrations inquiétantes",
+    autre: "Autre anomalie"
+});
