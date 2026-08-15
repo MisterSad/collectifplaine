@@ -81,7 +81,7 @@
 
 .input-pill-group .input-icon {
     position: absolute;
-    left: 1.25rem;
+    left: 1rem;
     color: var(--text-muted);
     pointer-events: none;
     display: flex;
@@ -90,16 +90,20 @@
     z-index: 2;
 }
 
-.input-pill-group input,
-.input-pill-group select {
+.input-pill-group input[type="text"],
+.input-pill-group input[type="password"],
+.input-pill-group input[type="email"],
+.input-pill-group input[type="tel"],
+.input-pill-group select,
+.input-pill-group input {
     width: 100%;
-    padding: 0.95rem 1.25rem 0.95rem 3.25rem;
+    padding: 0.85rem 1.25rem 0.85rem 3rem !important;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border-color);
     background: var(--bg-secondary);
     color: var(--text-primary);
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 500;
     outline: none;
     transition: all var(--transition-fast);
@@ -2755,8 +2759,175 @@ textarea:focus {
     background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
 }
 
-.poll-result-bar-fill.normal {
-    background: rgba(255, 255, 255, 0.15);
+/* ============================================================
+   ONBOARDING SWIPE CAROUSEL (Standards 2026)
+   ============================================================ */
+.onboarding-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 999;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: calc(1.25rem + env(safe-area-inset-top)) 1.5rem calc(2rem + env(safe-area-inset-bottom));
+    overflow: hidden;
+}
+
+.onboarding-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.onboarding-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+}
+
+.onboarding-skip-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+}
+
+.onboarding-skip-btn:hover, .onboarding-skip-btn:active {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+}
+
+.onboarding-carousel {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+}
+
+.onboarding-carousel:active {
+    cursor: grabbing;
+}
+
+.onboarding-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    align-items: center;
+    transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    will-change: transform;
+}
+
+.onboarding-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem 0.5rem;
+}
+
+.onboarding-icon-hero {
+    width: 84px;
+    height: 84px;
+    border-radius: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.onboarding-slide-title {
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+}
+
+.onboarding-slide-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    max-width: 330px;
+    margin: 0 auto 1.25rem;
+}
+
+.onboarding-pill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+    max-width: 320px;
+}
+
+.onboarding-pill-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35rem 0.8rem;
+    border-radius: var(--radius-pill);
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+
+.onboarding-bottom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.onboarding-dots {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.onboarding-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--border-color);
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    cursor: pointer;
+}
+
+.onboarding-dot.active {
+    width: 28px;
+    background: var(--gradient-aurora);
 }
 
 

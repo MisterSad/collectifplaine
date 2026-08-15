@@ -1,23 +1,23 @@
 /**
- * @fileoverview Point d'entrée principal (Main Bootstrap) de l'application Collectif Plaine.
- * Orchestre les services, initialise les contrôleurs d'interface, et enregistre le Service Worker PWA.
+ * @fileoverview Point d'entrée principal (Main Bootstrap) de l'application Collectif Plaine 100% Mobile.
+ * Orchestre les services, initialise les contrôleurs d'interface, le carrousel d'onboarding tactile et les formulaires.
  */
 
 import { Auth } from './core/auth.js';
 import { Router } from './core/router.js';
 import { Storage } from './core/storage.js';
+import { Onboarding } from './core/onboarding.js';
 import { EventBus, EVENTS } from './core/event-bus.js';
 import { Elevator } from './domains/elevators/elevator.service.js';
 import { ElevatorUI } from './domains/elevators/elevator.ui.js';
 import { Incident } from './domains/incidents/incident.service.js';
 import { IncidentUI } from './domains/incidents/incident.ui.js';
 import { Petitions } from './domains/democracy/petitions.service.js';
-import { Polls } from './domains/democracy/polls.service.js';
 import { DemocracyUI } from './domains/democracy/democracy.ui.js';
 import { WikiUI } from './domains/wiki/wiki.ui.js';
 import { exportElevatorHistory } from './domains/legal/legal-generator.js';
-import { sanitizeHTML, isValidUsername, isValidPassword } from './utils/security.js';
-import { playSuccessSound } from './utils/audio-feedback.js';
+import { sanitizeHTML, isValidPassword } from './utils/security.js';
+import { playSuccessSound, playAlertSound } from './utils/audio-feedback.js';
 import { CONFIG } from './config/config.js';
 
 class App {
@@ -26,33 +26,36 @@ class App {
     }
 
     async bootstrap() {
-        console.log(`🚀 Démarrage de ${CONFIG.appName} v${CONFIG.appVersion}...`);
+        console.log(`🚀 Démarrage de ${CONFIG.appName} Mobile v${CONFIG.appVersion}...`);
 
         // 1. Initialiser le stockage IndexedDB et l'Authentification
         await Storage.init();
         await Auth.init();
 
-        // 2. Initialiser les contrôleurs d'interface
+        // 2. Initialiser l'Onboarding swipeable
+        Onboarding.init();
+
+        // 3. Initialiser les contrôleurs de domaine
         ElevatorUI.init();
         IncidentUI.init();
         DemocracyUI.init();
         WikiUI.init();
 
-        // 3. Initialiser le routeur SPA
+        // 4. Initialiser le routeur SPA Mobile
         Router.init();
 
-        // 4. Charger les données des domaines
+        // 5. Charger les données en arrière-plan
         this._loadDomainData();
 
-        // 5. Initialiser les fonctionnalités transverses
+        // 6. Initialiser les fonctionnalités transverses
         this._bindAuthUI();
-        this._bindModalsAndNavigation();
+        this._bindModalsAndActions();
         this._setupToastManager();
         this._setupTheme();
         this._setupOfflineSyncWorker();
         this._registerServiceWorker();
 
-        console.log("✅ Application Collectif Plaine prête.");
+        console.log("✅ Application Mobile Collectif Plaine prête.");
     }
 
     async _loadDomainData() {
@@ -60,8 +63,7 @@ class App {
             await Promise.allSettled([
                 Elevator.loadAll(),
                 Incident.loadAll(),
-                Petitions.loadAll(),
-                Polls.loadAll()
+                Petitions.loadAll()
             ]);
         } catch (e) {
             console.warn("[App] Erreur chargement initial:", e);
@@ -69,8 +71,13 @@ class App {
     }
 
     _setupToastManager() {
-        const container = document.getElementById('toast-container');
-        if (!container) return;
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
 
         EventBus.on(EVENTS.TOAST_NOTIFY, ({ title, message, type = 'info' }) => {
             const toast = document.createElement('div');
@@ -85,7 +92,7 @@ class App {
             setTimeout(() => {
                 toast.classList.add('toast-fade-out');
                 setTimeout(() => toast.remove(), 300);
-            }, 4000);
+            }, 3500);
         });
     }
 
@@ -97,11 +104,7 @@ class App {
         const tabLogin = document.getElementById('account-tab-login');
         const tabRegister = document.getElementById('account-tab-register');
         const logoutBtn = document.getElementById('account-logout-btn');
-        const profileForm = document.getElementById('account-profile-form');
-        const deleteBtn = document.getElementById('account-delete-btn');
-        const headerLoginBtn = document.getElementById('admin-login-btn');
-        const moreMenuStatsLink = document.getElementById('more-menu-stats-link');
-        const sidebarStatsLink = document.querySelector('.menu-link[href="#/stats"]');
+        const restartOnboardingBtn = document.getElementById('btn-restart-onboarding');
 
         // Onglets Connexion / Inscription
         if (tabLogin && tabRegister && loginForm && registerForm) {
@@ -124,18 +127,27 @@ class App {
         if (loginForm) {
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const username = document.getElementById('account-login-username')?.value;
+                const identifier = document.getElementById('account-login-username')?.value;
                 const password = document.getElementById('account-login-password')?.value;
                 const errBox = document.getElementById('account-auth-error');
 
+                if (!identifier || !password) {
+                    if (errBox) {
+                        errBox.textContent = "Veuillez saisir votre email ou identifiant et mot de passe.";
+                        errBox.classList.remove('hidden');
+                    }
+                    return;
+                }
+
                 try {
-                    await Auth.signIn(username, password);
+                    await Auth.signIn(identifier, password);
                     playSuccessSound();
                     EventBus.emit(EVENTS.TOAST_NOTIFY, {
                         title: "Connexion réussie",
-                        message: `Bienvenue, ${username} !`,
+                        message: "Bienvenue sur le hub Collectif Plaine !",
                         type: "success"
                     });
+                    Router.navigate('ascenseurs');
                 } catch (err) {
                     if (errBox) {
                         errBox.textContent = err.message;
@@ -145,17 +157,21 @@ class App {
             });
         }
 
-        // Soumission Inscription
+        // Soumission Inscription Complète
         if (registerForm) {
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const username = document.getElementById('account-register-username')?.value;
-                const password = document.getElementById('account-register-password')?.value;
+                const firstName = document.getElementById('reg-firstname')?.value;
+                const lastName = document.getElementById('reg-lastname')?.value;
+                const email = document.getElementById('reg-email')?.value;
+                const apartment = document.getElementById('reg-apartment')?.value;
+                const entrance = document.getElementById('reg-entrance')?.value;
+                const password = document.getElementById('reg-password')?.value;
                 const errBox = document.getElementById('account-auth-error');
 
-                if (!isValidUsername(username)) {
+                if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !apartment?.trim() || !entrance || !password) {
                     if (errBox) {
-                        errBox.textContent = "Le pseudo doit comporter de 3 à 20 caractères alphanumériques.";
+                        errBox.textContent = "Veuillez renseigner l'ensemble des champs obligatoires.";
                         errBox.classList.remove('hidden');
                     }
                     return;
@@ -170,19 +186,35 @@ class App {
                 }
 
                 try {
-                    await Auth.signUp({ username, password });
+                    await Auth.signUp({
+                        firstName,
+                        lastName,
+                        email,
+                        apartment,
+                        entrance,
+                        password
+                    });
+
                     playSuccessSound();
                     EventBus.emit(EVENTS.TOAST_NOTIFY, {
-                        title: "Compte créé",
-                        message: "Votre compte résident a été créé avec succès !",
+                        title: "Bienvenue dans le Collectif !",
+                        message: "Votre compte résident a été créé avec succès.",
                         type: "success"
                     });
+                    Router.navigate('ascenseurs');
                 } catch (err) {
                     if (errBox) {
                         errBox.textContent = err.message;
                         errBox.classList.remove('hidden');
                     }
                 }
+            });
+        }
+
+        // Revoir l'Onboarding
+        if (restartOnboardingBtn) {
+            restartOnboardingBtn.addEventListener('click', () => {
+                Onboarding.restart();
             });
         }
 
@@ -195,76 +227,13 @@ class App {
                     message: "Vous avez été déconnecté.",
                     type: "info"
                 });
-                Router.navigate('ascenseurs');
-            });
-        }
-
-        // Mise à jour du profil
-        if (profileForm) {
-            profileForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const firstName = document.getElementById('account-firstname')?.value || '';
-                const lastName = document.getElementById('account-lastname')?.value || '';
-                const email = document.getElementById('account-email')?.value || '';
-                const phone = document.getElementById('account-phone')?.value || '';
-                const entrance = document.getElementById('account-entrance')?.value || '38';
-                const apartment = document.getElementById('account-apartment')?.value || '';
-                const notifs = document.getElementById('account-notifications')?.checked || false;
-
-                const succBox = document.getElementById('account-profile-success');
-                const errBox = document.getElementById('account-profile-error');
-
-                try {
-                    await Auth.updateProfile({
-                        first_name: firstName,
-                        last_name: lastName,
-                        email: email,
-                        phone: phone,
-                        entrance: entrance,
-                        apartment: apartment,
-                        notifications: notifs
-                    });
-
-                    playSuccessSound();
-                    if (succBox) {
-                        succBox.textContent = "Profil mis à jour avec succès !";
-                        succBox.classList.remove('hidden');
-                    }
-                    if (errBox) errBox.classList.add('hidden');
-                } catch (err) {
-                    if (errBox) {
-                        errBox.textContent = "Erreur lors de l'enregistrement : " + err.message;
-                        errBox.classList.remove('hidden');
-                    }
-                }
-            });
-        }
-
-        // Suppression de compte
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', () => {
-                const modal = document.getElementById('delete-account-modal');
-                if (modal) modal.classList.remove('hidden');
-            });
-        }
-
-        const confirmDeleteBtn = document.getElementById('btn-confirm-delete');
-        if (confirmDeleteBtn) {
-            confirmDeleteBtn.addEventListener('click', async () => {
-                try {
-                    await Auth.deleteAccount();
-                    document.getElementById('delete-account-modal')?.classList.add('hidden');
-                    alert("Votre compte et vos données personnelles ont été définitivement supprimés.");
-                    Router.navigate('landing');
-                } catch (err) {
-                    alert("Erreur lors de la suppression : " + err.message);
-                }
+                Router.navigate('compte');
             });
         }
 
         // Réaction aux changements d'authentification
         Auth.onAuthStateChange((user, profile) => {
-            const isAuth = !!user;
+            const isAuth = !!(user || profile);
             const isAdmin = Auth.isAdmin();
 
             if (unauthSection && authSection) {
@@ -272,41 +241,25 @@ class App {
                 authSection.classList.toggle('hidden', !isAuth);
             }
 
-            // Mettre à jour les champs de profil
+            // Mettre à jour l'affichage du profil
             if (isAuth && profile) {
                 const titleEl = document.getElementById('account-username-title');
                 const avatarEl = document.getElementById('account-avatar');
-                const fnInput = document.getElementById('account-firstname');
-                const lnInput = document.getElementById('account-lastname');
-                const emailInput = document.getElementById('account-email');
-                const phoneInput = document.getElementById('account-phone');
-                const entSelect = document.getElementById('account-entrance');
-                const aptInput = document.getElementById('account-apartment');
-                const notifInput = document.getElementById('account-notifications');
+                const entranceEl = document.getElementById('account-display-entrance');
+                const aptEl = document.getElementById('account-display-apartment');
+                const emailEl = document.getElementById('account-display-email');
+                const roleBadge = document.getElementById('account-badge-role');
 
-                if (titleEl) titleEl.textContent = profile.username || 'Résident';
-                if (avatarEl) avatarEl.textContent = (profile.username || 'R').charAt(0).toUpperCase();
-                if (fnInput) fnInput.value = profile.first_name || '';
-                if (lnInput) lnInput.value = profile.last_name || '';
-                if (emailInput) emailInput.value = profile.email || '';
-                if (phoneInput) phoneInput.value = profile.phone || '';
-                if (entSelect && profile.entrance) entSelect.value = profile.entrance;
-                if (aptInput) aptInput.value = profile.apartment || '';
-                if (notifInput) notifInput.checked = !!profile.notifications;
-            }
+                const fullName = (profile.first_name && profile.last_name) ? `${profile.first_name} ${profile.last_name}` : (profile.username || 'Résident');
 
-            // Visibilité du lien Admin Stats
-            if (moreMenuStatsLink) moreMenuStatsLink.classList.toggle('hidden', !isAdmin);
-            if (sidebarStatsLink) sidebarStatsLink.classList.toggle('hidden', !isAdmin);
-
-            // Bouton En-tête
-            if (headerLoginBtn) {
-                if (isAuth) {
-                    headerLoginBtn.textContent = `👤 ${profile?.username || 'Compte'}`;
-                    headerLoginBtn.onclick = () => Router.navigate('compte');
-                } else {
-                    headerLoginBtn.textContent = "Connexion";
-                    headerLoginBtn.onclick = () => Router.navigate('compte');
+                if (titleEl) titleEl.textContent = fullName;
+                if (avatarEl) avatarEl.textContent = fullName.charAt(0).toUpperCase();
+                if (entranceEl) entranceEl.textContent = `${profile.entrance} avenue Division Leclerc (N° ${profile.entrance})`;
+                if (aptEl) aptEl.textContent = profile.apartment || 'Non renseigné';
+                if (emailEl) emailEl.textContent = profile.email || user.email || 'Non renseigné';
+                if (roleBadge) {
+                    roleBadge.textContent = isAdmin ? 'Administrateur Collectif' : 'Locataire Résident';
+                    roleBadge.className = isAdmin ? 'status-badge badge-broken' : 'status-badge badge-functional';
                 }
             }
 
@@ -314,235 +267,108 @@ class App {
         });
     }
 
-    _bindModalsAndNavigation() {
-        // Menu "Plus" flottant Mobile
-        const moreBtn = document.getElementById('mobile-more-btn');
-        const moreMenu = document.getElementById('mobile-more-menu');
-        const closeMoreBtn = document.getElementById('btn-close-more-menu');
-
-        if (moreBtn && moreMenu) {
-            moreBtn.addEventListener('click', () => moreMenu.classList.toggle('hidden'));
-        }
-        if (closeMoreBtn && moreMenu) {
-            closeMoreBtn.addEventListener('click', () => moreMenu.classList.add('hidden'));
+    _bindModalsAndActions() {
+        // Modale d'incident
+        const openIncidentBtn = document.getElementById('btn-open-incident-modal');
+        const incidentModal = document.getElementById('incident-modal');
+        if (openIncidentBtn && incidentModal) {
+            openIncidentBtn.addEventListener('click', () => {
+                incidentModal.classList.remove('hidden');
+                incidentModal.setAttribute('aria-hidden', 'false');
+            });
         }
 
-        // Fermer le menu au clic sur un lien interne
-        document.querySelectorAll('.more-menu-item').forEach(link => {
-            link.addEventListener('click', () => {
-                if (moreMenu) moreMenu.classList.add('hidden');
+        // Modale de signalement ascenseur
+        const openReportBtn = document.getElementById('btn-open-report-modal');
+        if (openReportBtn) {
+            openReportBtn.addEventListener('click', () => ElevatorUI.openReportModal());
+        }
+
+        // Fermeture générique des modales
+        document.querySelectorAll('.btn-close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.modal-backdrop').forEach(m => {
+                    m.classList.add('hidden');
+                    m.setAttribute('aria-hidden', 'true');
+                });
             });
         });
 
-        // Modale À Propos & RGPD
-        const aboutBtn = document.getElementById('btn-open-about');
-        const aboutModal = document.getElementById('about-modal');
-        const rgpdBtn = document.getElementById('btn-open-rgpd');
-        const rgpdModal = document.getElementById('rgpd-modal');
-
-        if (aboutBtn && aboutModal) {
-            aboutBtn.addEventListener('click', () => aboutModal.classList.remove('hidden'));
-        }
-        if (rgpdBtn && rgpdModal) {
-            rgpdBtn.addEventListener('click', () => rgpdModal.classList.remove('hidden'));
-        }
-
-        // Export PDF Historique Ascenseur
-        const exportHistoryBtn = document.getElementById('btn-export-history');
-        if (exportHistoryBtn) {
-            exportHistoryBtn.addEventListener('click', () => {
-                const entranceId = ElevatorUI.selectedEntranceId;
-                if (!entranceId) return;
-                const el = Elevator.getById(entranceId);
+        // Génération Mise en Demeure PDF
+        const noticeBtn = document.getElementById('btn-generate-formal-notice');
+        if (noticeBtn) {
+            noticeBtn.addEventListener('click', () => {
+                const profile = Auth.getProfile();
+                const defaultEntrance = profile?.entrance || '50';
+                const el = Elevator.getById(defaultEntrance);
                 if (el) {
                     exportElevatorHistory(el);
-                }
-            });
-        }
-
-        // Écouter le changement de route pour rafraîchir les graphiques stats si nécessaire
-        EventBus.on(EVENTS.ROUTE_CHANGED, ({ route }) => {
-            if (route === 'stats') {
-                this._renderAdminStats();
-            }
-        });
-    }
-
-    _renderAdminStats() {
-        if (!Auth.isAdmin() || typeof window.Chart === 'undefined') return;
-
-        const elevators = Elevator.getAll();
-        const total = elevators.length;
-        const broken = elevators.filter(e => e.status === 'en_panne').length;
-        const totalDowntimeHours = elevators.reduce((acc, e) => acc + (e.downtimeHours || 0), 0);
-
-        // KPIs
-        const kpiAvail = document.getElementById('kpi-availability');
-        const kpiBreakdowns = document.getElementById('kpi-breakdowns');
-        const kpiResTime = document.getElementById('kpi-resolution-time');
-        const kpiActiveReports = document.getElementById('kpi-active-reports');
-
-        if (kpiAvail) {
-            const totalPossibleHours = total * 30 * 24;
-            const rate = Math.max(0, 100 * (1 - (totalDowntimeHours / totalPossibleHours))).toFixed(1);
-            kpiAvail.textContent = `${rate}%`;
-        }
-
-        if (kpiBreakdowns) kpiBreakdowns.textContent = String(broken);
-        if (kpiResTime) kpiResTime.textContent = "4.2h";
-        if (kpiActiveReports) {
-            const activeRep = elevators.reduce((acc, e) => acc + (e.reports?.length || 0), 0);
-            kpiActiveReports.textContent = String(activeRep);
-        }
-
-        // Graphique Top 5 Ascenseurs en panne
-        const canvasElevators = document.getElementById('stats-chart-elevators');
-        if (canvasElevators) {
-            if (this.statsCharts.elevators) this.statsCharts.elevators.destroy();
-
-            const top5 = [...elevators].sort((a, b) => (b.downtimeHours || 0) - (a.downtimeHours || 0)).slice(0, 5);
-
-            this.statsCharts.elevators = new window.Chart(canvasElevators.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: top5.map(e => `N° ${e.id}`),
-                    datasets: [{
-                        label: "Heures d'arrêt cumulées",
-                        data: top5.map(e => e.downtimeHours || 0),
-                        backgroundColor: '#ef4444',
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
+                    playSuccessSound();
+                    EventBus.emit(EVENTS.TOAST_NOTIFY, {
+                        title: "Document PDF généré",
+                        message: "Votre lettre de mise en demeure a été téléchargée.",
+                        type: "success"
+                    });
                 }
             });
         }
     }
 
     _setupTheme() {
-        const lightBtn = document.getElementById('theme-btn-light');
-        const darkBtn = document.getElementById('theme-btn-dark');
-        const sidebarCheckbox = document.getElementById('sidebar-theme-checkbox');
+        const toggleBtn = document.getElementById('mobile-theme-toggle');
 
         const applyTheme = (theme) => {
             const finalTheme = theme === 'light' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', finalTheme);
             localStorage.setItem('cp_theme', finalTheme);
 
-            if (sidebarCheckbox) {
-                sidebarCheckbox.checked = (finalTheme === 'dark');
-            }
-
-            if (lightBtn && darkBtn) {
-                if (finalTheme === 'light') {
-                    lightBtn.style.background = 'var(--bg-secondary)';
-                    lightBtn.style.color = 'var(--text-primary)';
-                    lightBtn.style.boxShadow = 'var(--shadow-sm)';
-                    darkBtn.style.background = 'none';
-                    darkBtn.style.color = 'var(--text-muted)';
-                    darkBtn.style.boxShadow = 'none';
-                } else {
-                    darkBtn.style.background = 'var(--bg-elevated)';
-                    darkBtn.style.color = 'var(--text-primary)';
-                    darkBtn.style.boxShadow = 'var(--shadow-sm)';
-                    lightBtn.style.background = 'none';
-                    lightBtn.style.color = 'var(--text-muted)';
-                    lightBtn.style.boxShadow = 'none';
-                }
+            if (toggleBtn) {
+                toggleBtn.innerHTML = finalTheme === 'dark'
+                    ? '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+                    : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
             }
         };
 
-        const initialTheme = localStorage.getItem('cp_theme') || 'dark';
-        applyTheme(initialTheme);
+        const currentTheme = localStorage.getItem('cp_theme') || 'dark';
+        applyTheme(currentTheme);
 
-        if (sidebarCheckbox) {
-            sidebarCheckbox.addEventListener('change', (e) => {
-                applyTheme(e.target.checked ? 'dark' : 'light');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const nowTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                applyTheme(nowTheme);
             });
-        }
-
-        if (lightBtn) {
-            lightBtn.addEventListener('click', () => applyTheme('light'));
-        }
-
-        if (darkBtn) {
-            darkBtn.addEventListener('click', () => applyTheme('dark'));
         }
     }
 
     _setupOfflineSyncWorker() {
         window.addEventListener('online', () => {
-            console.log("🌐 Connexion rétablie. Synchronisation des données hors-ligne...");
+            console.log("🌐 Connexion rétablie. Synchronisation des données...");
             EventBus.emit(EVENTS.NETWORK_ONLINE);
-            this._drainSyncQueue();
         });
 
         window.addEventListener('offline', () => {
             console.log("📴 Mode hors-ligne activé.");
             EventBus.emit(EVENTS.NETWORK_OFFLINE);
             EventBus.emit(EVENTS.TOAST_NOTIFY, {
-                title: "Mode Hors-Ligne",
-                message: "Vos actions seront enregistrées localement et synchronisées dès le retour du réseau.",
-                type: "info"
+                title: "Mode Hors-ligne",
+                message: "Les fonctionnalités de consultation et de signalement restent actives.",
+                type: "warning"
             });
         });
-
-        setInterval(() => {
-            if (navigator.onLine) this._drainSyncQueue();
-        }, CONFIG.syncIntervalMs);
-    }
-
-    async _drainSyncQueue() {
-        const queue = await Storage.getSyncQueue();
-        if (!queue || queue.length === 0) return;
-
-        console.log(`🔄 Traitement de ${queue.length} opération(s) en attente...`);
-
-        for (const item of queue) {
-            try {
-                if (item.action === 'CREATE_REPORT') {
-                    await Elevator.submitReport({
-                        entrance: item.payload.entrance,
-                        type: item.payload.type,
-                        description: item.payload.description,
-                        user: item.payload.user
-                    });
-                } else if (item.action === 'CREATE_INCIDENT') {
-                    await Incident.createIncident({
-                        category: item.payload.category,
-                        entrance: item.payload.entrance,
-                        description: item.payload.description
-                    });
-                } else if (item.action === 'UPDATE_STATUS') {
-                    await Elevator.updateStatus(
-                        item.payload.entrance,
-                        item.payload.status,
-                        item.payload.notes
-                    );
-                }
-
-                await Storage.removeFromSyncQueue(item.id);
-            } catch (err) {
-                console.warn("[SyncWorker] Échec synchronisation de l'élément:", item, err);
-            }
-        }
     }
 
     _registerServiceWorker() {
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log("🛡️ Service Worker actif (PWA)", reg.scope))
-                    .catch(err => console.warn("Service Worker non enregistré:", err));
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log("📲 Service Worker actif:", reg.scope))
+                    .catch(err => console.warn("SW non actif en local:", err.message));
             });
         }
     }
 }
 
-// Démarrage automatique au chargement du DOM
+// Bootstrap au chargement du DOM
 document.addEventListener('DOMContentLoaded', () => {
     const app = new App();
     app.bootstrap();

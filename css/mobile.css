@@ -534,6 +534,12 @@ button, a, select, input, textarea, label {
         min-height: 46px;
     }
 
+    .input-pill-group input,
+    .input-pill-group select {
+        padding-left: 2.85rem !important;
+        padding-right: 1.1rem !important;
+    }
+
     .field-hint { font-size: 0.68rem; }
 }
 
@@ -1040,102 +1046,12 @@ button, a, select, input, textarea, label {
         margin-bottom: 0.35rem !important;
     }
 
-    /* Auth Card padding reduction to maximize space */
-    #account-unauthenticated-section {
-        padding: 1.25rem !important;
-        border-radius: var(--radius-md) !important;
-    }
-
-    #account-unauthenticated-section .modal-tabs {
-        margin-bottom: 1.15rem !important;
-        gap: 0.75rem !important;
-    }
-
-    #account-unauthenticated-section .modal-tabs button {
-        font-size: 0.95rem !important;
-    }
-
-    #account-unauthenticated-section .form-group {
-        margin-bottom: 0.85rem !important;
-    }
-
-    #account-unauthenticated-section .form-group label {
-        font-size: 0.775rem !important;
-        margin-bottom: 0.3rem !important;
-    }
-
-    #account-unauthenticated-section input {
-        padding: 0.6rem 0.75rem !important;
-        font-size: 0.85rem !important;
-        border-radius: var(--radius-sm) !important;
-    }
-
-    #account-unauthenticated-section .field-hint {
-        font-size: 0.7rem !important;
-        margin-top: 0.2rem !important;
-        line-height: 1.3 !important;
-    }
-
-    #account-unauthenticated-section button[type="submit"] {
-        padding: 0.65rem 1rem !important;
-        font-size: 0.95rem !important;
-        margin-top: 0.5rem !important;
-    }
-
-    /* Features Section on mobile */
-    #tab-landing section {
-        margin-top: 0.5rem !important;
-        padding-top: 1.75rem !important;
-    }
-
-    #tab-landing section h3 {
-        font-size: 1.15rem !important;
-        margin-bottom: 1.5rem !important;
-    }
-
-    #tab-landing .features-grid {
-        gap: 1rem !important;
-    }
-
-    #tab-landing .feature-card {
-        padding: 1.15rem !important;
-    }
-
-    #tab-landing .feature-card h4 {
-        font-size: 0.95rem !important;
-        margin-bottom: 0.35rem !important;
-    }
-
-    #tab-landing .feature-card p {
-        font-size: 0.8rem !important;
-        line-height: 1.4 !important;
-    }
-
-    #tab-landing .feature-card div {
-        width: 36px !important;
-        height: 36px !important;
-        margin-bottom: 0.85rem !important;
-    }
-
-    #tab-landing .feature-card div svg {
-        width: 16px !important;
-        height: 16px !important;
-    }
-
-    #tab-landing .landing-stats-preview {
-        grid-template-columns: 1fr 1fr !important;
-        gap: 1rem 0.5rem !important;
-        padding: 1rem 0.5rem !important;
-        margin-bottom: 1.5rem !important;
-    }
-
-    #tab-landing .landing-stat-item {
-        border-left: none !important;
-        padding: 0.25rem !important;
-    }
-
-    #tab-landing .landing-stat-item:nth-child(even) {
-        border-left: 1px solid var(--border-color) !important;
+    /* Auth Card mobile styling */
+    #account-unauthenticated-section .input-pill-group input,
+    #account-unauthenticated-section .input-pill-group select {
+        padding-left: 2.85rem !important;
+        padding-right: 1rem !important;
+        font-size: 0.88rem !important;
     }
 }
 

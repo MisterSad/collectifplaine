@@ -142,7 +142,7 @@ class DemocracyUIController {
                         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                     </div>
                     <h3 style="font-size: 1.15rem; color: var(--text-primary); font-family: var(--font-heading); margin-bottom: 0.35rem;">Aucun scrutin actif</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 400px; margin: 0 auto;">Les votes et consultations de l'amicale seront affichés ici.</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 400px; margin: 0 auto;">Les consultations du collectif seront affichées ici.</p>
                 </div>
             `;
             return;

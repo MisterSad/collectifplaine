@@ -2,21 +2,15 @@
 <html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Collectif Plaine — Hub Locataires Leclerc</title>
     
-    <!-- Sécurité : Politique de Sécurité du Contenu (CSP) renforcée -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://iblfurgquymrcyzefwzy.supabase.co https://api.qrserver.com; connect-src 'self' https://iblfurgquymrcyzefwzy.supabase.co wss://iblfurgquymrcyzefwzy.supabase.co;">
-    
-    <title>Collectif Plaine - Valdévy, Secteur La Plaine</title>
-    
-    <!-- Polices Modernes -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- PWA -->
+    <!-- Meta PWA & Sécurité -->
+    <meta name="description" content="Application mobile du Collectif des Locataires de l'Avenue de la Division Leclerc (38 à 52) à Cachan.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d0f17">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#000000">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
     
@@ -27,1392 +21,697 @@
     <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
-    <div class="app-layout">
-        <!-- Barre latérale de navigation (Sidebar) - Desktop -->
-        <aside class="app-sidebar glass">
-            <div class="sidebar-brand">
-                <div class="brand-icon">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Conteneur Mobile-First Shell -->
+    <div class="mobile-app-shell">
+        
+        <!-- En-tête Mobile Natif (App Header) -->
+        <header class="mobile-app-header glass">
+            <div class="header-brand">
+                <div class="brand-badge-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="5" y="3" width="14" height="18" rx="2" ry="2" />
-                        <line x1="9" y1="21" x2="9" y2="17" />
-                        <line x1="15" y1="21" x2="15" y2="17" />
-                        <line x1="9" y1="17" x2="15" y2="17" />
-                        <rect x="8" y="6" width="2" height="2" rx="0.5" fill="currentColor" />
-                        <rect x="14" y="6" width="2" height="2" rx="0.5" fill="currentColor" />
-                        <rect x="8" y="10" width="2" height="2" rx="0.5" fill="currentColor" />
-                        <rect x="14" y="10" width="2" height="2" rx="0.5" fill="currentColor" />
-                        <rect x="8" y="14" width="2" height="2" rx="0.5" fill="currentColor" />
-                        <rect x="14" y="14" width="2" height="2" rx="0.5" fill="currentColor" />
+                        <polyline points="9 10 12 7 15 10" />
+                        <polyline points="9 14 12 17 15 14" />
                     </svg>
                 </div>
-                <div class="brand-text">
-                    <h2>Collectif Plaine</h2>
-                    <span>Hub Locataires</span>
+                <div class="header-title-box">
+                    <h1 class="header-title" id="mobile-header-title">Collectif Plaine</h1>
+                    <span class="header-subtitle">8 Entrées Leclerc</span>
                 </div>
             </div>
-            <nav class="sidebar-menu">
-                <a href="#/ascenseurs" class="menu-link active" data-page="page-elevators">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/><polyline points="9 10 12 7 15 10"/><polyline points="9 14 12 17 15 14"/></svg></span> <span class="menu-text">Ascenseurs</span>
+            <div class="header-actions">
+                <button type="button" id="mobile-theme-toggle" class="header-btn" aria-label="Changer de thème">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <a href="#/compte" class="header-btn" id="header-profile-btn" aria-label="Mon compte">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </a>
-                <a href="#/incidents" class="menu-link" data-page="page-incidents">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span> <span class="menu-text">Incidents</span>
-                </a>
-                <a href="#/guides" class="menu-link" data-page="page-guides">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> <span class="menu-text">Guides</span>
-                </a>
-                <a href="#/petitions" class="menu-link" data-page="page-petitions">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> <span class="menu-text">Pétitions</span>
-                </a>
-                <a href="#/votes" class="menu-link" data-page="page-votes">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span> <span class="menu-text">Sondages & Votes</span>
-                </a>
-                <a href="#/charges" class="menu-link" data-page="page-charges">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> <span class="menu-text">Charges</span>
-                </a>
-                <a href="#/compte" class="menu-link" data-page="page-profile" id="sidebar-account-link">
-                    <span class="menu-icon" id="sidebar-account-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> <span class="menu-text" id="sidebar-account-text">Mon Compte</span>
-                </a>
-                <a href="#/stats" class="menu-link hidden" data-page="page-stats" id="sidebar-stats-link">
-                    <span class="menu-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> <span class="menu-text">Statistiques</span>
-                </a>
-            </nav>
-            <div class="sidebar-theme-toggle" style="margin-top: auto; padding: 1rem 0.9rem 0.5rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
-                <span style="display: flex; align-items: center; gap: 0.5rem;">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    Mode Sombre
-                </span>
-                <label class="switch-toggle" style="scale: 0.85; margin: 0;">
-                    <input type="checkbox" id="sidebar-theme-checkbox" aria-label="Activer le mode sombre">
-                    <span class="slider"></span>
-                </label>
             </div>
-        </aside>
+        </header>
 
-        <!-- Zone de contenu principal -->
-        <div class="app-main">
-            <!-- Container Principal des Pages -->
-            <main class="page-container container">
+        <!-- Zone de contenu principal de l'application -->
+        <main class="mobile-app-content">
 
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET : LANDING PAGE (DÉCONNECTÉ) -->
-        <!-- ============================================ -->
-        <div id="tab-landing" class="page-panel active" role="tabpanel" aria-labelledby="tab-landing" style="padding: 1rem 0;">
-            <!-- Header de la Landing Page -->
-            <header style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.01); border-radius: var(--radius-md);">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <div style="background: var(--accent-gradient); color: white; width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="5" y="3" width="14" height="18" rx="2" ry="2" />
-                            <line x1="9" y1="21" x2="9" y2="17" />
-                            <line x1="15" y1="21" x2="15" y2="17" />
-                            <line x1="9" y1="17" x2="15" y2="17" />
-                        </svg>
+            <!-- ============================================ -->
+            <!-- 1. ÉCRAN D'ONBOARDING TACTILE (SWIPE CAROUSEL) -->
+            <!-- ============================================ -->
+            <div id="tab-onboarding" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-onboarding">
+                <div class="onboarding-screen">
+                    <div class="onboarding-top">
+                        <div class="onboarding-brand">
+                            <div class="badge-icon-box purple" style="width: 32px; height: 32px;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/></svg>
+                            </div>
+                            <span>Collectif Plaine</span>
+                        </div>
+                        <button type="button" id="onboarding-skip-btn" class="onboarding-skip-btn">Passer</button>
                     </div>
-                    <div>
-                        <h1 style="font-size: 1.2rem; font-weight: 800; margin: 0; letter-spacing: -0.01em; color: var(--text-primary); font-family: var(--font-heading);">Collectif Plaine</h1>
+
+                    <div class="onboarding-carousel" id="onboarding-container">
+                        <div class="onboarding-track" id="onboarding-track">
+                            
+                            <!-- Slide 1 : Ascenseurs -->
+                            <div class="onboarding-slide">
+                                <div class="onboarding-icon-hero badge-icon-box purple" style="width: 86px; height: 86px;">
+                                    <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="5" y="3" width="14" height="18" rx="2" ry="2"/>
+                                        <polyline points="9 10 12 7 15 10"/>
+                                        <polyline points="9 14 12 17 15 14"/>
+                                    </svg>
+                                </div>
+                                <h2 class="onboarding-slide-title">Transparence des 8 Ascenseurs</h2>
+                                <p class="onboarding-slide-desc">
+                                    Suivez en direct l'état des cabines du 38 au 52 avenue Division Leclerc et calculez les heures d'arrêt pour exiger vos remises de charges.
+                                </p>
+                                <div class="onboarding-pill-tags">
+                                    <span class="onboarding-pill-tag">⏱️ Calcul temps d'arrêt</span>
+                                    <span class="onboarding-pill-tag">🔔 Alertes pannes</span>
+                                    <span class="onboarding-pill-tag">📊 Preuves probantes</span>
+                                </div>
+                            </div>
+
+                            <!-- Slide 2 : Incidents -->
+                            <div class="onboarding-slide">
+                                <div class="onboarding-icon-hero badge-icon-box coral" style="width: 86px; height: 86px;">
+                                    <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                        <line x1="12" y1="9" x2="12" y2="13"/>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                    </svg>
+                                </div>
+                                <h2 class="onboarding-slide-title">Signalement Express en 30s</h2>
+                                <p class="onboarding-slide-desc">
+                                    Porte bloquée, interphone VIGIK hors-service, éclairage ou propreté : signalez les anomalies avec photo pour centraliser les preuves face à Valdévy.
+                                </p>
+                                <div class="onboarding-pill-tags">
+                                    <span class="onboarding-pill-tag">📸 Photo intégrée</span>
+                                    <span class="onboarding-pill-tag">🔑 VIGIK & Portes</span>
+                                    <span class="onboarding-pill-tag">🧹 Parties communes</span>
+                                </div>
+                            </div>
+
+                            <!-- Slide 3 : Droit & Guides -->
+                            <div class="onboarding-slide">
+                                <div class="onboarding-icon-hero badge-icon-box pink" style="width: 86px; height: 86px;">
+                                    <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14 2 14 8 20 8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                    </svg>
+                                </div>
+                                <h2 class="onboarding-slide-title">Droit du Locataire & Mises en Demeure</h2>
+                                <p class="onboarding-slide-desc">
+                                    Accédez aux textes de lois officiels (Loi du 6 juillet 1989) et générez automatiquement des courriers juridiques en PDF prêts à l'envoi.
+                                </p>
+                                <div class="onboarding-pill-tags">
+                                    <span class="onboarding-pill-tag">📜 Loi 6 juillet 1989</span>
+                                    <span class="onboarding-pill-tag">📄 PDF certifiés</span>
+                                    <span class="onboarding-pill-tag">💰 Audit charges</span>
+                                </div>
+                            </div>
+
+                            <!-- Slide 4 : Action Collective -->
+                            <div class="onboarding-slide">
+                                <div class="onboarding-icon-hero badge-icon-box blue" style="width: 86px; height: 86px;">
+                                    <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
+                                </div>
+                                <h2 class="onboarding-slide-title">La Force du Collectif</h2>
+                                <p class="onboarding-slide-desc">
+                                    Rejoignez le collectif de locataires des 8 bâtiments Leclerc. Solidaires et organisés, nous faisons respecter notre cadre de vie.
+                                </p>
+                                <div class="onboarding-pill-tags">
+                                    <span class="onboarding-pill-tag">🤝 Solidarité voisins</span>
+                                    <span class="onboarding-pill-tag">✍️ Pétitions</span>
+                                    <span class="onboarding-pill-tag">🛡️ Action collective</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="onboarding-bottom">
+                        <div class="onboarding-dots">
+                            <div class="onboarding-dot active" data-index="0"></div>
+                            <div class="onboarding-dot" data-index="1"></div>
+                            <div class="onboarding-dot" data-index="2"></div>
+                            <div class="onboarding-dot" data-index="3"></div>
+                        </div>
+                        <button type="button" id="onboarding-next-btn" class="btn-pill-primary" style="width: 100%; justify-content: center; font-size: 0.95rem; padding: 0.85rem 1.5rem;">
+                            <span>Suivant</span>
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
                     </div>
                 </div>
-                <div>
-                    <a href="#/compte" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: var(--radius-md);">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        Connexion / Inscription
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 2. ONGLET ASCENSEURS (8 BÂTIMENTS LECLERC) -->
+            <!-- ============================================ -->
+            <div id="tab-ascenseurs" class="page-panel active" role="tabpanel" aria-labelledby="tab-ascenseurs">
+                
+                <!-- Résumé des 8 ascenseurs (KPIs) -->
+                <div class="glass-card" style="padding: 1.25rem; margin-bottom: 1.25rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em;">État Barre Leclerc (38-52)</span>
+                        <span style="font-size: 0.725rem; color: var(--color-success); font-weight: 700;">● En Direct</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; text-align: center;">
+                        <div style="padding: 0.5rem 0.25rem; background: var(--bg-tertiary); border-radius: var(--radius-sm);">
+                            <div class="font-data" id="stat-functional" style="font-size: 1.4rem; font-weight: 800; color: var(--color-success);">--</div>
+                            <div style="font-size: 0.675rem; color: var(--text-muted); font-weight: 600;">En Service</div>
+                        </div>
+                        <div style="padding: 0.5rem 0.25rem; background: var(--bg-tertiary); border-radius: var(--radius-sm);">
+                            <div class="font-data" id="stat-maintenance" style="font-size: 1.4rem; font-weight: 800; color: var(--color-warning);">--</div>
+                            <div style="font-size: 0.675rem; color: var(--text-muted); font-weight: 600;">Maintenance</div>
+                        </div>
+                        <div style="padding: 0.5rem 0.25rem; background: var(--bg-tertiary); border-radius: var(--radius-sm);">
+                            <div class="font-data" id="stat-broken" style="font-size: 1.4rem; font-weight: 800; color: var(--color-danger);">--</div>
+                            <div style="font-size: 0.675rem; color: var(--text-muted); font-weight: 600;">En Panne</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-muted);">
+                        <span>Arrêt cumulé récent</span>
+                        <strong class="font-data" id="stat-downtime" style="color: var(--text-primary);">--</strong>
+                    </div>
+                </div>
+
+                <!-- Bouton d'action rapide : Signaler une panne -->
+                <button type="button" id="btn-open-report-modal" class="btn-pill-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.9rem; margin-bottom: 1.25rem;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    Signaler une Panne d'Ascenseur
+                </button>
+
+                <!-- Recherche instantanée -->
+                <div class="input-pill-group" style="margin-bottom: 1rem;">
+                    <div class="input-icon">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <input type="text" id="elevator-search-input" placeholder="Rechercher une entrée (38, 40, 50...)" style="border: 1px solid var(--border-color); border-radius: var(--radius-pill); padding: 0.65rem 1rem 0.65rem 2.6rem; width: 100%; background: var(--bg-elevated); color: var(--text-primary); font-size: 0.85rem; outline: none;">
+                </div>
+
+                <!-- Filtres Segmented Pill -->
+                <div class="segmented-pill-bar" style="margin-bottom: 1.25rem;">
+                    <button type="button" class="segmented-pill-item active" data-filter="all">Tous (8)</button>
+                    <button type="button" class="segmented-pill-item" data-filter="en_panne">🚨 Pannes</button>
+                    <button type="button" class="segmented-pill-item" data-filter="en_maintenance">🔧 Maint.</button>
+                    <button type="button" class="segmented-pill-item" data-filter="en_service">✅ Service</button>
+                </div>
+
+                <!-- Grille des 8 cartes de suivi -->
+                <div id="elevators-grid" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="loading-placeholder">Chargement des ascenseurs...</div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 3. ONGLET INCIDENTS (PARTIES COMMUNES) -->
+            <!-- ============================================ -->
+            <div id="tab-incidents" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-incidents">
+                <div class="section-header-box">
+                    <h2 class="section-title">Incidents Communs</h2>
+                    <p class="section-desc">Registre des dysfonctionnements (portes, VIGIK, propreté, éclairage).</p>
+                </div>
+
+                <button type="button" id="btn-open-incident-modal" class="btn-pill-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.9rem; margin-bottom: 1.25rem;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Déclarer un Incident
+                </button>
+
+                <div class="segmented-pill-bar" style="margin-bottom: 1.25rem;">
+                    <button type="button" class="segmented-pill-item active" data-category="all">Tous</button>
+                    <button type="button" class="segmented-pill-item" data-category="porte">🚪 Portes</button>
+                    <button type="button" class="segmented-pill-item" data-category="vigik">🔑 VIGIK</button>
+                    <button type="button" class="segmented-pill-item" data-category="proprete">🧹 Propreté</button>
+                    <button type="button" class="segmented-pill-item" data-category="chauffage">🔥 Chauffage</button>
+                </div>
+
+                <div id="incidents-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="loading-placeholder">Chargement des incidents...</div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 4. ONGLET PÉTITIONS (ACTIONS COLLECTIVES) -->
+            <!-- ============================================ -->
+            <div id="tab-petitions" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-petitions">
+                <div class="section-header-box">
+                    <h2 class="section-title">Pétitions Collectives</h2>
+                    <p class="section-desc">Signez et soutenez les requêtes portées par le collectif de locataires.</p>
+                </div>
+
+                <div id="petitions-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="loading-placeholder">Chargement des pétitions...</div>
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 5. ONGLET GUIDES & VOS DROITS -->
+            <!-- ============================================ -->
+            <div id="tab-guides" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-guides">
+                <div class="section-header-box">
+                    <h2 class="section-title">Guides & Vos Droits</h2>
+                    <p class="section-desc">Droit du locataire (Loi du 6 juillet 1989) & Mises en demeure PDF.</p>
+                </div>
+
+                <div class="input-pill-group" style="margin-bottom: 1rem;">
+                    <div class="input-icon">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <input type="text" id="wiki-search-input" placeholder="Rechercher un droit, un article de loi..." style="border: 1px solid var(--border-color); border-radius: var(--radius-pill); padding: 0.65rem 1rem 0.65rem 2.6rem; width: 100%; background: var(--bg-elevated); color: var(--text-primary); font-size: 0.85rem; outline: none;">
+                </div>
+
+                <!-- Générateur de mise en demeure PDF -->
+                <div class="glass-card" style="padding: 1.25rem; margin-bottom: 1.25rem; border: 1px solid rgba(236, 72, 153, 0.3); background: var(--gradient-aurora-soft);">
+                    <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <div class="badge-icon-box pink" style="width: 38px; height: 38px; flex-shrink: 0;">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary);">Générateur de Mise en Demeure</div>
+                            <div style="font-size: 0.775rem; color: var(--text-secondary); margin-top: 2px;">Lettre LRAR avec calcul probant des pannes pour Valdévy.</div>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-generate-formal-notice" class="btn-pill-dark" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.85rem;">
+                        📄 Générer mon courrier PDF
+                    </button>
+                </div>
+
+                <div id="wiki-articles-list" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                    <!-- Rendu dynamique -->
+                </div>
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 6. ONGLET CHARGES -->
+            <!-- ============================================ -->
+            <div id="tab-charges" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
+                <div class="section-header-box">
+                    <h2 class="section-title">Audit des Charges</h2>
+                    <p class="section-desc">Vérification des charges récupérables et contestations légales.</p>
+                </div>
+
+                <div class="glass-card" style="padding: 1.5rem; text-align: center;">
+                    <div class="badge-icon-box coral" style="width: 52px; height: 52px; margin: 0 auto 1rem;">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Calculateur de Charges</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                        Le décret n° 87-713 encadre strictement les dépenses que Valdévy peut vous réclamer. Les pannes prolongées d'ascenseurs ouvrent droit à déduction.
+                    </p>
+                    <a href="#/guides" class="btn-pill-primary" style="display: inline-flex; justify-content: center; width: 100%; text-decoration: none; padding: 0.75rem;">
+                        Consulter le barème légal
                     </a>
                 </div>
-            </header>
+            </div>
 
-            <div class="landing-hero-grid">
+            <!-- ============================================ -->
+            <!-- 7. ONGLET MON COMPTE / AUTHENTIFICATION -->
+            <!-- ============================================ -->
+            <div id="tab-compte" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-compte">
                 
-                <!-- Colonne Gauche : Proposition de valeur & Mission -->
-                <div class="landing-content-left" style="justify-content: center; height: 100%;">
-                    <div class="assoc-badge" style="margin-bottom: 1rem; align-self: flex-start;">Entraide & Dialogue Locataires</div>
-                    <h2 class="landing-hero-title" style="font-size: 2.2rem; font-weight: 850; line-height: 1.15; margin-bottom: 1.5rem; letter-spacing: -0.03em; background: linear-gradient(135deg, #ffffff 30%, var(--text-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 0;">Agissons ensemble pour notre cadre de vie : le hub d'entraide des locataires</h2>
-                    
-                    <p class="lead-text" style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                        Pour préserver la qualité de vie dans notre résidence, l'entraide et le partage d'informations sont essentiels. Ce hub permet aux locataires de Cachan de recenser les dysfonctionnements (ascenseurs, équipements, parties communes) afin d'assurer un suivi précis et de faciliter le dialogue avec le bailleur Valdévy pour y remédier.
-                    </p>
+                <!-- Section DÉCONNECTÉ : Formulaire Connexion & Inscription Complète -->
+                <div id="account-unauthenticated-section">
+                    <div class="glass-card" style="padding: 1.5rem; text-align: center; border-radius: var(--radius-card);">
+                        
+                        <div style="margin-bottom: 1.5rem;">
+                            <div class="badge-icon-box purple" style="width: 52px; height: 52px; margin: 0 auto 0.75rem;">
+                                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <h2 style="font-size: 1.45rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); margin-bottom: 0.25rem;">
+                                Espace Résident
+                            </h2>
+                            <p style="font-size: 0.825rem; color: var(--text-muted); line-height: 1.45;">
+                                Bâtiments 38 à 52 avenue Division Leclerc
+                            </p>
+                        </div>
+
+                        <!-- Segmented Pill Switch (Connexion / Inscription) -->
+                        <div class="segmented-pill-bar" style="margin: 0 auto 1.25rem; width: 100%;">
+                            <button class="segmented-pill-item active" id="account-tab-login" type="button" style="flex: 1; justify-content: center;">Connexion</button>
+                            <button class="segmented-pill-item" id="account-tab-register" type="button" style="flex: 1; justify-content: center;">Créer un compte</button>
+                        </div>
+
+                        <div id="account-auth-error" class="alert-box alert-danger hidden" style="margin-bottom: 1rem; border-radius: var(--radius-md); font-size: 0.825rem;"></div>
+                        <div id="account-auth-success" class="alert-box alert-success hidden" style="margin-bottom: 1rem; border-radius: var(--radius-md); font-size: 0.825rem;"></div>
+
+                        <!-- Formulaire 1 : Connexion -->
+                        <form id="account-login-form" style="text-align: left;">
+                            <div class="input-pill-group">
+                                <div class="input-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                </div>
+                                <input type="text" id="account-login-username" required placeholder="Email ou Identifiant" autocomplete="username">
+                            </div>
+
+                            <div class="input-pill-group">
+                                <div class="input-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                </div>
+                                <input type="password" id="account-login-password" required placeholder="Mot de passe" autocomplete="current-password">
+                            </div>
+
+                            <button type="submit" class="btn-pill-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.9rem; margin-top: 0.25rem;">
+                                Se connecter
+                            </button>
+                        </form>
+
+                        <!-- Formulaire 2 : Inscription Complète -->
+                        <form id="account-register-form" class="hidden" style="text-align: left;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <div class="input-pill-group" style="margin-bottom: 0;">
+                                    <div class="input-icon">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                    <input type="text" id="reg-firstname" required placeholder="Prénom">
+                                </div>
+                                <div class="input-pill-group" style="margin-bottom: 0;">
+                                    <div class="input-icon">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                    <input type="text" id="reg-lastname" required placeholder="Nom">
+                                </div>
+                            </div>
+
+                            <div class="input-pill-group">
+                                <div class="input-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                </div>
+                                <input type="email" id="reg-email" required placeholder="Adresse e-mail">
+                            </div>
+
+                            <div class="input-pill-group">
+                                <div class="input-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                                </div>
+                                <input type="text" id="reg-apartment" required placeholder="N° de Logement / Appartement (ex: 42)">
+                            </div>
+
+                            <div class="input-pill-group">
+                                <div class="input-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/></svg>
+                                </div>
+                                <select id="reg-entrance" required style="width: 100%; border: 1px solid var(--border-color); border-radius: var(--radius-pill); padding: 0.75rem 1rem 0.75rem 2.6rem; background: var(--bg-elevated); color: var(--text-primary); font-size: 0.85rem; outline: none; appearance: none; -webkit-appearance: none;">
+                                    <option value="" disabled selected>Choisir votre adresse...</option>
+                                    <option value="38">38 avenue Division Leclerc (N° 38)</option>
+                                    <option value="40">40 avenue Division Leclerc (N° 40)</option>
+                                    <option value="42">42 avenue Division Leclerc (N° 42)</option>
+                                    <option value="44">44 avenue Division Leclerc (N° 44)</option>
+                                    <option value="46">46 avenue Division Leclerc (N° 46)</option>
+                                    <option value="48">48 avenue Division Leclerc (N° 48)</option>
+                                    <option value="50">50 avenue Division Leclerc (N° 50)</option>
+                                    <option value="52">52 avenue Division Leclerc (N° 52)</option>
+                                </select>
+                            </div>
+
+                            <div class="input-pill-group">
+                                <div class="input-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                </div>
+                                <input type="password" id="reg-password" required placeholder="Mot de passe (min 8 caractères)">
+                            </div>
+
+                            <button type="submit" class="btn-pill-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.9rem; margin-top: 0.25rem;">
+                                Rejoindre le Collectif
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-success);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <span>Privacy by Design • Données protégées RGPD</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Colonne Droite : Le Cadre Réglementaire (Loi de 1989) -->
-                <div class="landing-content-right">
-                    <div class="card glass feature-card" style="padding: 2rem; border-radius: var(--radius-lg); background: rgba(255, 255, 255, 0.01); margin: 0; box-shadow: 0 8px 32px rgba(0,0,0,0.25);">
-                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-top: 0; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-family: var(--font-heading);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-primary); flex-shrink: 0;"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7L2 12h6L5 7z"/><path d="M19 7l-3 5h6l-3-5z"/><path d="M12 22H4"/><path d="M12 22h8"/></svg>
-                            Le cadre réglementaire
-                        </h3>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 0.75rem;">
-                            La législation française (loi du 6 juillet 1989) définit des règles claires pour assurer le confort et la sécurité des locataires :
-                        </p>
-                        <ul style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; padding-left: 1.25rem; margin: 0;">
-                            <li style="margin-bottom: 0.5rem;"><strong>Entretien et réparations :</strong> le bailleur veille au bon fonctionnement des équipements communs et à la décence des logements.</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Jouissance paisible :</strong> chaque résident doit pouvoir bénéficier de ses équipements (chauffage, ascenseur, etc.).</li>
-                            <li><strong>Sécurité des accès :</strong> le maintien en bon état des fermetures et éclairages contribue à la tranquillité de tous.</li>
-                        </ul>
+                <!-- Section CONNECTÉ : Profil Résident & Paramètres -->
+                <div id="account-authenticated-section" class="hidden">
+                    <div class="glass-card" style="padding: 1.5rem; margin-bottom: 1.25rem; border-radius: var(--radius-card);">
+                        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.25rem;">
+                            <div class="badge-icon-box purple" style="width: 48px; height: 48px; font-size: 1.2rem; font-weight: 800;" id="account-avatar">
+                                👤
+                            </div>
+                            <div>
+                                <h3 id="account-username-title" style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); margin: 0;">
+                                    Résident
+                                </h3>
+                                <span id="account-badge-role" class="status-badge badge-functional" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; margin-top: 3px; display: inline-block;">
+                                    Locataire
+                                </span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; color: var(--text-secondary); padding: 0.85rem; background: var(--bg-tertiary); border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                            <div>🏢 <strong>Adresse :</strong> <span id="account-display-entrance">Avenue Division Leclerc</span></div>
+                            <div>🚪 <strong>Logement :</strong> <span id="account-display-apartment">--</span></div>
+                            <div>✉️ <strong>Email :</strong> <span id="account-display-email">--</span></div>
+                        </div>
+
+                        <button type="button" id="btn-restart-onboarding" class="btn-pill-dark" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.85rem; margin-bottom: 0.75rem;">
+                            ✨ Revoir la présentation (Onboarding)
+                        </button>
+
+                        <button type="button" id="account-logout-btn" class="btn-pill-outline" style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 0.85rem; color: var(--color-danger); border-color: rgba(239, 68, 68, 0.3);">
+                            Se déconnecter
+                        </button>
                     </div>
+                </div>
+
+            </div>
+
+            <!-- ============================================ -->
+            <!-- 8. ONGLET STATS ADMIN (RÉSERVÉ ADMIN) -->
+            <!-- ============================================ -->
+            <div id="tab-stats" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-stats">
+                <div class="section-header-box">
+                    <h2 class="section-title">Tableau de Bord Admin</h2>
+                    <p class="section-desc">Statistiques globales et journal d'interventions.</p>
+                </div>
+                <div id="stats-summary-card" class="glass-card" style="padding: 1.25rem;">
+                    <!-- Rendu dynamique -->
                 </div>
             </div>
 
-            <!-- Section Présentation de l'Amicale "Collectif Plaine" -->
-            <section style="margin-top: 3rem; border-top: 1px solid var(--border-color); padding-top: 3rem;">
-                <h3 style="font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 0.5rem; color: var(--text-primary); font-family: var(--font-heading);">L'Amicale des Locataires « Collectif Plaine »</h3>
-                <p style="font-size: 0.95rem; color: var(--text-muted); text-align: center; max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.5;">
-                    Qui sommes-nous et pourquoi l'union de notre résidence est notre plus grande force au quotidien.
-                </p>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; align-items: stretch;">
-                    
-                    <!-- Colonne 1 : Présentation Générale -->
-                    <div class="card glass feature-card" style="padding: 2rem; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-start; background: rgba(255, 255, 255, 0.01);">
-                        <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-primary); margin-bottom: 1rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-primary); flex-shrink: 0;"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line><line x1="9" y1="16" x2="15" y2="16"></line><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M12 6h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"></path></svg> Unis pour notre cadre de vie
-                        </h4>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-                            Le <strong>Collectif Plaine</strong> est l'association indépendante de fait (Amicale) regroupant les résidents du secteur de la Plaine à Cachan. Notre amicale s'organise de manière démocratique et bénévole pour animer la résidence, favoriser le dialogue entre voisins et agir d'une seule voix face au bailleur social <strong>Valdévy</strong>.
-                        </p>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">
-                            Notre but est de veiller au bon entretien des immeubles, à la sécurité des accès, et à la juste maîtrise des charges de chauffage et d'équipements collectifs (notamment le suivi de la maintenance des ascenseurs).
-                        </p>
-                    </div>
-
-                    <!-- Colonne 2 : Pourquoi une Amicale est cruciale -->
-                    <div class="card glass feature-card" style="padding: 2rem; border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: flex-start; background: rgba(255, 255, 255, 0.01);">
-                        <h4 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-primary); margin-bottom: 1rem; font-family: var(--font-heading); display: flex; align-items: center; gap: 0.5rem;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-primary); flex-shrink: 0;"><line x1="12" y1="2" x2="12" y2="22"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7L2 12h6L5 7z"/><path d="M19 7l-3 5h6l-3-5z"/><path d="M12 22H4"/><path d="M12 22h8"/></svg> L'importance d'une action collective
-                        </h4>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-                            Face à un grand bailleur social, un locataire isolé est souvent impuissant face aux retards d'entretien ou aux facturations de charges floues. L'article 44 de la loi du 6 juillet 1989 confère aux amicales de locataires un rôle juridique officiel :
-                        </p>
-                        <ul style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; padding-left: 1.2rem; margin: 0;">
-                            <li style="margin-bottom: 0.5rem;"><strong>Légitimité de concertation :</strong> le bailleur est légalement tenu de consulter et d'écouter les représentants de l'Amicale pour les décisions touchant la résidence.</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Contrôle des charges :</strong> nous pouvons auditer chaque année les pièces justificatives des charges récupérables pour contester les surfacturations.</li>
-                            <li><strong>Poids des réclamations :</strong> un signalement porté par une amicale a un impact bien plus fort qu'une plainte individuelle.</li>
-                        </ul>
-                    </div>
-
-                </div>
-
-                <!-- Les 3 Piliers de l'Amicale -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
-                    
-                    <!-- Pilier 1 : Dialogue & Négociation -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; border-radius: var(--radius-lg); background: rgba(255, 255, 255, 0.01);">
-                        <div style="margin-bottom: 0.75rem; color: var(--accent-primary); display: flex; align-items: center;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        </div>
-                        <h5 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; font-family: var(--font-heading);">Dialogue & Négociation</h5>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
-                            Nous privilégions toujours la médiation et le dialogue constructif avec les équipes de Valdévy pour accélérer les chantiers et résolutions.
-                        </p>
-                    </div>
-
-                    <!-- Pilier 2 : Solidarité Active -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; border-radius: var(--radius-lg); background: rgba(255, 255, 255, 0.01);">
-                        <div style="margin-bottom: 0.75rem; color: var(--color-success); display: flex; align-items: center;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                        </div>
-                        <h5 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; font-family: var(--font-heading);">Solidarité Active</h5>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
-                            Organisation de l'entraide entre résidents (notamment l'assistance aux personnes à mobilité réduite ou âgées lors des pannes d'ascenseurs).
-                        </p>
-                    </div>
-
-                    <!-- Pilier 3 : Vigilance Juridique -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; border-radius: var(--radius-lg); background: rgba(255, 255, 255, 0.01);">
-                        <div style="margin-bottom: 0.75rem; color: var(--color-warning); display: flex; align-items: center;">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        </div>
-                        <h5 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; font-family: var(--font-heading);">Vigilance & Droit</h5>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
-                            Contrôle rigoureux de la conformité des installations, du respect des contrats de maintenance et de l'adéquation des charges réclamées.
-                        </p>
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- Section Fonctionnalités -->
-            <section style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 3rem;">
-                <h3 style="font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: 0.5rem; color: var(--text-primary); font-family: var(--font-heading);">Les outils de l'Amicale pour agir</h3>
-                <p style="font-size: 0.95rem; color: var(--text-muted); text-align: center; max-width: 600px; margin: 0 auto 2.5rem; line-height: 1.5;">
-                    Découvrez l'ensemble des services collaboratifs mis en place pour améliorer le quotidien de notre résidence et défendre nos droits de locataires.
-                </p>
-
-                <!-- Aperçu du Tableau de Bord en Direct (Live Stats Preview) -->
-                <div class="landing-stats-preview glass" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color); margin-bottom: 2.5rem; background: rgba(255, 255, 255, 0.02);">
-                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem;">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Résidence</div>
-                        <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="color:var(--text-muted); margin-right: 0.15rem;"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line><line x1="9" y1="16" x2="15" y2="16"></line><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M12 6h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"></path></svg> <span id="landing-buildings-count">8 Bâtiments</span>
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Valdévy, Secteur La Plaine</div>
-                    </div>
-                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem; border-left: 1px solid var(--border-color);">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">État Ascenseurs</div>
-                        <div id="landing-stat-elevators" style="font-size: 1.25rem; font-weight: 800; color: var(--color-success); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="color:var(--color-success); margin-right: 0.15rem;"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/><polyline points="9 10 12 7 15 10"/><polyline points="9 14 12 17 15 14"/></svg> <span id="landing-elevators-count">--/--</span>
-                        </div>
-                        <div id="landing-stat-elevators-desc" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Chargement...</div>
-                    </div>
-                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem; border-left: 1px solid var(--border-color);">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Incidents Actifs</div>
-                        <div id="landing-stat-incidents" style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="color:var(--text-primary); margin-right: 0.15rem;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <span id="landing-incidents-count">--</span>
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">En attente de résolution</div>
-                    </div>
-                    <div class="landing-stat-item" style="text-align: center; padding: 0.5rem; border-left: 1px solid var(--border-color);">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Mobilisation</div>
-                        <div id="landing-stat-engagement" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-primary); display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="color:var(--accent-primary); margin-right: 0.15rem;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> <span id="landing-signatures-count">--</span>
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Signatures récoltées</div>
-                    </div>
-                </div>
-
-                <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                    
-                    <!-- Feature 1: Ascenseurs -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
-                        <div style="background: rgba(37, 99, 235, 0.1); color: var(--accent-primary); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/><polyline points="9 10 12 7 15 10"/><polyline points="9 14 12 17 15 14"/></svg>
-                        </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
-                            Suivi des Ascenseurs
-                            <span id="badge-elevator-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: var(--accent-primary-dim); color: var(--accent-primary); border: 1px solid var(--accent-primary-border);">En direct</span>
-                        </h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
-                            Signalez les pannes instantanément avec photos horodatées. Un registre d'indisponibilité est compilé automatiquement pour exiger des remboursements de charges.
-                        </p>
-                    </div>
-
-                    <!-- Feature 2: Incidents -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
-                        <div style="background: rgba(239, 68, 68, 0.1); color: var(--color-danger); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                        </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
-                            Registre d'Incidents
-                            <span id="badge-incidents-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(239,68,68,0.1); color: var(--color-danger); border: 1px solid rgba(239,68,68,0.2);">Actif</span>
-                        </h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
-                            Déclarez tout dysfonctionnement des parties communes (portes fracturées, coupures d'eau/chauffage, éclairage) pour centraliser nos doléances.
-                        </p>
-                    </div>
-
-                    <!-- Feature 3: Pétitions -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
-                        <div style="background: rgba(99, 102, 241, 0.1); color: #6366f1; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
-                            Pétitions Collectives
-                            <span id="badge-petitions-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(99,102,241,0.1); color: #6366f1; border: 1px solid rgba(99,102,241,0.2);">Pétitions</span>
-                        </h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
-                            Signez et lancez des pétitions communes pour faire réagir le bailleur face aux dysfonctionnements répétés ou aux absences de réponse.
-                        </p>
-                    </div>
-
-                    <!-- Feature 4: Sondages & Votes -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
-                        <div style="background: rgba(245, 158, 11, 0.1); color: #d97706; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                        </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
-                            Sondages & Votes
-                            <span id="badge-votes-status" class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(245,158,11,0.1); color: #d97706; border: 1px solid rgba(245,158,11,0.2);">Avis</span>
-                        </h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
-                            Donnez votre avis sur les sondages du quotidien et participez aux votes collectifs de l'amicale pour décider ensemble des actions à mener.
-                        </p>
-                    </div>
-
-                    <!-- Feature 5: Guides & Droits -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
-                        <div style="background: rgba(16, 185, 129, 0.1); color: var(--color-success); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
-                            Droits & Guides
-                            <span class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: var(--color-success-bg); color: var(--color-success); border: 1px solid var(--color-success-border);">Loi 1989</span>
-                        </h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
-                            Consultez vos droits et obligations face au bailleur (charges récupérables, réparations locatives, décence) selon la législation française.
-                        </p>
-                    </div>
-
-                    <!-- Feature 6: Audit des Charges -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
-                        <div style="background: rgba(6, 182, 212, 0.1); color: #0891b2; width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.1);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                        </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
-                            Audit des Charges
-                            <span class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(6,182,212,0.1); color: #0891b2; border: 1px solid rgba(6,182,212,0.2);">Bientôt</span>
-                        </h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
-                            Outil d'analyse pour éplucher les régularisations de charges annuelles, identifier les surfacturations et contester les charges abusives.
-                        </p>
-                    </div>
-
-                    <!-- Feature 7: Saisie Hors-ligne -->
-                    <div class="card glass feature-card" style="padding: 1.5rem; transition: transform 0.2s ease, border-color 0.2s ease; border-radius: var(--radius-lg); display: flex; flex-direction: column;">
-                        <div style="background: rgba(107, 114, 128, 0.1); color: var(--text-muted); width: 44px; height: 44px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; box-shadow: 0 4px 10px rgba(107, 114, 128, 0.08);">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.5M5 12.5a10.94 10.94 0 0 1 5.83-2.84M8.53 16.03a6 6 0 0 1 6.94 0M12 20h.01"/></svg>
-                        </div>
-                        <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center;">
-                            Saisie Hors-ligne
-                            <span class="assoc-badge" style="font-size: 0.7rem; margin: 0; padding: 0.15rem 0.5rem; background: rgba(107,114,128,0.1); color: var(--text-muted); border: 1px solid rgba(107,114,128,0.2);">PWA</span>
-                        </h4>
-                        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0; flex-grow: 1;">
-                            Signalez les anomalies même sans réseau (dans la cabine ou le parking). L'application synchronise vos données dès que vous captez à nouveau.
-                        </p>
-                    </div>
-                </div>
-            </section>
-        </div>
+        </main>
 
         <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 2 : ASCENSEURS -->
+        <!-- BARRE DE NAVIGATION MOBILE FIXE (TABBAR) -->
         <!-- ============================================ -->
-        <div id="tab-ascenseurs" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-ascenseurs">
-
-            <section class="stats-section">
-                <h2>État Général de la Barre d'Immeubles</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-num color-success" id="stat-functional">--</div>
-                        <div class="stat-label">En Service</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-num color-warning" id="stat-maintenance">--</div>
-                        <div class="stat-label">En Maintenance</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-num color-danger" id="stat-broken">--</div>
-                        <div class="stat-label">En Panne</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-num color-warning" id="stat-downtime">--</div>
-                        <div class="stat-label">Jours de pannes cumulés</div>
-                    </div>
-                </div>
-                <div class="last-update">
-                    Mise à jour en direct • Avenue de la Division Leclerc, Cachan
-                </div>
-            </section>
-
-            <!-- Section de signalement rapide & d'action -->
-            <section class="action-section">
-                <button id="quick-report-btn" class="btn btn-report btn-lg pulse-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
+        <nav class="mobile-bottom-nav glass" aria-label="Navigation mobile">
+            <a href="#/ascenseurs" class="mobile-link active" data-page="page-elevators">
+                <span class="mobile-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="3" width="14" height="18" rx="2" ry="2"/>
+                        <polyline points="9 10 12 7 15 10"/>
+                        <polyline points="9 14 12 17 15 14"/>
+                    </svg>
+                </span>
+                <span class="mobile-text">Ascenseurs</span>
+            </a>
+            <a href="#/incidents" class="mobile-link" data-page="page-incidents">
+                <span class="mobile-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                         <line x1="12" y1="9" x2="12" y2="13"/>
                         <line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
-                    Signaler une Panne d'Ascenseur
-                </button>
-            </section>
-
-            <!-- Grille des Entrées avec Recherche & Filtres Rapides -->
-            <section class="entrances-section">
-                <div class="section-title-wrapper" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
-                    <div>
-                        <h2 class="section-title">État par Entrée</h2>
-                        <p class="section-desc">Sélectionnez une entrée pour voir le détail des pannes et l'historique d'entretien.</p>
-                    </div>
-
-                    <!-- Barre de recherche rapide d'entrée -->
-                    <div class="search-box glass" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.9rem; border-radius: var(--radius-pill); border: 1px solid var(--border-color); width: 100%; max-width: 320px;">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); flex-shrink: 0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" id="elevator-search-input" placeholder="Rechercher une entrée (38, 40, 50...)" style="border: none; background: transparent; color: var(--text-primary); font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
-                    </div>
-                </div>
-
-                <!-- Filtres rapides par statut (Segmented Pill Bar) -->
-                <div class="segmented-pill-bar" style="margin-bottom: 1.5rem;">
-                    <button type="button" class="segmented-pill-item active" data-filter="all">Tous (8)</button>
-                    <button type="button" class="segmented-pill-item" data-filter="en_panne">🚨 En Panne</button>
-                    <button type="button" class="segmented-pill-item" data-filter="en_maintenance">🔧 Maintenance</button>
-                    <button type="button" class="segmented-pill-item" data-filter="en_service">✅ En Service</button>
-                </div>
-                
-                <div id="elevators-grid" class="entrances-grid">
-                    <div class="loading-placeholder">Chargement des ascenseurs...</div>
-                </div>
-            </section>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET 3 : INCIDENTS -->
-        <!-- ============================================ -->
-        <div id="tab-incidents" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-incidents">
-
-            <section class="action-section">
-                <button id="quick-incident-btn" class="btn-pill-primary pulse-button" style="max-width: 380px; margin: 0 auto;">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                    Signaler une anomalie
-                </button>
-            </section>
-            
-            <section class="incidents-list-section">
-                <div class="section-title-wrapper" style="margin-bottom: 1.25rem;">
-                    <h2 class="section-title">Incidents Signalés</h2>
-                    <p class="section-desc">Portes, propreté, chauffage, éclairage, nuisances...</p>
-                </div>
-
-                <!-- Filtres par catégorie d'incident (Segmented Pill Bar) -->
-                <div class="segmented-pill-bar" style="margin-bottom: 1.5rem;">
-                    <button type="button" class="segmented-pill-item active" data-category="all">Tous</button>
-                    <button type="button" class="segmented-pill-item" data-category="proprete">🧹 Propreté</button>
-                    <button type="button" class="segmented-pill-item" data-category="securite">🛡️ Sécurité</button>
-                    <button type="button" class="segmented-pill-item" data-category="chauffage">🌡️ Chauffage</button>
-                    <button type="button" class="segmented-pill-item" data-category="eclairage">💡 Éclairage</button>
-                    <button type="button" class="segmented-pill-item" data-category="portes">🚪 Portes</button>
-                    <button type="button" class="segmented-pill-item" data-category="autre">⚠️ Autre</button>
-                </div>
-
-                <div id="incidents-feed" class="incidents-feed">
-                    <div class="loading-placeholder">Chargement des incidents...</div>
-                </div>
-            </section>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET : GUIDES PRATIQUES -->
-        <!-- ============================================ -->
-        <div id="tab-guides" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-guides">
-            <div class="wiki-header card glass">
-                <div class="wiki-title-area">
-                    <span class="wiki-tag">⚖️ Droits du Locataire</span>
-                    <h2>Guides & Aide Pratique</h2>
-                    <p>Découvrez vos droits et obligations face au bailleur selon la législation française en vigueur.</p>
-                </div>
-            </div>
-
-            <!-- Barre de Recherche & Filtres Rapides -->
-            <div class="wiki-controls card glass">
-                <div class="wiki-search-box">
-                    <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <input type="text" id="wiki-search" placeholder="Rechercher un sujet (ex: chauffage, caution, TEOM, chaudière, rat...)" class="search-input" aria-label="Rechercher un guide ou sujet">
-                    <button id="wiki-search-clear" class="search-clear-btn hidden">&times;</button>
-                </div>
-                
-                <div class="wiki-filter-scroll">
-                    <div class="wiki-filters">
-                        <button class="filter-btn active" data-category="all">Tout voir</button>
-                        <button class="filter-btn" data-category="charges">Charges Récupérables</button>
-                        <button class="filter-btn" data-category="rep_locatives">Réparations & Travaux</button>
-                        <button class="filter-btn" data-category="chauffage">Chauffage & Eau</button>
-                        <button class="filter-btn" data-category="decence">Décence & Nuisibles</button>
-                        <button class="filter-btn" data-category="garantie_conge">Congé & Caution</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Liste des Articles (Accordéons) -->
-            <div id="wiki-articles-list" class="wiki-list">
-                <!-- Les articles seront générés dynamiquement par js/app.js -->
-            </div>
-            
-            <!-- Message de recherche vide -->
-            <div id="wiki-no-results" class="card glass center-text hidden" style="padding: 3rem;">
-                <div class="placeholder-icon color-warning">
-                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
-                    </svg>
-                </div>
-                <h3>Aucun article trouvé</h3>
-                <p class="placeholder-desc" style="max-width: 450px; margin: 0.5rem auto 0;">Nous n'avons trouvé aucun guide correspondant à vos mots-clés. Essayez d'autres termes comme « chaudière », « préavis » ou « ordures ».</p>
-            </div>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET : CHARGES (CONSTRUCTION) -->
-        <!-- ============================================ -->
-        <div id="tab-charges" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-charges">
-            <div class="card glass" style="max-width: 600px; margin: 3rem auto; padding: 3rem; text-align: center; border-radius: var(--radius-lg);">
-                <div style="background: rgba(37, 99, 235, 0.1); color: var(--accent-primary); width: 80px; height: 80px; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);">
-                    <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"/>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                    </svg>
-                </div>
-                <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">Audit des Charges</h2>
-                <div class="assoc-badge" style="margin: 0 auto 1.5rem; display: inline-block;">Module en construction</div>
-                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
-                    Ce module vous permettra de téléverser vos décomptes de régularisation de charges annuelles envoyés par Valdévy.
-                    <br><br>
-                    Grâce à un outil d'analyse collective, nous pourrons éplucher chaque ligne de dépense (gardiennage, électricité des communs, entretien des ascenseurs, taxes d'ordures ménagères) afin d'identifier les surfacturations et contester les charges abusives de manière groupée.
-                </p>
-                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: var(--radius-md); font-size: 0.85rem; color: var(--text-muted); border: 1px solid var(--border-color);">
-                    ⏳ <strong>Bientôt disponible</strong> : rejoignez le collectif pour être prévenu du lancement de cet outil.
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-compte" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-compte">
-            <div id="account-unauthenticated-section" class="hidden">
-                <!-- Header du Panneau Compte (Déconnecté) -->
-                <header class="unauth-only-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); background: rgba(255,255,255,0.01); border-radius: var(--radius-md);">
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div style="background: var(--accent-gradient); color: white; width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);">
-                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="5" y="3" width="14" height="18" rx="2" ry="2" />
-                                <line x1="9" y1="21" x2="9" y2="17" />
-                                <line x1="15" y1="21" x2="15" y2="17" />
-                                <line x1="9" y1="17" x2="15" y2="17" />
-                            </svg>
-                        </div>
-                        <div>
-                            <span style="font-size: 1.2rem; font-weight: 800; margin: 0; letter-spacing: -0.01em; color: var(--text-primary); font-family: var(--font-heading);">Collectif Plaine</span>
-                        </div>
-                    </div>
-                    <div>
-                        <a href="#/landing" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1.25rem; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; border-radius: var(--radius-md);">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                            Retour à l'accueil
-                        </a>
-                    </div>
-                </header>
-
-                <div class="glass-card" style="max-width: 480px; margin: 1.5rem auto; padding: 2.25rem 2rem; border-radius: var(--radius-card); box-shadow: var(--shadow-soft); text-align: center;">
-                    
-                    <!-- En-tête Welcome Back (Comme sur la maquette) -->
-                    <div style="margin-bottom: 2rem;">
-                        <div style="width: 56px; height: 56px; border-radius: var(--radius-pill); background: var(--gradient-aurora-soft); color: var(--accent-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
-                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="12" cy="7" r="4"></circle>
-                            </svg>
-                        </div>
-                        <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); margin-bottom: 0.4rem; letter-spacing: -0.02em;">
-                            Bienvenue,
-                        </h2>
-                        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin: 0 auto; max-width: 320px;">
-                            Suivez les pannes, signalez les incidents et participez à la vie de votre résidence.
-                        </p>
-                    </div>
-
-                    <!-- Segmented Control Pill (Connexion / Inscription) -->
-                    <div class="segmented-pill-bar" style="margin: 0 auto 1.75rem; width: 100%; display: flex;">
-                        <button class="segmented-pill-item active" id="account-tab-login" type="button" style="flex: 1;">Connexion</button>
-                        <button class="segmented-pill-item" id="account-tab-register" type="button" style="flex: 1;">Créer un compte</button>
-                    </div>
-                    
-                    <div id="account-auth-error" class="alert-box alert-danger hidden" style="margin-bottom: 1.25rem; border-radius: var(--radius-md);"></div>
-                    <div id="account-auth-success" class="alert-box alert-success hidden" style="margin-bottom: 1.25rem; border-radius: var(--radius-md);"></div>
-
-                    <!-- Formulaire de Connexion -->
-                    <form id="account-login-form" style="text-align: left;">
-                        <div class="input-pill-group">
-                            <div class="input-icon">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <input type="text" id="account-login-username" required placeholder="Votre pseudo (ex: Marc50)" autocomplete="username" aria-label="Votre pseudo">
-                        </div>
-
-                        <div class="input-pill-group">
-                            <div class="input-icon">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                            </div>
-                            <input type="password" id="account-login-password" required placeholder="Votre mot de passe" autocomplete="current-password" aria-label="Votre mot de passe">
-                        </div>
-
-                        <button type="submit" class="btn-pill-primary" style="margin-top: 0.5rem;">Se connecter</button>
-                    </form>
-
-                    <!-- Formulaire d'Inscription (Masqué par défaut) -->
-                    <form id="account-register-form" class="hidden" style="text-align: left;">
-                        <div class="input-pill-group">
-                            <div class="input-icon">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <input type="text" id="account-register-username" required placeholder="Choisir un pseudo (ex: Sarah48)" maxlength="15" autocomplete="username" aria-label="Choisir un pseudo">
-                        </div>
-
-                        <div class="input-pill-group">
-                            <div class="input-icon">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                            </div>
-                            <input type="password" id="account-register-password" required placeholder="Mot de passe (min 8 car.)" autocomplete="new-password" aria-label="Mot de passe">
-                        </div>
-
-                        <button type="submit" class="btn-pill-primary" style="margin-top: 0.5rem;">Créer mon compte</button>
-                    </form>
-
-                    <!-- Mention Privacy & Security by Design -->
-                    <div style="margin-top: 1.75rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; font-size: 0.775rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
-                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-success);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <span><strong>Privacy by Design</strong> • Données chiffrées & conformes RGPD</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="account-authenticated-section" class="card glass hidden" style="max-width: 600px; margin: 2rem auto; padding: 2rem;">
-                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-                    <div id="account-avatar" class="user-avatar" style="width: 48px; height: 48px; font-size: 1.2rem;"></div>
-                    <div>
-                        <h2 id="account-username-title" style="margin: 0; font-size: 1.3rem;">Pseudo</h2>
-                        <span style="font-size: 0.8rem; color: var(--accent-primary);">Résident Connecté</span>
-                    </div>
-                </div>
-
-                <div id="account-profile-error" class="alert-box alert-danger hidden" style="margin-bottom: 1rem;"></div>
-                <div id="account-profile-success" class="alert-box alert-success hidden" style="margin-bottom: 1rem;"></div>
-
-                <form id="account-profile-form">
-                    <!-- Section 1 : Informations Personnelles -->
-                    <div class="profile-section-title" style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.35rem;">
-                        Informations Personnelles
-                    </div>
-                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
-                        <div class="form-group">
-                            <label for="account-firstname">Prénom <span class="required">*</span></label>
-                            <input type="text" id="account-firstname" required placeholder="Ex: Jean">
-                        </div>
-                        <div class="form-group">
-                            <label for="account-lastname">Nom <span class="required">*</span></label>
-                            <input type="text" id="account-lastname" required placeholder="Ex: Dupont">
-                        </div>
-                    </div>
-                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="form-group">
-                            <label for="account-email">Adresse e-mail <span class="required">*</span></label>
-                            <input type="email" id="account-email" required placeholder="Ex: jean.dupont@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="account-phone">Numéro de mobile <span class="required">*</span></label>
-                            <input type="tel" id="account-phone" required placeholder="Ex: 06 12 34 56 78">
-                        </div>
-                    </div>
-
-                    <!-- Section 2 : Mon Logement -->
-                    <div class="profile-section-title" style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.35rem;">
-                        Mon Logement
-                    </div>
-                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                        <div class="form-group">
-                            <label for="account-entrance">Immeuble / Bâtiment <span class="required">*</span></label>
-                            <select id="account-entrance" required>
-                                <option value="" disabled selected>Sélectionner votre immeuble...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="account-apartment">N° d'appartement / Logement <span class="required">*</span></label>
-                            <input type="text" id="account-apartment" required placeholder="Ex: 402" maxlength="10">
-                        </div>
-                    </div>
-
-                    <!-- Section 3 : Notifications -->
-                    <div class="profile-section-title" style="font-size: 0.9rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.35rem;">
-                        Préférences de Communication
-                    </div>
-                    <div class="card glass notifications-settings-card" style="padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-secondary); margin-bottom: 2rem;">
-                        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;">
-                            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
-                                <span style="font-weight: 700; color: var(--text-primary); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);">
-                                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                                    </svg>
-                                    Notifications en temps réel
-                                </span>
-                                <span style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45;">
-                                    Recevoir des alertes de pannes et travaux concernant spécifiquement votre bâtiment directement sur cet appareil.
-                                </span>
-                            </div>
-                            <label class="switch-toggle" style="margin-top: 2px; flex-shrink: 0;">
-                                <input type="checkbox" id="account-notifications" aria-label="Activer les notifications en temps réel">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%;">
-                        <button type="button" id="account-logout-btn" class="btn btn-secondary" style="flex: 1;">Se déconnecter</button>
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">Enregistrer</button>
-                    </div>
-                    <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; text-align: center; width: 100%;">
-                        <button type="button" id="account-delete-btn" style="color: var(--color-danger); background: none; border: none; font-size: 0.85rem; cursor: pointer; text-decoration: underline; font-weight: 500; transition: color var(--transition-fast);">Supprimer mon compte définitivement</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Liens d'information légale et à propos -->
-            <div style="max-width: 600px; margin: 2rem auto; display: flex; flex-direction: column; gap: 0.75rem; padding: 0 1rem; width: 100%;">
-                <!-- Sélecteur d'apparence (Thème) -->
-                <div class="card glass" style="padding: 1rem; display: flex; align-items: center; justify-content: space-between; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--bg-secondary);">
-                    <span style="display: flex; align-items: center; gap: 0.75rem; font-weight: 600; color: var(--text-primary); font-size: 0.875rem;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);">
-                            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                        </svg>
-                        Apparence
-                    </span>
-                    <div class="theme-toggle-options" style="display: flex; background: var(--bg-tertiary); padding: 4px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                        <button type="button" id="theme-btn-light" style="padding: 0.35rem 0.75rem; border: none; border-radius: var(--radius-xs); cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.25rem; background: none; color: var(--text-muted); transition: all var(--transition-fast);">
-                            Clair
-                        </button>
-                        <button type="button" id="theme-btn-dark" style="padding: 0.35rem 0.75rem; border: none; border-radius: var(--radius-xs); cursor: pointer; font-size: 0.8rem; font-weight: 600; display: flex; align-items: center; gap: 0.25rem; background: none; color: var(--text-muted); transition: all var(--transition-fast);">
-                            Sombre
-                        </button>
-                    </div>
-                </div>
-
-                <button type="button" id="btn-open-about" class="btn btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem; font-weight: 600; text-align: left;">
-                    <span style="display: flex; align-items: center; gap: 0.75rem;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                        À propos de l'application
-                    </span>
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><polyline points="9 18 15 12 9 6"/></svg>
-                </button>
-                
-                <button type="button" id="btn-open-rgpd" class="btn btn-secondary" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1rem; font-weight: 600; text-align: left;">
-                    <span style="display: flex; align-items: center; gap: 0.75rem;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        Protection des données (RGPD)
-                    </span>
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted);"><polyline points="9 18 15 12 9 6"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET : STATISTIQUES (ADMIN UNIQUEMENT) -->
-        <!-- ============================================ -->
-        <div id="tab-stats" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-stats" style="padding: 1rem 0;">
-            <div class="stats-header" style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <h2 style="margin: 0; font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; color: var(--text-primary); font-family: var(--font-heading);">
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent-primary);"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                        Tableau de Bord Statistique
-                    </h2>
-                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">Indicateurs de performance de la copropriété et suivi des pannes.</p>
-                </div>
-                <div class="admin-badge" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--color-danger); font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--radius-pill); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.35rem;">
-                    🛡️ Accès Admin Restreint (Tavares50)
-                </div>
-            </div>
-
-            <!-- Grille des KPIs -->
-            <div class="stats-kpi-grid">
-                <div class="card glass kpi-card">
-                    <div class="kpi-icon-wrapper success">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <div class="kpi-content">
-                        <span class="kpi-label">Disponibilité Moyenne</span>
-                        <h3 class="kpi-value" id="kpi-availability">0.0%</h3>
-                        <span class="kpi-subtext" id="kpi-availability-period">Calculée sur 30j</span>
-                    </div>
-                </div>
-
-                <div class="card glass kpi-card">
-                    <div class="kpi-icon-wrapper danger">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    </div>
-                    <div class="kpi-content">
-                        <span class="kpi-label">Total des Pannes</span>
-                        <h3 class="kpi-value" id="kpi-breakdowns">0</h3>
-                        <span class="kpi-subtext" id="kpi-breakdowns-sub">Événements enregistrés</span>
-                    </div>
-                </div>
-
-                <div class="card glass kpi-card">
-                    <div class="kpi-icon-wrapper warning">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <div class="kpi-content">
-                        <span class="kpi-label">Temps Moyen de Résolution</span>
-                        <h3 class="kpi-value" id="kpi-resolution-time">0h</h3>
-                        <span class="kpi-subtext">Durée panne ➔ réparation</span>
-                    </div>
-                </div>
-
-                <div class="card glass kpi-card">
-                    <div class="kpi-icon-wrapper info">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                    <div class="kpi-content">
-                        <span class="kpi-label">Signalements Actifs</span>
-                        <h3 class="kpi-value" id="kpi-active-reports">0</h3>
-                        <span class="kpi-subtext" id="kpi-active-reports-sub">En attente de traitement</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Grille des graphiques -->
-            <div class="stats-charts-grid">
-                <div class="card glass chart-card">
-                    <div class="chart-header">
-                        <h4>Historique des Pannes par Mois</h4>
-                    </div>
-                    <div class="stats-chart-wrapper">
-                        <canvas id="stats-chart-monthly"></canvas>
-                    </div>
-                </div>
-
-                <div class="card glass chart-card">
-                    <div class="chart-header">
-                        <h4>Répartition des Pannes par Rue</h4>
-                    </div>
-                    <div class="stats-chart-wrapper">
-                        <canvas id="stats-chart-streets"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Graphique pleine largeur -->
-            <div class="card glass chart-card" style="margin-top: 1.5rem; margin-bottom: 2rem;">
-                <div class="chart-header">
-                    <h4>Top 5 des Ascenseurs les plus pénalisés (Jours d'indisponibilité accumulés)</h4>
-                </div>
-                <div class="stats-chart-wrapper" style="height: 250px;">
-                    <canvas id="stats-chart-elevators"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET : PÉTITIONS -->
-        <!-- ============================================ -->
-        <div id="tab-petitions" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-petitions" style="padding: 1rem 0;">
-            <div class="section-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading);">Pétitions Collectives</h2>
-                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">Soutenez les initiatives et les requêtes adressées au bailleur.</p>
-                </div>
-                <!-- Formulaire de création visible uniquement par l'administrateur Tavares50 -->
-                <button type="button" id="btn-create-petition-trigger" class="btn btn-primary hidden" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                    ✍️ Nouvelle Pétition
-                </button>
-            </div>
-
-            <!-- Formulaire de création de pétition (Masqué par défaut) -->
-            <div id="petition-creator-card" class="card glass hidden" style="margin-bottom: 2rem; padding: 1.5rem;">
-                <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-heading);">Créer une nouvelle pétition</h4>
-                <form id="petition-create-form">
-                    <div class="form-group" style="margin-bottom: 1rem;">
-                        <label for="petition-title">Titre de la pétition <span class="required">*</span></label>
-                        <input type="text" id="petition-title" required placeholder="Ex: Réparation immédiate des interphones du bâtiment 44">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 1.25rem;">
-                        <label for="petition-desc">Description et arguments <span class="required">*</span></label>
-                        <textarea id="petition-desc" required placeholder="Exprimez clairement les motifs de la demande, la réglementation concernée et les attentes envers le bailleur..." style="height: 100px; resize: vertical;"></textarea>
-                    </div>
-                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-                        <button type="button" id="btn-cancel-petition" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Annuler</button>
-                        <button type="submit" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Publier</button>
-                    </div>
-                </form>
-            </div>
-
-            <div id="petitions-list-container" class="petitions-list-container">
-                <!-- Généré dynamiquement -->
-                <div class="loading-placeholder">Chargement des pétitions...</div>
-            </div>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- CONTENU DE L'ONGLET : SONDAGES & VOTES -->
-        <!-- ============================================ -->
-        <div id="tab-votes" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-votes" style="padding: 1rem 0;">
-            <div class="section-header" style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                <div>
-                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading);">Sondages & Votes</h2>
-                    <p style="margin: 0.25rem 0 0; font-size: 0.85rem; color: var(--text-muted);">Exprimez-vous sur les sondages du quotidien et votez sur les décisions de l'amicale.</p>
-                </div>
-                <!-- Formulaire de création visible uniquement par l'administrateur Tavares50 -->
-                <button type="button" id="btn-create-poll-trigger" class="btn btn-primary hidden" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                    📊 Nouveau Scrutin
-                </button>
-            </div>
-
-            <!-- Formulaire de création de vote (Masqué par défaut) -->
-            <div id="poll-creator-card" class="card glass hidden" style="margin-bottom: 2rem; padding: 1.5rem;">
-                <h4 style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); font-family: var(--font-heading);">Créer un nouveau vote ou sondage</h4>
-                <form id="poll-create-form">
-                    <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <div class="form-group">
-                            <label for="poll-title">Intitulé de la question <span class="required">*</span></label>
-                            <input type="text" id="poll-title" required placeholder="Ex: Souhaitez-vous l'organisation d'une fête des voisins le 26 juin ?">
-                        </div>
-                        <div class="form-group">
-                            <label for="poll-type">Type de scrutin</label>
-                            <select id="poll-type" required>
-                                <option value="sondage" selected>Sondage consultatif</option>
-                                <option value="vote_resolution">Vote de résolution amicale</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 1rem;">
-                        <label for="poll-desc">Détails / Contexte <span class="required">*</span></label>
-                        <textarea id="poll-desc" required placeholder="Expliquez le contexte, les enjeux ou les résolutions liées à ce scrutin..." style="height: 70px; resize: vertical;"></textarea>
-                    </div>
-                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
-                        <div class="form-group">
-                            <label for="poll-options">Choix possibles (séparés par des virgules) <span class="required">*</span></label>
-                            <input type="text" id="poll-options" required placeholder="Ex: Oui, Non, Abstention">
-                        </div>
-                        <div class="form-group">
-                            <label for="poll-ends-at">Date de fin du scrutin <span class="required">*</span></label>
-                            <input type="datetime-local" id="poll-ends-at" required>
-                        </div>
-                    </div>
-                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
-                        <button type="button" id="btn-cancel-poll" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Annuler</button>
-                        <button type="submit" class="btn btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">Publier le scrutin</button>
-                    </div>
-                </form>
-            </div>
-
-            <div id="polls-list-container" class="polls-list-container">
-                <!-- Généré dynamiquement -->
-                <div class="loading-placeholder">Chargement des scrutins...</div>
-            </div>
-        </div>
-            </main>
-        </div>
-
-        <!-- Navigation mobile inférieure flottante (Bottom Bar) -->
-        <nav class="mobile-bottom-nav glass">
-            <a href="#/ascenseurs" class="mobile-link active" data-page="page-elevators">
-                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2" ry="2"/><polyline points="9 10 12 7 15 10"/><polyline points="9 14 12 17 15 14"/></svg></span>
-                <span class="mobile-text">Ascenseurs</span>
-            </a>
-            <a href="#/incidents" class="mobile-link" data-page="page-incidents">
-                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                </span>
                 <span class="mobile-text">Incidents</span>
             </a>
-            <!-- BOUTON CENTRAL + MOBILE -->
-            <button type="button" class="mobile-link" id="mobile-more-btn" style="border: none; background: none; outline: none; cursor: pointer; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
-                <span class="mobile-icon more-icon" style="background: var(--accent-gradient); color: white; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35); transition: transform 0.2s ease;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-                <span class="mobile-text">Plus</span>
-            </button>
+            <a href="#/petitions" class="mobile-link" data-page="page-petitions">
+                <span class="mobile-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </span>
+                <span class="mobile-text">Pétitions</span>
+            </a>
             <a href="#/guides" class="mobile-link" data-page="page-guides">
-                <span class="mobile-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                <span class="mobile-text">Guides</span>
+                <span class="mobile-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </span>
+                <span class="mobile-text">Droit</span>
             </a>
             <a href="#/compte" class="mobile-link" data-page="page-profile" id="mobile-account-link">
-                <span class="mobile-icon" id="mobile-account-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-                <span class="mobile-text" id="mobile-account-text">Compte</span>
+                <span class="mobile-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </span>
+                <span class="mobile-text">Compte</span>
             </a>
         </nav>
+
     </div>
 
     <!-- ============================================ -->
-    <!-- MENU FLOTTANT MOBILE "PLUS" (BOTTOM SHEET) -->
+    <!-- MODALES DE L'APPLICATION MOBILE -->
     <!-- ============================================ -->
-    <div id="mobile-more-menu" class="more-menu-backdrop hidden">
-        <div class="more-menu-content glass">
-            <div class="more-menu-drag-handle"></div>
-            <div class="more-menu-header">
-                <h4>Fonctionnalités</h4>
-                <button type="button" class="btn-close-more-menu" id="btn-close-more-menu">&times;</button>
-            </div>
-            <div class="more-menu-links">
-                <!-- Pétitions -->
-                <a href="#/petitions" class="more-menu-item">
-                    <span class="item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
-                    <div class="item-details">
-                        <span class="item-title">Pétitions Collectives</span>
-                        <span class="item-desc">Soutenir les actions et requêtes du collectif.</span>
-                    </div>
-                </a>
-                
-                <!-- Sondages & Votes -->
-                <a href="#/votes" class="more-menu-item">
-                    <span class="item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-                    <div class="item-details">
-                        <span class="item-title">Sondages & Votes</span>
-                        <span class="item-desc">Donner votre avis et voter sur les décisions de l'amicale.</span>
-                    </div>
-                </a>
-                
-                <!-- Charges -->
-                <a href="#/charges" class="more-menu-item">
-                    <span class="item-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-                    <div class="item-details">
-                        <span class="item-title">Audit des Charges</span>
-                        <span class="item-desc">Consulter le dossier des charges de copropriété.</span>
-                    </div>
-                </a>
-                
-                <!-- Statistiques (Masqué si pas admin) -->
-                <a href="#/stats" class="more-menu-item hidden" id="more-menu-stats-link">
-                    <span class="item-icon" style="color: var(--color-danger);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-                    <div class="item-details">
-                        <span class="item-title" style="color: var(--text-primary);">Statistiques Admin</span>
-                        <span class="item-desc">Indicateurs de pannes (Accès Tavares50).</span>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
 
-    <!-- ============================================ -->
-    <!-- MODALE : SIGNALEMENT DE PANNE -->
-    <!-- ============================================ -->
+    <!-- 1. Modal Signalement Panne Ascenseur -->
     <div id="report-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" tabindex="-1">
+        <div class="modal-container glass-card">
             <div class="modal-header">
-                <h3>Signaler une Panne</h3>
-                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
+                <h3>Signaler une Panne d'Ascenseur</h3>
+                <button type="button" class="btn-close-modal" aria-label="Fermer">✕</button>
             </div>
-            <form id="report-form" novalidate>
-                <div class="modal-body">
-                    <!-- Message d'alerte XSS / Validation -->
-                    <div id="report-error-msg" class="alert-box alert-danger hidden"></div>
-                    <div id="report-success-msg" class="alert-box alert-success hidden"></div>
-                    
+            <div class="modal-body">
+                <div id="report-error-msg" class="alert-box alert-danger hidden"></div>
+                <div id="report-success-msg" class="alert-box alert-success hidden"></div>
+                
+                <form id="report-form">
                     <div class="form-group">
                         <label for="report-entrance">Numéro d'Entrée <span class="required">*</span></label>
-                        <select id="report-entrance" name="entrance" required>
-                            <option value="" disabled selected>Choisir l'entrée concernée...</option>
+                        <select id="report-entrance" required>
+                            <option value="" disabled selected>Choisir l'entrée Leclerc...</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="report-type">Type de problème constaté <span class="required">*</span></label>
-                        <select id="report-type" name="type" required>
-                            <option value="" disabled selected>Quel est le problème ?...</option>
-                            <option value="arrêt">Hors service / Arrêt complet</option>
-                            <option value="portes">Problème d'ouverture/fermeture des portes</option>
-                            <option value="boutons">Boutons ou cabine inactifs</option>
-                            <option value="bruit">Bruit anormal ou vibrations inquiétantes</option>
-                            <option value="autre">Autre (préciser ci-dessous)</option>
+                        <label for="report-type">Type de Panne <span class="required">*</span></label>
+                        <select id="report-type" required>
+                            <option value="arrêt" selected>🚨 Arrêt complet / Hors service</option>
+                            <option value="portes">🚪 Problème de portes</option>
+                            <option value="boutons">🔘 Boutons inactifs</option>
+                            <option value="bruit">🔊 Bruit anormal / Vibration</option>
+                            <option value="autre">⚠️ Autre problème</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="report-desc">Description du problème <span class="required">*</span></label>
-                        <textarea id="report-desc" name="description" rows="3" placeholder="Ex: L'ascenseur est bloqué au 4ème étage avec la porte entrouverte." required maxlength="250"></textarea>
-                        <div class="char-counter"><span id="char-count">0</span> / 250 caractères</div>
+                        <textarea id="report-desc" required placeholder="Précisez l'étage bloqué ou le symptôme observé..." style="height: 80px;"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label for="report-photo">Prendre ou ajouter une Photo (Optionnel)</label>
-                        <input type="file" id="report-photo" accept="image/*">
-                        <span class="field-hint">Taille max 3 Mo. La photo sera automatiquement horodatée.</span>
-                        
-                        <!-- Zone de prévisualisation de la miniature de photo -->
-                        <div id="report-photo-preview-container" class="photo-preview-container hidden">
-                            <img id="report-photo-preview" src="" alt="Aperçu de la photo de la panne">
-                            <button type="button" id="btn-remove-photo" class="btn-remove-photo" title="Supprimer cette photo">&times;</button>
+                        <label for="report-photo">Preuve photo (Optionnel)</label>
+                        <input type="file" id="report-photo" accept="image/*" capture="environment">
+                        <div id="report-photo-preview-container" class="hidden" style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <img id="report-photo-preview" src="" alt="Aperçu" style="width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius-xs);">
+                            <button type="button" id="btn-remove-photo" class="btn-pill-dark" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Retirer</button>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="report-user">Votre Pseudo ou N° d'Appartement (Optionnel)</label>
-                        <input type="text" id="report-user" name="user" placeholder="Ex: VoisinAppt42" maxlength="20">
-                        <span class="field-hint">Aucun e-mail ou téléphone n'est demandé pour préserver votre vie privée.</span>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button type="button" class="btn-pill-dark btn-close-modal" style="flex: 1; justify-content: center;">Annuler</button>
+                        <button type="submit" id="submit-report-btn" class="btn-pill-primary" style="flex: 2; justify-content: center;">Envoyer</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" id="submit-report-btn" class="btn btn-primary">Envoyer le signalement</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- MODALE : DETAILS DE L'ASCENSEUR & HISTORIQUE -->
-    <!-- ============================================ -->
+    <!-- 2. Modal Détails & Historique d'Entrée -->
     <div id="details-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" tabindex="-1">
+        <div class="modal-container glass-card" style="max-height: 90vh; overflow-y: auto;">
             <div class="modal-header">
-                <h3>Détails - Entrée <span id="details-entrance-num">--</span></h3>
-                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
+                <h3>Entrée N° <span id="details-entrance-num">--</span></h3>
+                <button type="button" class="btn-close-modal" aria-label="Fermer">✕</button>
             </div>
             <div class="modal-body">
-                <!-- Bloc Statut Principal -->
-                <div class="details-status-container" id="details-status-box">
-                    <div class="status-indicator-large" id="details-status-badge"></div>
-                    <div class="status-meta">
-                        <h4 id="details-status-text">Statut</h4>
-                        <p class="time-since" id="details-last-change">Mis à jour il y a 3h</p>
-                        <p class="downtime-total color-danger" id="details-downtime" style="font-weight: 600; margin-top: 4px; font-size: 0.85rem;"></p>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div id="details-status-badge" class="status-indicator-large bg-functional"></div>
+                    <div>
+                        <div id="details-status-text" style="font-weight: 800; font-size: 1rem; color: var(--text-primary);">En Service</div>
+                        <div id="details-last-change" style="font-size: 0.75rem; color: var(--text-muted);">--</div>
                     </div>
                 </div>
 
-                <!-- Informations de Maintenance / Intervention Pro (Si applicable) -->
-                <div id="maintenance-info-box" class="maintenance-info-box hidden">
-                    <h5><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--color-warning);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Intervention de Maintenance</h5>
-                    <p id="maintenance-details">Description de l'intervention...</p>
+                <div id="details-downtime" class="downtime-pill font-data" style="margin-bottom: 1rem; display: inline-block;">--</div>
+
+                <div id="maintenance-info-box" class="alert-box alert-warning hidden" style="margin-bottom: 1rem;">
+                    <strong>Note technique :</strong> <span id="maintenance-details"></span>
                 </div>
 
-                <!-- Signalements Locataires Récents -->
-                <div class="details-section">
-                    <h4>Signalements Récents des Locataires</h4>
-                    <div id="tenant-reports-list" class="tenant-reports-list">
-                        <!-- Généré dynamiquement -->
-                    </div>
-                </div>
-
-                <!-- Historique des Pannes -->
-                <div class="details-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h4 style="margin: 0;">Historique des 30 derniers jours</h4>
-                        <button id="btn-export-history" class="btn btn-secondary btn-sm" title="Télécharger l'historique légal">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            Export PDF
-                        </button>
-                    </div>
-                    
-                    <!-- Graphique d'historique -->
-                    <div class="chart-container" style="position: relative; height:200px; width:100%; margin-bottom: 1.5rem; background: rgba(0,0,0,0.1); border-radius: 8px; padding: 10px;">
-                        <canvas id="history-chart"></canvas>
-                    </div>
-
-                    <div id="history-timeline" class="history-timeline">
-                        <!-- Généré dynamiquement -->
-                    </div>
-                </div>
-
-                <!-- Section Espace Pro - Modification d'état (Caché si pas loggué) -->
-                <div id="admin-actions-section" class="admin-actions-section hidden">
-                    <div class="admin-action-header">
-                        <h5><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline" style="margin-right:6px; vertical-align:middle; color:var(--accent-primary);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Mettre à jour le statut de l'ascenseur</h5>
-                    </div>
-                    
-                    <form id="admin-status-form" class="admin-status-form">
-                        <input type="hidden" id="admin-entrance-id">
-                        
-                        <div class="form-group">
-                            <label for="admin-select-status">Nouveau statut</label>
-                            <select id="admin-select-status" required>
-                                <option value="en_service">En Service (Réparé)</option>
-                                <option value="en_maintenance">En Maintenance (Intervention prévue)</option>
-                                <option value="en_panne">En Panne (Hors Service)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="admin-maintenance-notes">Commentaire ou informations utiles</label>
-                            <textarea id="admin-maintenance-notes" rows="2" placeholder="Ex: Ascenseur réparé par le technicien ce matin." maxlength="200"></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block">Valider le changement</button>
+                <!-- Section réservée aux administrateurs -->
+                <div id="admin-actions-section" class="hidden" style="padding: 1rem; background: var(--bg-tertiary); border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                    <h4 style="font-size: 0.85rem; font-weight: 800; margin-bottom: 0.5rem;">Gestion Administrateur</h4>
+                    <form id="admin-status-form">
+                        <select id="admin-select-status" style="width: 100%; margin-bottom: 0.5rem;">
+                            <option value="en_service">En Service (Opérationnel)</option>
+                            <option value="en_maintenance">En Maintenance (Intervention)</option>
+                            <option value="en_panne">En Panne (Hors service)</option>
+                        </select>
+                        <input type="text" id="admin-maintenance-notes" placeholder="Notes d'intervention..." style="width: 100%; margin-bottom: 0.5rem;">
+                        <button type="submit" class="btn-pill-dark" style="width: 100%; justify-content: center;">Enregistrer le statut</button>
                     </form>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary btn-close-modal">Fermer</button>
+
+                <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 0.5rem;">Derniers Signalements</h4>
+                <div id="tenant-reports-list" style="margin-bottom: 1.25rem;"></div>
+
+                <h4 style="font-size: 0.9rem; font-weight: 800; margin-bottom: 0.5rem;">Historique d'Entretien</h4>
+                <div id="history-timeline"></div>
             </div>
         </div>
     </div>
 
-
-
-    <!-- ============================================ -->
-    <!-- MODALE : SIGNALER UN AUTRE INCIDENT -->
-    <!-- ============================================ -->
+    <!-- 3. Modal Nouvel Incident Commun -->
     <div id="incident-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" tabindex="-1">
+        <div class="modal-container glass-card">
             <div class="modal-header">
-                <h3>Signaler un Incident</h3>
-                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
+                <h3>Déclarer un Incident</h3>
+                <button type="button" class="btn-close-modal" aria-label="Fermer">✕</button>
             </div>
-            <form id="incident-form">
-                <div class="modal-body">
-                    <div id="incident-error-msg" class="alert-box alert-danger hidden"></div>
-                    <div id="incident-success-msg" class="alert-box alert-success hidden"></div>
-                    
+            <div class="modal-body">
+                <div id="incident-error-msg" class="alert-box alert-danger hidden"></div>
+                <div id="incident-success-msg" class="alert-box alert-success hidden"></div>
+
+                <form id="incident-form">
+                    <div class="form-group">
+                        <label for="incident-entrance">Bâtiment / Entrée <span class="required">*</span></label>
+                        <select id="incident-entrance" required>
+                            <option value="" disabled selected>Choisir l'entrée Leclerc...</option>
+                        </select>
+                    </div>
+
                     <div class="form-group">
                         <label for="incident-category">Catégorie <span class="required">*</span></label>
                         <select id="incident-category" required>
-                            <option value="" disabled selected>Choisissez une catégorie...</option>
-                            <option value="porte">Porte bloquée / ne ferme plus</option>
-                            <option value="vigik">Lecteur VIGIK / Interphone en panne</option>
-                            <option value="proprete">Propreté / Encombrants</option>
-                            <option value="chauffage">Chauffage / Eau Chaude</option>
-                            <option value="eclairage">Éclairage défectueux</option>
-                            <option value="securite">Sécurité / Nuisance (Squat, Bruit)</option>
-                            <option value="autre">Autre incident</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="incident-entrance">Bâtiment / Entrée concernée</label>
-                        <select id="incident-entrance" required>
-                            <option value="" disabled selected>Sélectionner le bâtiment...</option>
-                            <option value="tous">Concerne tous les bâtiments / Espaces verts</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="incident-description">Description précise <span class="required">*</span></label>
-                        <textarea id="incident-description" rows="3" required placeholder="Ex: La porte du hall 40 reste bloquée ouverte, le pêne est tordu." maxlength="300"></textarea>
-                    </div>
-                    
-                    <!-- Formulaire Photo Optionnel -->
-                    <div class="form-group">
-                        <label>Ajouter une photo (recommandé)</label>
-                        <p class="field-hint" style="margin-bottom: 0.5rem;">Preuve indispensable pour faire bouger le bailleur.</p>
-                        
-                        <!-- Zone de dépôt / Bouton de sélection (Identique à ascenseur mais IDs différents) -->
-                        <div id="incident-photo-dropzone" class="photo-dropzone">
-                            <input type="file" id="incident-photo-input" accept="image/jpeg, image/png, image/webp" class="hidden">
-                            <button type="button" id="btn-incident-camera" class="btn btn-secondary btn-sm photo-upload-btn">
-                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
-                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                    <circle cx="12" cy="13" r="4"/>
-                                </svg>
-                                Prendre / Choisir une photo
-                            </button>
-                        </div>
-                        
-                        <!-- Prévisualisation Photo Incident -->
-                        <div id="incident-photo-preview-container" class="photo-preview-container hidden">
-                            <img id="incident-photo-preview" src="" alt="Prévisualisation">
-                            <button type="button" id="btn-remove-incident-photo" class="btn-remove-photo" aria-label="Supprimer la photo">&times;</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary pulse-button">Signaler</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- MODALE : METTRE À JOUR UN INCIDENT -->
-    <!-- ============================================ -->
-    <div id="update-incident-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" tabindex="-1">
-            <div class="modal-header">
-                <h3>Mettre à jour l'Incident</h3>
-                <button class="btn-close-modal" aria-label="Fermer la modale">&times;</button>
-            </div>
-            <form id="update-incident-form">
-                <input type="hidden" id="update-incident-id">
-                <div class="modal-body">
-                    <div id="update-incident-error-msg" class="alert-box alert-danger hidden"></div>
-                    <div id="update-incident-success-msg" class="alert-box alert-success hidden"></div>
-                    
-                    <div class="form-group">
-                        <label for="update-incident-status">Statut de l'incident <span class="required">*</span></label>
-                        <select id="update-incident-status" required>
-                            <option value="nouveau">Nouveau</option>
-                            <option value="en_cours">En cours de traitement</option>
-                            <option value="resolu">Résolu / Réparé</option>
+                            <option value="porte" selected>🚪 Porte bloquée / ne ferme plus</option>
+                            <option value="vigik">🔑 Lecteur VIGIK / Interphone</option>
+                            <option value="proprete">🧹 Propreté / Encombrants</option>
+                            <option value="chauffage">🔥 Chauffage / Eau Chaude</option>
+                            <option value="eclairage">💡 Éclairage défectueux</option>
+                            <option value="securite">🛡️ Sécurité / Nuisance</option>
+                            <option value="autre">⚠️ Autre incident</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="update-incident-description">Description / Notes de suivi <span class="required">*</span></label>
-                        <textarea id="update-incident-description" rows="4" required placeholder="Décrivez l'évolution du problème..." maxlength="300"></textarea>
+                        <label for="incident-desc">Description de l'incident <span class="required">*</span></label>
+                        <textarea id="incident-desc" required placeholder="Décrivez l'incident constaté..." style="height: 80px;"></textarea>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-close-modal">Annuler</button>
-                    <button type="submit" class="btn btn-primary pulse-button">Enregistrer</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
+                    <div class="form-group">
+                        <label for="incident-photo">Photo de preuve</label>
+                        <input type="file" id="incident-photo" accept="image/*" capture="environment">
+                    </div>
 
-    <!-- MODALE : ZOOM PHOTO (LIGHTBOX) -->
-    <!-- ============================================ -->
-    <div id="lightbox-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="lightbox-container">
-            <button id="btn-close-lightbox" class="btn-close-lightbox" aria-label="Fermer la vue plein écran">&times;</button>
-            <img id="lightbox-img" src="" alt="Photo de la panne en grand format">
-            <div id="lightbox-caption" class="lightbox-caption">Photo horodatée</div>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- MODALE : CONFIRMATION SUPPRESSION COMPTE -->
-    <!-- ============================================ -->
-    <div id="delete-account-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" style="max-width: 400px; margin: auto;" tabindex="-1">
-            <div class="modal-header">
-                <h3>Suppression du compte</h3>
-                <button type="button" class="btn-close-modal" id="btn-close-delete-modal" aria-label="Fermer">&times;</button>
-            </div>
-            <div class="modal-body" style="padding: 1.5rem; text-align: center;">
-                <div style="font-size: 2.5rem; color: var(--color-danger); margin-bottom: 1rem; display: flex; justify-content: center;">
-                    <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                </div>
-                <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Êtes-vous sûr ?</h4>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
-                    Cette action est irréversible. Toutes vos données personnelles de profil seront supprimées de la base de données.
-                    <br><br>
-                    <strong>Note :</strong> Vos signalements seront conservés anonymement pour l'historique commun.
-                </p>
-                <div style="display: flex; gap: 1rem; width: 100%;">
-                    <button type="button" class="btn btn-secondary btn-close-modal" id="btn-cancel-delete" style="flex: 1;">Annuler</button>
-                    <button type="button" class="btn btn-danger" id="btn-confirm-delete" style="flex: 1;">Supprimer</button>
-                </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button type="button" class="btn-pill-dark btn-close-modal" style="flex: 1; justify-content: center;">Annuler</button>
+                        <button type="submit" id="submit-incident-btn" class="btn-pill-primary" style="flex: 2; justify-content: center;">Publier</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- MODALE : A PROPOS -->
-    <!-- ============================================ -->
-    <div id="about-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" style="max-width: 600px; margin: auto;" tabindex="-1">
-            <div class="modal-header">
-                <h3>À propos de l'application</h3>
-                <button type="button" class="btn-close-modal" id="btn-close-about-modal" aria-label="Fermer">&times;</button>
-            </div>
-            <div class="modal-body" style="padding: 1.5rem; max-height: 60vh; overflow-y: auto;">
-                <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: 1rem;">
-                    <p>Cette application mobile et web a été développée bénévolement par <strong>André Vieira</strong>, fils de M. et Mme. TAVARES FERNANDES (locataires résidant au 50 avenue de la Division Leclerc à Cachan).</p>
-                    <p>Afin de faire face aux dysfonctionnements d'ascenseurs et au besoin d'entretien de nos parties communes, cette plateforme fournit aux résidents un outil collaboratif pour documenter objectivement chaque situation.</p>
-                    <p>Le recensement de signalements précis et documentés permet d'avoir une vision claire de l'état de la résidence et d'étayer nos échanges avec le bailleur <strong>Valdévy</strong> pour obtenir des interventions efficaces et durables.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================ -->
-    <!-- MODALE : RGPD -->
-    <!-- ============================================ -->
-    <div id="rgpd-modal" class="modal-backdrop hidden" aria-hidden="true" role="dialog">
-        <div class="modal-card glass" style="max-width: 600px; margin: auto;" tabindex="-1">
-            <div class="modal-header">
-                <h3>Protection des données (RGPD)</h3>
-                <button type="button" class="btn-close-modal" id="btn-close-rgpd-modal" aria-label="Fermer">&times;</button>
-            </div>
-            <div class="modal-body" style="padding: 1.5rem; max-height: 60vh; overflow-y: auto;">
-                <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 1rem;">
-                    <p>Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, les informations recueillies dans cette application sont destinées uniquement à la gestion technique des pannes d'ascenseurs et à la défense collective des locataires.</p>
-                    <ul style="padding-left: 1.25rem; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
-                        <li><strong>Responsable du traitement :</strong> André Vieira.</li>
-                        <li><strong>Données collectées :</strong> Pseudonyme, bâtiment d'habitation, numéro d'appartement, prénom/nom (facultatifs), ainsi que les détails et photos des incidents signalés.</li>
-                        <li><strong>Finalité :</strong> Affichage en temps réel des dysfonctionnements, envoi de notifications d'incident et génération de rapports de mise en demeure collectifs.</li>
-                        <li><strong>Destinataires :</strong> Les données publiques (signalements et photos) sont visibles par tous les locataires connectés de la résidence. Les mots de passe sont hachés de manière irréversible côté client et ne sont jamais visibles en clair.</li>
-                        <li><strong>Conservation :</strong> Les informations du profil sont conservées tant que vous maintenez votre compte actif. Les signalements archivés ou supprimés le sont définitivement.</li>
-                        <li><strong>Vos droits :</strong> Vous disposez d'un droit d'accès, de rectification, de portabilité et de suppression de vos données. Vous pouvez modifier vos informations à tout moment depuis cet espace de profil ou supprimer définitivement votre compte.</li>
-                    </ul>
-                    <p style="margin-top: 0.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                        Pour toute question ou demande concernant le traitement de vos données, vous pouvez contacter :
-                        <br><strong style="color: var(--text-primary);">André Vieira</strong> - <a href="mailto:vieira.andre@proton.me" style="color: var(--accent-primary); text-decoration: none;">vieira.andre@proton.me</a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Conteneur flottant des notifications Toasts -->
-    <div id="toast-container" class="toast-container"></div>
-    
-    <!-- SDK Client de base de données localisé (noms génériques pour éviter les blocages AdBlockers) -->
+    <!-- Scripts ES Modules -->
     <script src="js/db-lib.js"></script>
-    <!-- Librairies externes (Chart.js & jsPDF) -->
     <script src="js/chart.min.js"></script>
     <script src="js/jspdf.umd.min.js"></script>
- 
-    <!-- Point d'Entrée Applicatif Moderne (ES Modules) -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

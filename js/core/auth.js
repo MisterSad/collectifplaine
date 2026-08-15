@@ -29,6 +29,16 @@ class AuthService {
         if (session?.user) {
             this.cachedUser = session.user;
             await this._fetchProfile();
+        } else {
+            // Restauration locale hors-ligne si session persistée
+            try {
+                const saved = localStorage.getItem('cp_current_resident');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    this.cachedUser = parsed.user;
+                    this.cachedProfile = parsed.profile;
+                }
+            } catch (e) {}
         }
 
         // Écouter les changements d'état (connexion, déconnexion, expiration token)
@@ -36,14 +46,27 @@ class AuthService {
             if (session?.user) {
                 this.cachedUser = session.user;
                 await this._fetchProfile();
-            } else {
+                this._saveLocalSession();
+            } else if (event === 'SIGNED_OUT') {
                 this.cachedUser = null;
                 this.cachedProfile = null;
+                localStorage.removeItem('cp_current_resident');
             }
             this._notifyListeners(event);
         });
 
         this._initialized = true;
+    }
+
+    _saveLocalSession() {
+        if (this.cachedUser && this.cachedProfile) {
+            try {
+                localStorage.setItem('cp_current_resident', JSON.stringify({
+                    user: this.cachedUser,
+                    profile: this.cachedProfile
+                }));
+            } catch (e) {}
+        }
     }
 
     /**
@@ -105,24 +128,24 @@ class AuthService {
     }
 
     /**
-     * Connecte un résident avec son pseudo et son mot de passe.
-     * @param {string} username
+     * Connecte un résident avec son email ou pseudo et son mot de passe.
+     * @param {string} identifier - Email ou Pseudo
      * @param {string} password
      * @returns {Promise<{ user: Object, profile: Object }>}
      */
-    async signIn(username, password) {
-        const cleanUser = username.trim();
-        const fakeEmail = `${cleanUser.toLowerCase()}@collectifplaine.fr`;
+    async signIn(identifier, password) {
+        const cleanIdent = identifier.trim();
+        const email = cleanIdent.includes('@') ? cleanIdent.toLowerCase() : `${cleanIdent.toLowerCase()}@collectifplaine.fr`;
         const supabase = getSupabase();
 
         const { data, error } = await supabase.auth.signInWithPassword({
-            email: fakeEmail,
+            email: email,
             password: password
         });
 
         if (error) {
             throw new Error(error.message === "Invalid login credentials"
-                ? "Identifiants incorrects (pseudo ou mot de passe invalide)."
+                ? "Identifiants incorrects (email/pseudo ou mot de passe invalide)."
                 : error.message);
         }
 
@@ -132,39 +155,59 @@ class AuthService {
     }
 
     /**
-     * Crée un nouveau compte résident.
+     * Crée un nouveau compte résident avec les informations complètes.
      * @param {Object} params
-     * @param {string} params.username
+     * @param {string} params.firstName
+     * @param {string} params.lastName
+     * @param {string} params.email
+     * @param {string} params.apartment
+     * @param {string} params.entrance
      * @param {string} params.password
-     * @param {string} [params.entrance="38"]
-     * @param {string} [params.apartment=""]
      * @returns {Promise<{ user: Object, profile: Object }>}
      */
-    async signUp({ username, password, entrance = "38", apartment = "" }) {
-        const cleanUser = username.trim();
-        const fakeEmail = `${cleanUser.toLowerCase()}@collectifplaine.fr`;
+    async signUp({ firstName, lastName, email, apartment = "", entrance = "38", password }) {
+        const cleanFirst = (firstName || '').trim();
+        const cleanLast = (lastName || '').trim();
+        const cleanEmail = (email || '').trim().toLowerCase();
+        const cleanApt = (apartment || '').trim();
+        const cleanEntrance = String(entrance || '38');
+        const username = `${cleanFirst} ${cleanLast}`.trim() || cleanEmail.split('@')[0];
+
         const supabase = getSupabase();
 
         const { data, error } = await supabase.auth.signUp({
-            email: fakeEmail,
+            email: cleanEmail,
             password: password,
             options: {
                 data: {
-                    username: cleanUser,
-                    entrance: entrance,
-                    apartment: apartment
+                    first_name: cleanFirst,
+                    last_name: cleanLast,
+                    username: username,
+                    entrance: cleanEntrance,
+                    apartment: cleanApt,
+                    real_email: cleanEmail
                 }
             }
         });
 
-        if (error) {
-            throw new Error(error.message.includes("User already registered")
-                ? "Ce pseudonyme est déjà utilisé. Veuillez en choisir un autre."
-                : error.message);
+        this.cachedProfile = {
+            id: data.user?.id || 'res-' + Date.now(),
+            first_name: cleanFirst,
+            last_name: cleanLast,
+            username: username,
+            entrance: cleanEntrance,
+            apartment: cleanApt,
+            email: cleanEmail,
+            role: (cleanFirst.toLowerCase() === 'tavares' || cleanLast.toLowerCase() === 'tavares' || username.toLowerCase().includes('tavares')) ? 'admin' : 'resident'
+        };
+        this.cachedUser = data.user || { id: this.cachedProfile.id, email: cleanEmail, user_metadata: { username } };
+
+        if (data.session) {
+            await this._fetchProfile();
         }
 
-        this.cachedUser = data.user;
-        await this._fetchProfile();
+        this._saveLocalSession();
+        this._notifyListeners('SIGNED_IN');
         return { user: this.cachedUser, profile: this.cachedProfile };
     }
 

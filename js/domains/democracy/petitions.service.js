@@ -63,7 +63,7 @@ class PetitionsService {
      */
     async createPetition({ title, description, targetSignatures = 50 }) {
         if (!Auth.isAdmin()) {
-            throw new Error("Action réservée aux administrateurs de l'amicale.");
+            throw new Error("Action réservée aux administrateurs du collectif.");
         }
 
         const user = Auth.getUser();

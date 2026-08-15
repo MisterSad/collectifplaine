@@ -34,7 +34,7 @@ class IncidentUIController {
      * @param {Array<Object>} [incidentsList]
      */
     renderFeed(incidentsList) {
-        const feed = document.getElementById('incidents-feed');
+        const feed = document.getElementById('incidents-feed') || document.getElementById('incidents-list');
         if (!feed) return;
 
         const list = incidentsList || Incident.getAll();

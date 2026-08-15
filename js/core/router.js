@@ -1,20 +1,19 @@
 /**
- * @fileoverview Routeur SPA basé sur le fragment de hachage (#/route).
- * Gère l'affichage dynamique des vues et la synchronisation de l'état de navigation mobile/desktop.
+ * @fileoverview Routeur SPA Mobile basé sur le fragment de hachage (#/route).
+ * Gère l'affichage dynamique des vues 100% Mobile, l'Onboarding immersif et la synchronisation de la TabBar.
  */
 
 import { EventBus, EVENTS } from './event-bus.js';
 import { Auth } from './auth.js';
 
 const ROUTE_MAP = {
-    'landing': { panelId: 'tab-landing', title: 'Accueil' },
+    'onboarding': { panelId: 'tab-onboarding', title: 'Bienvenue', fullscreen: true },
     'ascenseurs': { panelId: 'tab-ascenseurs', altId: 'tab-elevators', title: 'Ascenseurs' },
     'incidents': { panelId: 'tab-incidents', title: 'Incidents' },
-    'petitions': { panelId: 'tab-petitions', title: 'Pétitions Collectives' },
-    'votes': { panelId: 'tab-votes', title: 'Sondages & Votes' },
-    'guides': { panelId: 'tab-guides', title: 'Guides & Aide Pratique' },
+    'petitions': { panelId: 'tab-petitions', title: 'Pétitions' },
+    'guides': { panelId: 'tab-guides', title: 'Guides & Droit' },
     'charges': { panelId: 'tab-charges', title: 'Audit des Charges' },
-    'stats': { panelId: 'tab-stats', title: 'Statistiques Admin', adminOnly: true },
+    'stats': { panelId: 'tab-stats', title: 'Statistiques', adminOnly: true },
     'compte': { panelId: 'tab-compte', title: 'Mon Compte' }
 };
 
@@ -50,11 +49,16 @@ class RouterService {
      */
     _handleHashChange() {
         const rawHash = window.location.hash.replace(/^#\/?/, '').trim();
-        let targetRoute = rawHash || 'ascenseurs';
+        let targetRoute = rawHash;
 
-        // Si l'utilisateur n'est pas connecté et arrive sans hash spécifique
-        if (!rawHash && !Auth.isAuthenticated()) {
-            targetRoute = 'landing';
+        // Si aucun hash n'est fourni
+        if (!targetRoute) {
+            if (!Auth.isAuthenticated()) {
+                const onboardingDone = localStorage.getItem('cp_onboarding_completed') === 'true';
+                targetRoute = onboardingDone ? 'compte' : 'onboarding';
+            } else {
+                targetRoute = 'ascenseurs';
+            }
         }
 
         const routeConfig = ROUTE_MAP[targetRoute] || ROUTE_MAP['ascenseurs'];
@@ -86,33 +90,25 @@ class RouterService {
         const targetPanel = document.getElementById(config.panelId) || (config.altId ? document.getElementById(config.altId) : null);
         if (targetPanel) {
             targetPanel.classList.remove('hidden');
-            // Timeout léger pour déclencher l'animation CSS
             requestAnimationFrame(() => targetPanel.classList.add('active'));
         }
 
-        // 3. Mettre à jour le titre de l'en-tête principal
-        const topBarTitle = document.getElementById('top-bar-title');
-        if (topBarTitle) {
-            topBarTitle.textContent = config.title;
+        // 3. Mettre à jour le titre de l'en-tête mobile
+        const headerTitle = document.getElementById('mobile-header-title') || document.getElementById('top-bar-title');
+        if (headerTitle) {
+            headerTitle.textContent = config.title;
         }
 
-        // 4. Mettre à jour la navigation Desktop
-        document.querySelectorAll('.menu-link').forEach(link => {
-            const href = link.getAttribute('href') || '';
-            const linkRoute = href.replace(/^#\/?/, '');
-            link.classList.toggle('active', linkRoute === routeName);
-        });
-
-        // 5. Mettre à jour la navigation Mobile
+        // 4. Mettre à jour la navigation mobile (TabBar)
         document.querySelectorAll('.mobile-link').forEach(link => {
             const href = link.getAttribute('href') || '';
             const linkRoute = href.replace(/^#\/?/, '');
             link.classList.toggle('active', linkRoute === routeName);
         });
 
-        // 6. Gestion de la visibilité des menus selon la landing page
-        const isLanding = routeName === 'landing';
-        document.body.classList.toggle('unauth-layout', isLanding);
+        // 5. Gestion du mode plein écran (Onboarding)
+        const isFullscreen = config.fullscreen === true;
+        document.body.classList.toggle('fullscreen-mode', isFullscreen);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }

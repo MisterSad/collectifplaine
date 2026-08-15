@@ -1,4 +1,4 @@
-const CACHE_NAME = 'collectif-plaine-v40';
+const CACHE_NAME = 'collectif-plaine-v41';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -14,6 +14,7 @@ const ASSETS_TO_CACHE = [
   '/js/core/db-client.js',
   '/js/core/auth.js',
   '/js/core/storage.js',
+  '/js/core/onboarding.js',
   '/js/core/event-bus.js',
   '/js/core/router.js',
   '/js/domains/elevators/elevator.service.js',
@@ -21,7 +22,6 @@ const ASSETS_TO_CACHE = [
   '/js/domains/incidents/incident.service.js',
   '/js/domains/incidents/incident.ui.js',
   '/js/domains/democracy/petitions.service.js',
-  '/js/domains/democracy/polls.service.js',
   '/js/domains/democracy/democracy.ui.js',
   '/js/domains/wiki/wiki.data.js',
   '/js/domains/wiki/wiki.ui.js',

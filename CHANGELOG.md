@@ -5,6 +5,30 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 
 ---
 
+## [2.1.0] — 2026-08-15
+### 📱 Transformation 100% Mobile-First & Inscription Résident Complète
+
+#### ✨ Ajouté
+- **Expérience 100% Mobile-First :**
+  - Élimination totale de la barre latérale desktop au profit d'un conteneur mobile fluide et adaptatif en temps réel.
+  - En-tête natif avec bascule de thème, titre dynamique et accès profil.
+  - Barre de navigation tactile inférieure (TabBar) à 5 onglets (*Ascenseurs, Incidents, Pétitions, Droit, Compte*) avec support des `safe-area-insets`.
+- **Carrousel d'Onboarding Tactile (`js/core/onboarding.js`) :**
+  - 4 écrans de présentation interactifs avec support complet des gestes de glissement (*swipe*) sur écran tactile et souris.
+  - Indicateurs de progression en pilule (dots animés) et bouton d'action progressive (*Suivant* -> *Rejoindre le Collectif*).
+- **Formulaire d'Inscription Résident Exhaustif :**
+  - Saisie complète : Nom, Prénom, Adresse e-mail, N° de logement / appartement, Adresse sélectionnée parmi les 8 entrées Leclerc (38, 40, 42, 44, 46, 48, 50, 52), et Mot de passe sécurisé.
+  - Connexion et synchronisation immédiate avec persistance de session hors-ligne.
+- **Règle Terminologique Stricte :**
+  - Remplacement exhaustif de toute occurrence de "amicale" par "collectif de locataires" ou "Collectif Plaine" sur l'ensemble de l'application et de ses services.
+
+#### 🗑️ Supprimé
+- Suppression de la page de présentation landing statique (`#tab-landing`).
+- Suppression du module et de l'onglet des sondages & votes (`#tab-votes`).
+- Suppression de l'aside de navigation desktop (`.app-sidebar`).
+
+---
+
 ## [2.0.0] — 2026-08-15
 ### 🛡️ Sécurité & Architecture Zero-Trust (Standards 2026)
 

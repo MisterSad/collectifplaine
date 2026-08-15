@@ -87,7 +87,7 @@ class PollsService {
      */
     async createPoll({ title, description, options, type = "sondage", endsAt = null }) {
         if (!Auth.isAdmin()) {
-            throw new Error("Action réservée aux administrateurs de l'amicale.");
+            throw new Error("Action réservée aux administrateurs du collectif.");
         }
 
         const user = Auth.getUser();
