@@ -76,7 +76,7 @@ class ElevatorService {
                 const assembled = {
                     id: idStr,
                     status: el.status || 'en_service',
-                    last_status_change: el.last_status_change || new Date().toISOString(),
+                    last_status_change: (el.status === 'en_panne' && metrics.downSince) ? metrics.downSince : (el.last_status_change || new Date().toISOString()),
                     maintenance_notes: el.maintenance_notes || '',
                     reports: elReports,
                     history: elHistory,
@@ -153,7 +153,11 @@ class ElevatorService {
         // Calcul du nombre de jours de panne
         const downtimeDays = Math.max(0, Math.floor(totalDowntimeMs / (1000 * 60 * 60 * 24)));
 
-        return { totalDowntimeMs, downtimeDays };
+        return { 
+            totalDowntimeMs, 
+            downtimeDays, 
+            downSince: downSince !== null ? new Date(downSince).toISOString() : null 
+        };
     }
 
     /**

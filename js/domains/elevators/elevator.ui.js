@@ -342,12 +342,14 @@ class ElevatorUIController {
             const title = h.status === 'en_service' ? 'Remise en service' :
                           h.status === 'en_maintenance' ? 'Intervention technique' : 'Arrêt / Panne constatée';
 
+            const noteText = h.notes || h.details || '';
+
             html += `
                 <div class="timeline-item" style="position: relative; padding-left: 1.5rem; margin-bottom: 1rem; border-left: 2px solid var(--border-color);">
                     <div class="timeline-marker ${markerClass}" style="position: absolute; left: -6px; top: 3px; width: 10px; height: 10px; border-radius: 50%;"></div>
                     <span class="timeline-date font-data" style="font-size: 0.725rem; color: var(--text-muted);">${formatDateFR(h.created_at || h.timestamp)}</span>
-                    <div class="timeline-title" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">${title}</div>
-                    ${h.details ? `<div class="timeline-desc" style="font-size: 0.775rem; color: var(--text-secondary); margin-top: 2px;">${sanitizeHTML(h.details)}</div>` : ''}
+                    <div class="timeline-title" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin-top: 1px;">${title}</div>
+                    ${noteText ? `<div class="timeline-desc" style="font-size: 0.775rem; color: var(--text-secondary); margin-top: 3px; line-height: 1.35;">${sanitizeHTML(noteText.replace(/&#x27;/g, "'").replace(/&#x2F;/g, "/"))}</div>` : ''}
                 </div>
             `;
         }
