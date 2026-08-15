@@ -8,7 +8,7 @@ import { Auth } from './auth.js';
 
 const ROUTE_MAP = {
     'landing': { panelId: 'tab-landing', title: 'Accueil' },
-    'ascenseurs': { panelId: 'tab-ascenseurs', title: 'Ascenseurs' },
+    'ascenseurs': { panelId: 'tab-ascenseurs', altId: 'tab-elevators', title: 'Ascenseurs' },
     'incidents': { panelId: 'tab-incidents', title: 'Incidents' },
     'petitions': { panelId: 'tab-petitions', title: 'Pétitions Collectives' },
     'votes': { panelId: 'tab-votes', title: 'Sondages & Votes' },
@@ -83,7 +83,7 @@ class RouterService {
         });
 
         // 2. Afficher le panneau ciblé
-        const targetPanel = document.getElementById(config.panelId);
+        const targetPanel = document.getElementById(config.panelId) || (config.altId ? document.getElementById(config.altId) : null);
         if (targetPanel) {
             targetPanel.classList.remove('hidden');
             // Timeout léger pour déclencher l'animation CSS

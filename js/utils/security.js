@@ -12,16 +12,17 @@ import { CONFIG } from '../config/config.js';
  */
 export function sanitizeHTML(str) {
     if (str === null || str === undefined) return '';
-    const s = String(str);
+    let s = String(str);
+    // Nettoyer les éventuelles entités pré-échappées (comme &#x2F;)
+    s = s.replace(/&#x2F;/gi, '/').replace(/&amp;/g, '&');
     const map = {
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
         '"': '&quot;',
-        "'": '&#x27;',
-        '/': '&#x2F;'
+        "'": '&#x27;'
     };
-    return s.replace(/[&<>"'/]/g, m => map[m]);
+    return s.replace(/[&<>"']/g, m => map[m]);
 }
 
 /**

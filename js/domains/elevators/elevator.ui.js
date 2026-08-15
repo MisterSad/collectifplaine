@@ -40,15 +40,23 @@ class ElevatorUIController {
 
         this._bindDOMEvents();
         this._populateEntranceSelects();
+
+        // Rendu immédiat si les données sont déjà en mémoire
+        const initialList = Elevator.getAll();
+        if (initialList.length > 0) {
+            this.renderGrid(initialList);
+            this.renderStatsSummary(initialList);
+        }
+
         this._initialized = true;
     }
 
     renderGrid(elevatorsList) {
-        const grid = document.getElementById('elevators-grid');
+        const grid = document.getElementById('elevators-grid') || document.getElementById('entrances-grid');
         if (!grid) return;
 
         const list = elevatorsList || Elevator.getAll();
-        if (list.length === 0) {
+        if (!list || list.length === 0) {
             grid.innerHTML = `
                 <div class="loading-placeholder glass-card" style="padding: 2.5rem; text-align: center; grid-column: 1 / -1;">
                     <div style="display: inline-block; width: 28px; height: 28px; border: 3px solid var(--accent-primary); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 0.75rem;"></div>
@@ -116,7 +124,7 @@ class ElevatorUIController {
             html += `
                 <div class="glass-card elevator-card ${isBroken ? 'card-broken-highlight' : ''}" data-entrance="${sanitizeHTML(el.id)}" style="padding: 1.35rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-card);">
                     
-                    <!-- En-tête de carte de tracking (Style Colis / Tracking de la maquette) -->
+                    <!-- En-tête de carte de tracking -->
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem;">
                             <div style="display: flex; align-items: center; gap: 0.85rem;">
@@ -139,7 +147,7 @@ class ElevatorUIController {
                             <span class="status-badge ${statusClass}">${statusLabel}</span>
                         </div>
 
-                        <!-- Timeline d'étapes de suivi (Style Pickup/Dropoff de la maquette) -->
+                        <!-- Timeline d'étapes de suivi -->
                         <div class="tracking-timeline">
                             <div class="tracking-step ${el.status === 'en_service' ? 'completed' : isBroken ? 'broken' : ''}">
                                 <span class="tracking-step-label">État Opérationnel</span>
@@ -154,7 +162,7 @@ class ElevatorUIController {
                         </div>
                     </div>
 
-                    <!-- Ligne basse d'action et métrique (Style maquette avec bouton noir) -->
+                    <!-- Ligne basse d'action et métrique -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 0.5rem;">
                         <div style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">
                             ${downtimeHours > 0 ? `<span class="downtime-pill font-data" style="color: var(--color-warning);">⏱️ ${downtimeHours}h d'arrêt</span>` : '<span style="color: var(--color-success); font-weight: 700;">✓ 100% Dispo</span>'}

@@ -425,20 +425,51 @@ class App {
     _setupTheme() {
         const lightBtn = document.getElementById('theme-btn-light');
         const darkBtn = document.getElementById('theme-btn-dark');
+        const sidebarCheckbox = document.getElementById('sidebar-theme-checkbox');
 
-        const savedTheme = localStorage.getItem('cp_theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+        const applyTheme = (theme) => {
+            const finalTheme = theme === 'light' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', finalTheme);
+            localStorage.setItem('cp_theme', finalTheme);
 
-        if (lightBtn && darkBtn) {
-            lightBtn.addEventListener('click', () => {
-                document.documentElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('cp_theme', 'light');
+            if (sidebarCheckbox) {
+                sidebarCheckbox.checked = (finalTheme === 'dark');
+            }
+
+            if (lightBtn && darkBtn) {
+                if (finalTheme === 'light') {
+                    lightBtn.style.background = 'var(--bg-secondary)';
+                    lightBtn.style.color = 'var(--text-primary)';
+                    lightBtn.style.boxShadow = 'var(--shadow-sm)';
+                    darkBtn.style.background = 'none';
+                    darkBtn.style.color = 'var(--text-muted)';
+                    darkBtn.style.boxShadow = 'none';
+                } else {
+                    darkBtn.style.background = 'var(--bg-elevated)';
+                    darkBtn.style.color = 'var(--text-primary)';
+                    darkBtn.style.boxShadow = 'var(--shadow-sm)';
+                    lightBtn.style.background = 'none';
+                    lightBtn.style.color = 'var(--text-muted)';
+                    lightBtn.style.boxShadow = 'none';
+                }
+            }
+        };
+
+        const initialTheme = localStorage.getItem('cp_theme') || 'dark';
+        applyTheme(initialTheme);
+
+        if (sidebarCheckbox) {
+            sidebarCheckbox.addEventListener('change', (e) => {
+                applyTheme(e.target.checked ? 'dark' : 'light');
             });
+        }
 
-            darkBtn.addEventListener('click', () => {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('cp_theme', 'dark');
-            });
+        if (lightBtn) {
+            lightBtn.addEventListener('click', () => applyTheme('light'));
+        }
+
+        if (darkBtn) {
+            darkBtn.addEventListener('click', () => applyTheme('dark'));
         }
     }
 
