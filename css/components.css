@@ -16,14 +16,264 @@
 }
 
 .glass-card {
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
     transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .glass-card:hover {
     border-color: var(--border-hover);
+}
+
+/* ── SEGMENTED CONTROL EN PILULE (Comme sur la maquette) ── */
+.segmented-pill-bar {
+    display: flex;
+    background: var(--bg-secondary);
+    padding: 6px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    gap: 4px;
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.segmented-pill-item {
+    padding: 0.55rem 1.35rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.segmented-pill-item:hover:not(.active) {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.segmented-pill-item.active {
+    background: var(--gradient-aurora);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: var(--shadow-aurora);
+}
+
+/* ── INPUTS EN PILULE AVEC ICÔNES (Comme sur la maquette) ── */
+.input-pill-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.input-pill-group .input-icon {
+    position: absolute;
+    left: 1.25rem;
+    color: var(--text-muted);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.input-pill-group input,
+.input-pill-group select {
+    width: 100%;
+    padding: 0.95rem 1.25rem 0.95rem 3.25rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+
+.input-pill-group input:focus,
+.input-pill-group select:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 4px var(--accent-primary-dim);
+}
+
+/* ── BOUTONS EN PILULE (Pill Buttons) ── */
+.btn-pill-primary {
+    background: var(--gradient-aurora);
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    border: none;
+    padding: 0.9rem 1.75rem;
+    font-size: 0.925rem;
+    box-shadow: var(--shadow-aurora);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    width: 100%;
+}
+
+.btn-pill-primary:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px rgba(236, 72, 153, 0.4);
+}
+
+.btn-pill-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-pill-dark {
+    background: var(--btn-dark-bg);
+    color: var(--btn-dark-text);
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    border: none;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.825rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    text-decoration: none;
+}
+
+.btn-pill-dark:hover {
+    background: var(--btn-dark-hover);
+    transform: translateY(-1px);
+}
+
+.btn-pill-outline {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-color);
+    padding: 0.8rem 1.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.btn-pill-outline:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-hover);
+}
+
+/* ── BOÎTE D'ICÔNE PASTEL (Comme sur la maquette) ── */
+.badge-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.badge-icon-box.purple {
+    background: var(--badge-purple-bg);
+    color: var(--badge-purple-color);
+}
+
+.badge-icon-box.pink {
+    background: var(--badge-pink-bg);
+    color: var(--badge-pink-color);
+}
+
+.badge-icon-box.coral {
+    background: var(--badge-coral-bg);
+    color: var(--badge-coral-color);
+}
+
+.badge-icon-box.blue {
+    background: var(--badge-blue-bg);
+    color: var(--badge-blue-color);
+}
+
+/* ── TIMELINE VERTICALE À POINTS (Style Tracking) ── */
+.tracking-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin: 0.85rem 0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.tracking-timeline::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--border-color);
+    border-style: dashed;
+}
+
+.tracking-step {
+    position: relative;
+    font-size: 0.8rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.tracking-step::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--bg-secondary);
+}
+
+.tracking-step.completed::before {
+    background: var(--color-success);
+}
+
+.tracking-step.broken::before {
+    background: var(--color-danger);
+}
+
+.tracking-step-label {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.tracking-step-desc {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-top: 1px;
 }
 
 /* ── BUTTONS ── */

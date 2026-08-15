@@ -1,10 +1,10 @@
 /* ============================================================
    DESIGN SYSTEM 2026 — Collectif Plaine
-   Thèmes : OLED Dark Mode & Clean High-Contrast Light Mode
-   Polices : Outfit (Titres) + Inter (Interface) + Fira Code (Métriques)
+   Style : Soft-Pill, Aurora Gradient & Neo-Clean (Inspiré iOS/App Native)
+   Polices : Outfit (Titres) + Inter (Interface & Saisie) + Fira Code (Métriques)
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap');
 
 :root {
     /* ── TYPOGRAPHIE ── */
@@ -12,50 +12,62 @@
     --font-body:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono:       'Fira Code', ui-monospace, monospace;
 
-    /* ── GÉOMÉTRIE & RAYONS ── */
-    --radius-xs:       6px;
-    --radius-sm:       10px;
-    --radius-md:       14px;
-    --radius-lg:       20px;
-    --radius-xl:       28px;
+    /* ── GÉOMÉTRIE & RAYONS "SOFT-PILL" ── */
+    --radius-xs:       8px;
+    --radius-sm:       12px;
+    --radius-md:       16px;
+    --radius-card:     24px;
+    --radius-lg:       24px;
+    --radius-xl:       32px;
     --radius-pill:     9999px;
 
-    /* ── TRANSITIONS MICRO-INTERACTIONS ── */
+    /* ── TRANSITIONS ── */
     --transition-fast:    0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal:  0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce:  0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-spring:  0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    /* ── DIMENSIONS LAYOUT ── */
+    /* ── DIMENSIONS ── */
     --sidebar-width:      260px;
     --topbar-height:      64px;
     --mobile-nav-height:  72px;
-    --max-content-width:  1400px;
+    --max-content-width:  1280px;
     --touch-target-min:   48px;
 
-    /* ── THÈME CLAIR HAUTE LISIBILITÉ (Default) ── */
-    --bg-primary:         #f8fafc;
-    --bg-secondary:       #ffffff;
-    --bg-tertiary:        #f1f5f9;
-    --bg-elevated:        #ffffff;
-    --bg-hover:           #f1f5f9;
+    /* ── DÉGRADÉS AURORA SIGNATURE (Lavande -> Rose -> Corail) ── */
+    --gradient-aurora:         linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #fb7185 100%);
+    --gradient-aurora-soft:    linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(236, 72, 153, 0.12) 100%);
+    --gradient-dark:           linear-gradient(135deg, #0f172a 0%, #000000 100%);
 
-    --border-color:       #e2e8f0;
-    --border-subtle:      #edf2f7;
+    /* ── THÈME CLAIR DOUX (Clean Light Mode) ── */
+    --bg-primary:         #f5f6fa;
+    --bg-secondary:       #ffffff;
+    --bg-tertiary:        #f1f3f9;
+    --bg-elevated:        #ffffff;
+    --bg-hover:           #f8fafc;
+
+    --border-color:       #e8ecf4;
+    --border-subtle:      #f0f3f8;
     --border-hover:       #cbd5e1;
-    --border-active:      #3b82f6;
+    --border-active:      #8b5cf6;
 
     --text-primary:       #0f172a;
-    --text-secondary:     #334155;
+    --text-secondary:     #475569;
     --text-muted:         #64748b;
     --text-faint:         #94a3b8;
 
-    --accent-primary:          #2563eb;
-    --accent-primary-hover:    #1d4ed8;
-    --accent-primary-dim:      rgba(37, 99, 235, 0.08);
-    --accent-primary-border:   rgba(37, 99, 235, 0.2);
-    --accent-gradient:         linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    --accent-primary:          #8b5cf6;
+    --accent-primary-hover:    #7c3aed;
+    --accent-primary-dim:      rgba(139, 92, 246, 0.10);
+    --accent-primary-border:   rgba(139, 92, 246, 0.25);
+    --accent-gradient:         var(--gradient-aurora);
 
+    /* Bouton action sombre comme sur la maquette */
+    --btn-dark-bg:             #0f172a;
+    --btn-dark-text:           #ffffff;
+    --btn-dark-hover:          #000000;
+
+    /* Couleurs sémantiques pastels et nettes */
     --color-success:           #10b981;
     --color-success-bg:        #ecfdf5;
     --color-success-border:    #a7f3d0;
@@ -71,79 +83,100 @@
     --color-danger-border:     #fecaca;
     --color-danger-text:       #991b1b;
 
-    --color-info:              #0ea5e9;
-    --color-info-bg:           #f0f9ff;
-    --color-info-border:       #bae6fd;
-    --color-info-text:         #075985;
+    --color-info:              #6366f1;
+    --color-info-bg:           #eef2ff;
+    --color-info-border:       #c7d2fe;
+    --color-info-text:         #4338ca;
 
-    --glass-bg:                rgba(255, 255, 255, 0.82);
-    --glass-bg-light:          rgba(255, 255, 255, 0.94);
-    --glass-blur:              16px;
-    --glass-border:            1px solid rgba(226, 232, 240, 0.85);
+    /* Pastels d'icônes par catégorie */
+    --badge-purple-bg:         #f3e8ff;
+    --badge-purple-color:      #8b5cf6;
+    --badge-pink-bg:           #fce7f3;
+    --badge-pink-color:        #ec4899;
+    --badge-coral-bg:          #ffe4e6;
+    --badge-coral-color:       #f43f5e;
+    --badge-blue-bg:           #e0f2fe;
+    --badge-blue-color:        #0284c7;
 
-    --shadow-sm:               0 1px 2px rgba(15, 23, 42, 0.04);
-    --shadow-md:               0 4px 12px rgba(15, 23, 42, 0.06);
-    --shadow-lg:               0 10px 25px rgba(15, 23, 42, 0.08);
-    --shadow-xl:               0 20px 35px rgba(15, 23, 42, 0.12);
+    --glass-bg:                rgba(255, 255, 255, 0.90);
+    --glass-bg-light:          rgba(255, 255, 255, 0.96);
+    --glass-blur:              20px;
+    --glass-border:            1px solid rgba(232, 236, 244, 0.9);
+
+    --shadow-sm:               0 2px 6px rgba(15, 23, 42, 0.03);
+    --shadow-md:               0 6px 18px rgba(15, 23, 42, 0.05);
+    --shadow-lg:               0 12px 32px rgba(15, 23, 42, 0.06);
+    --shadow-soft:             0 10px 30px rgba(0, 0, 0, 0.04);
+    --shadow-aurora:           0 8px 24px rgba(236, 72, 153, 0.25);
     --shadow-glow-red:         0 0 20px rgba(239, 68, 68, 0.18);
-    --shadow-glow-green:       0 0 20px rgba(16, 185, 129, 0.18);
-    --shadow-glow-blue:        0 0 20px rgba(37, 99, 235, 0.20);
 }
 
-/* ── THÈME SOMBRE OLED HAUTE PERFORMANCE ── */
+/* ── THÈME SOMBRE HAUT DE GAMME (Dark Aurora Mode) ── */
 [data-theme="dark"] {
-    --bg-primary:         #020617; /* Slate 950 ultra profond */
-    --bg-secondary:       #0b1329; /* Carte bleu nuit profonde */
-    --bg-tertiary:        #111c3a; /* Surface imbriquée */
-    --bg-elevated:        #152247; /* Modales et menus */
-    --bg-hover:           rgba(255, 255, 255, 0.05);
+    --bg-primary:         #0d0f17;
+    --bg-secondary:       #161926;
+    --bg-tertiary:        #1f2438;
+    --bg-elevated:        #23293f;
+    --bg-hover:           rgba(255, 255, 255, 0.06);
 
     --border-color:       rgba(255, 255, 255, 0.08);
     --border-subtle:      rgba(255, 255, 255, 0.04);
     --border-hover:       rgba(255, 255, 255, 0.18);
-    --border-active:      #3b82f6;
+    --border-active:      #a78bfa;
 
     --text-primary:       #f8fafc;
     --text-secondary:     #cbd5e1;
     --text-muted:         #94a3b8;
     --text-faint:         #64748b;
 
-    --accent-primary:          #3b82f6;
-    --accent-primary-hover:    #60a5fa;
-    --accent-primary-dim:      rgba(59, 130, 246, 0.15);
-    --accent-primary-border:   rgba(59, 130, 246, 0.35);
-    --accent-gradient:         linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    --accent-primary:          #a78bfa;
+    --accent-primary-hover:    #c4b5fd;
+    --accent-primary-dim:      rgba(167, 139, 250, 0.15);
+    --accent-primary-border:   rgba(167, 139, 250, 0.35);
+    --accent-gradient:         var(--gradient-aurora);
 
-    --color-success:           #10b981;
-    --color-success-bg:        rgba(16, 185, 129, 0.12);
-    --color-success-border:    rgba(16, 185, 129, 0.30);
-    --color-success-text:      #34d399;
+    --btn-dark-bg:             #ffffff;
+    --btn-dark-text:           #0f172a;
+    --btn-dark-hover:          #f1f5f9;
 
-    --color-warning:           #f59e0b;
-    --color-warning-bg:        rgba(245, 158, 11, 0.12);
-    --color-warning-border:    rgba(245, 158, 11, 0.30);
-    --color-warning-text:      #fbbf24;
+    --color-success:           #34d399;
+    --color-success-bg:        rgba(52, 211, 153, 0.12);
+    --color-success-border:    rgba(52, 211, 153, 0.30);
+    --color-success-text:      #6ee7b7;
 
-    --color-danger:            #ef4444;
-    --color-danger-bg:         rgba(239, 68, 68, 0.14);
-    --color-danger-border:     rgba(239, 68, 68, 0.35);
-    --color-danger-text:       #f87171;
+    --color-warning:           #fbbf24;
+    --color-warning-bg:        rgba(251, 191, 36, 0.12);
+    --color-warning-border:    rgba(251, 191, 36, 0.30);
+    --color-warning-text:      #fde68a;
 
-    --color-info:              #38bdf8;
-    --color-info-bg:           rgba(56, 189, 248, 0.12);
-    --color-info-border:       rgba(56, 189, 248, 0.30);
-    --color-info-text:         #7dd3fc;
+    --color-danger:            #f87171;
+    --color-danger-bg:         rgba(248, 113, 113, 0.14);
+    --color-danger-border:     rgba(248, 113, 113, 0.35);
+    --color-danger-text:       #fca5a5;
 
-    --glass-bg:                rgba(11, 19, 41, 0.80);
-    --glass-bg-light:          rgba(17, 28, 58, 0.92);
-    --glass-blur:              20px;
+    --color-info:              #818cf8;
+    --color-info-bg:           rgba(129, 140, 248, 0.12);
+    --color-info-border:       rgba(129, 140, 248, 0.30);
+    --color-info-text:         #a5b4fc;
+
+    --badge-purple-bg:         rgba(139, 92, 246, 0.2);
+    --badge-purple-color:      #c4b5fd;
+    --badge-pink-bg:           rgba(236, 72, 153, 0.2);
+    --badge-pink-color:        #f472b6;
+    --badge-coral-bg:          rgba(251, 113, 133, 0.2);
+    --badge-coral-color:       #fda4af;
+    --badge-blue-bg:           rgba(56, 189, 248, 0.2);
+    --badge-blue-color:        #7dd3fc;
+
+    --glass-bg:                rgba(22, 25, 38, 0.85);
+    --glass-bg-light:          rgba(31, 36, 56, 0.94);
+    --glass-blur:              24px;
     --glass-border:            1px solid rgba(255, 255, 255, 0.08);
 
-    --shadow-sm:               0 2px 4px rgba(0, 0, 0, 0.4);
-    --shadow-md:               0 6px 16px rgba(0, 0, 0, 0.6);
-    --shadow-lg:               0 12px 30px rgba(0, 0, 0, 0.75);
-    --shadow-xl:               0 24px 45px rgba(0, 0, 0, 0.9);
+    --shadow-sm:               0 2px 6px rgba(0, 0, 0, 0.4);
+    --shadow-md:               0 6px 18px rgba(0, 0, 0, 0.6);
+    --shadow-lg:               0 14px 36px rgba(0, 0, 0, 0.75);
+    --shadow-soft:             0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-aurora:           0 8px 25px rgba(236, 72, 153, 0.35);
     --shadow-glow-red:         0 0 25px rgba(239, 68, 68, 0.25);
-    --shadow-glow-green:       0 0 25px rgba(16, 185, 129, 0.25);
-    --shadow-glow-blue:        0 0 25px rgba(59, 130, 246, 0.30);
 }

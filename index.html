@@ -428,12 +428,12 @@
                     </div>
                 </div>
 
-                <!-- Filtres rapides par statut -->
-                <div class="elevator-filters-bar" style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1.25rem;">
-                    <button type="button" class="btn btn-sm btn-filter-elevator active" data-filter="all">Tous (76)</button>
-                    <button type="button" class="btn btn-sm btn-filter-elevator" data-filter="en_panne">🚨 En Panne</button>
-                    <button type="button" class="btn btn-sm btn-filter-elevator" data-filter="en_maintenance">🔧 Maintenance</button>
-                    <button type="button" class="btn btn-sm btn-filter-elevator" data-filter="en_service">✅ En Service</button>
+                <!-- Filtres rapides par statut (Segmented Pill Bar) -->
+                <div class="segmented-pill-bar" style="margin-bottom: 1.5rem;">
+                    <button type="button" class="segmented-pill-item active" data-filter="all">Tous (76)</button>
+                    <button type="button" class="segmented-pill-item" data-filter="en_panne">🚨 En Panne</button>
+                    <button type="button" class="segmented-pill-item" data-filter="en_maintenance">🔧 Maintenance</button>
+                    <button type="button" class="segmented-pill-item" data-filter="en_service">✅ En Service</button>
                 </div>
                 
                 <div id="elevators-grid" class="entrances-grid">
@@ -448,11 +448,11 @@
         <div id="tab-incidents" class="page-panel hidden" role="tabpanel" aria-labelledby="tab-incidents">
 
             <section class="action-section">
-                <button id="quick-incident-btn" class="btn btn-report btn-lg pulse-button">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon-left">
+                <button id="quick-incident-btn" class="btn-pill-primary pulse-button" style="max-width: 380px; margin: 0 auto;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
-                    Signaler un autre Incident
+                    Signaler une anomalie
                 </button>
             </section>
             
@@ -462,17 +462,15 @@
                     <p class="section-desc">Portes, propreté, chauffage, éclairage, nuisances...</p>
                 </div>
 
-                <!-- Filtres par catégorie d'incident -->
-                <div class="incident-filters-scroll" style="margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: 4px;">
-                    <div class="incident-filters" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        <button type="button" class="btn btn-sm incident-filter-btn active" data-category="all">Tous les incidents</button>
-                        <button type="button" class="btn btn-sm incident-filter-btn" data-category="proprete">🧹 Propreté</button>
-                        <button type="button" class="btn btn-sm incident-filter-btn" data-category="securite">🛡️ Sécurité</button>
-                        <button type="button" class="btn btn-sm incident-filter-btn" data-category="chauffage">🌡️ Chauffage / Eau</button>
-                        <button type="button" class="btn btn-sm incident-filter-btn" data-category="eclairage">💡 Éclairage</button>
-                        <button type="button" class="btn btn-sm incident-filter-btn" data-category="portes">🚪 Portes / Accès</button>
-                        <button type="button" class="btn btn-sm incident-filter-btn" data-category="autre">⚠️ Autre</button>
-                    </div>
+                <!-- Filtres par catégorie d'incident (Segmented Pill Bar) -->
+                <div class="segmented-pill-bar" style="margin-bottom: 1.5rem;">
+                    <button type="button" class="segmented-pill-item active" data-category="all">Tous</button>
+                    <button type="button" class="segmented-pill-item" data-category="proprete">🧹 Propreté</button>
+                    <button type="button" class="segmented-pill-item" data-category="securite">🛡️ Sécurité</button>
+                    <button type="button" class="segmented-pill-item" data-category="chauffage">🌡️ Chauffage</button>
+                    <button type="button" class="segmented-pill-item" data-category="eclairage">💡 Éclairage</button>
+                    <button type="button" class="segmented-pill-item" data-category="portes">🚪 Portes</button>
+                    <button type="button" class="segmented-pill-item" data-category="autre">⚠️ Autre</button>
                 </div>
 
                 <div id="incidents-feed" class="incidents-feed">
@@ -579,43 +577,76 @@
                     </div>
                 </header>
 
-                <div class="card glass" style="max-width: 600px; margin: 2rem auto; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
-                    <!-- Section Connexion / Inscription -->
-                    <div class="modal-tabs" style="display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; padding-bottom: 0.5rem;">
-                        <button class="modal-tab-btn active" id="account-tab-login" type="button" style="background: none; border: none; color: inherit; font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Connexion</button>
-                        <button class="modal-tab-btn" id="account-tab-register" type="button" style="background: none; border: none; color: var(--text-muted); font-size: 1.1rem; font-weight: 700; cursor: pointer; padding-bottom: 0.25rem;">Créer un compte</button>
+                <div class="glass-card" style="max-width: 480px; margin: 1.5rem auto; padding: 2.25rem 2rem; border-radius: var(--radius-card); box-shadow: var(--shadow-soft); text-align: center;">
+                    
+                    <!-- En-tête Welcome Back (Comme sur la maquette) -->
+                    <div style="margin-bottom: 2rem;">
+                        <div style="width: 56px; height: 56px; border-radius: var(--radius-pill); background: var(--gradient-aurora-soft); color: var(--accent-primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); margin-bottom: 0.4rem; letter-spacing: -0.02em;">
+                            Bienvenue,
+                        </h2>
+                        <p style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; margin: 0 auto; max-width: 320px;">
+                            Suivez les pannes, signalez les incidents et participez à la vie de votre résidence.
+                        </p>
+                    </div>
+
+                    <!-- Segmented Control Pill (Connexion / Inscription) -->
+                    <div class="segmented-pill-bar" style="margin: 0 auto 1.75rem; width: 100%; display: flex;">
+                        <button class="segmented-pill-item active" id="account-tab-login" type="button" style="flex: 1;">Connexion</button>
+                        <button class="segmented-pill-item" id="account-tab-register" type="button" style="flex: 1;">Créer un compte</button>
                     </div>
                     
-                    <div id="account-auth-error" class="alert-box alert-danger hidden" style="margin-bottom: 1rem;"></div>
-                    <div id="account-auth-success" class="alert-box alert-success hidden" style="margin-bottom: 1rem;"></div>
+                    <div id="account-auth-error" class="alert-box alert-danger hidden" style="margin-bottom: 1.25rem; border-radius: var(--radius-md);"></div>
+                    <div id="account-auth-success" class="alert-box alert-success hidden" style="margin-bottom: 1.25rem; border-radius: var(--radius-md);"></div>
 
                     <!-- Formulaire de Connexion -->
-                    <form id="account-login-form">
-                        <div class="form-group" style="margin-bottom: 1.25rem;">
-                            <label for="account-login-username">Votre Pseudo <span class="required">*</span></label>
-                            <input type="text" id="account-login-username" required placeholder="Ex: Marc50" autocomplete="username">
+                    <form id="account-login-form" style="text-align: left;">
+                        <div class="input-pill-group">
+                            <div class="input-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <input type="text" id="account-login-username" required placeholder="Votre pseudo (ex: Marc50)" autocomplete="username" aria-label="Votre pseudo">
                         </div>
-                        <div class="form-group" style="margin-bottom: 1.5rem;">
-                            <label for="account-login-password">Votre Mot de passe <span class="required">*</span></label>
-                            <input type="password" id="account-login-password" required placeholder="Saisir votre mot de passe" autocomplete="current-password">
+
+                        <div class="input-pill-group">
+                            <div class="input-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                            <input type="password" id="account-login-password" required placeholder="Votre mot de passe" autocomplete="current-password" aria-label="Votre mot de passe">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+
+                        <button type="submit" class="btn-pill-primary" style="margin-top: 0.5rem;">Se connecter</button>
                     </form>
 
                     <!-- Formulaire d'Inscription (Masqué par défaut) -->
-                    <form id="account-register-form" class="hidden">
-                        <div class="form-group" style="margin-bottom: 1.25rem;">
-                            <label for="account-register-username">Choisir un Pseudo <span class="required">*</span></label>
-                            <input type="text" id="account-register-username" required placeholder="Ex: Sarah48" maxlength="15" autocomplete="username">
-                            <span class="field-hint">3 à 15 caractères, lettres et chiffres uniquement.</span>
+                    <form id="account-register-form" class="hidden" style="text-align: left;">
+                        <div class="input-pill-group">
+                            <div class="input-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <input type="text" id="account-register-username" required placeholder="Choisir un pseudo (ex: Sarah48)" maxlength="15" autocomplete="username" aria-label="Choisir un pseudo">
                         </div>
-                        <div class="form-group" style="margin-bottom: 1.5rem;">
-                            <label for="account-register-password">Mot de passe de sécurité <span class="required">*</span></label>
-                            <input type="password" id="account-register-password" required placeholder="Créer votre mot de passe (min 8 car.)" autocomplete="new-password">
-                            <span class="field-hint">Minimum 8 caractères, au moins une lettre et un chiffre.</span>
+
+                        <div class="input-pill-group">
+                            <div class="input-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            </div>
+                            <input type="password" id="account-register-password" required placeholder="Mot de passe (min 8 car.)" autocomplete="new-password" aria-label="Mot de passe">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
+
+                        <button type="submit" class="btn-pill-primary" style="margin-top: 0.5rem;">Créer mon compte</button>
                     </form>
+
+                    <!-- Mention Privacy & Security by Design -->
+                    <div style="margin-top: 1.75rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem; font-size: 0.775rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-success);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span><strong>Privacy by Design</strong> • Données chiffrées & conformes RGPD</span>
+                    </div>
                 </div>
             </div>
 

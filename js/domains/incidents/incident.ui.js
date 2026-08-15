@@ -1,5 +1,5 @@
 /**
- * @fileoverview Contrôleur d'interface pour le registre des incidents des parties communes (Standards 2026).
+ * @fileoverview Contrôleur d'interface pour le registre des incidents des parties communes (Style Soft-Pill & Tracking 2026).
  */
 
 import { Incident } from './incident.service.js';
@@ -44,10 +44,12 @@ class IncidentUIController {
 
         if (filtered.length === 0) {
             feed.innerHTML = `
-                <div class="card glass center-text" style="padding: 3rem 1rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
-                    <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-success); margin-bottom: 0.75rem;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.25rem;">Aucun incident signalé</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">Les parties communes ne présentent aucune anomalie dans cette catégorie.</p>
+                <div class="glass-card center-text" style="padding: 3rem 1.5rem; text-align: center; border-radius: var(--radius-card);">
+                    <div style="width: 52px; height: 52px; border-radius: var(--radius-sm); background: var(--color-success-bg); color: var(--color-success); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <h3 style="font-size: 1.15rem; color: var(--text-primary); font-family: var(--font-heading); margin-bottom: 0.35rem;">Aucun incident signalé</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 400px; margin: 0 auto;">Les parties communes ne présentent aucune anomalie dans cette catégorie.</p>
                 </div>
             `;
             return;
@@ -61,41 +63,51 @@ class IncidentUIController {
             const statusText = inc.status === 'resolu' ? 'Résolu' :
                                inc.status === 'en_cours' ? 'En cours' : 'Nouveau';
 
-            const entranceLabel = inc.entrance === 'tous' ? 'Espaces Communs / Espaces Verts' : `Bâtiment ${sanitizeHTML(inc.entrance)}`;
+            const entranceLabel = inc.entrance === 'tous' ? 'Espaces Communs & Extérieurs' : `Bâtiment N° ${sanitizeHTML(inc.entrance)}`;
             const canUpdate = Auth.isAdmin() || (inc.created_by && inc.created_by === Auth.getUser()?.id);
 
+            const badgeColorType = inc.category === 'proprete' ? 'pink' :
+                                   inc.category === 'securite' ? 'coral' :
+                                   inc.category === 'chauffage' ? 'blue' : 'purple';
+
             html += `
-                <div class="card glass-card report-item" style="margin-bottom: 1rem; padding: 1.25rem; border-radius: var(--radius-lg);" data-incident-id="${sanitizeHTML(inc.id)}">
-                    <div class="report-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                        <div>
-                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em;">
-                                ${catInfo.icon} ${sanitizeHTML(catInfo.label)}
-                            </span>
-                            <h4 style="margin: 0.2rem 0 0; font-size: 1.05rem; color: var(--text-primary); font-weight: 700;">
-                                ${entranceLabel}
-                            </h4>
+                <div class="glass-card report-item" style="margin-bottom: 1.25rem; padding: 1.35rem; border-radius: var(--radius-card);" data-incident-id="${sanitizeHTML(inc.id)}">
+                    
+                    <!-- En-tête avec boîte d'icône pastel -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.85rem;">
+                        <div style="display: flex; align-items: center; gap: 0.85rem;">
+                            <div class="badge-icon-box ${badgeColorType}">
+                                <span style="font-size: 1.25rem;">${catInfo.icon}</span>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); line-height: 1.2;">
+                                    ${entranceLabel}
+                                </div>
+                                <div style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 2px;">
+                                    ${sanitizeHTML(catInfo.label)}
+                                </div>
+                            </div>
                         </div>
                         <span class="incident-badge ${statusClass}">${statusText}</span>
                     </div>
 
-                    <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin: 0.5rem 0 0.85rem;">
                         ${sanitizeHTML(inc.description)}
                     </p>
 
                     ${inc.photo_url ? `
-                        <div class="report-photo-thumb" style="background-image: url('${sanitizeHTML(inc.photo_url)}'); height: 180px; background-size: cover; background-position: center; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 0.75rem; cursor: pointer; position: relative;" data-action="zoom-lightbox" data-url="${sanitizeHTML(inc.photo_url)}" data-caption="Incident - ${entranceLabel}">
-                            <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); color: white; padding: 3px 8px; border-radius: var(--radius-pill); font-size: 0.7rem; display: flex; align-items: center; gap: 4px;">
+                        <div class="report-photo-thumb" style="background-image: url('${sanitizeHTML(inc.photo_url)}'); height: 180px; background-size: cover; background-position: center; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 0.85rem; cursor: pointer; position: relative;" data-action="zoom-lightbox" data-url="${sanitizeHTML(inc.photo_url)}" data-caption="Incident - ${entranceLabel}">
+                            <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); color: white; padding: 4px 10px; border-radius: var(--radius-pill); font-size: 0.725rem; display: flex; align-items: center; gap: 4px; backdrop-filter: blur(4px);">
                                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Agrandir
                             </div>
                         </div>
                     ` : ''}
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.65rem; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem; font-size: 0.775rem; color: var(--text-muted); flex-wrap: wrap; gap: 0.5rem;">
                         <span>Signalé par <strong>${sanitizeHTML(inc.user || 'Voisin')}</strong> • ${timeAgo(inc.created_at)}</span>
                         ${canUpdate ? `
-                            <button type="button" class="btn btn-secondary btn-sm" data-action="update-incident" data-id="${sanitizeHTML(inc.id)}" data-status="${sanitizeHTML(inc.status || 'nouveau')}" data-desc="${sanitizeHTML(inc.description || '')}">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                                Actualiser
+                            <button type="button" class="btn-pill-dark" data-action="update-incident" data-id="${sanitizeHTML(inc.id)}" data-status="${sanitizeHTML(inc.status || 'nouveau')}" data-desc="${sanitizeHTML(inc.description || '')}">
+                                ⚙️ Actualiser
                             </button>
                         ` : ''}
                     </div>
@@ -151,9 +163,9 @@ class IncidentUIController {
         if (openBtn2) openBtn2.addEventListener('click', () => this.openIncidentModal());
 
         // Filtres par catégorie
-        document.querySelectorAll('.incident-filter-btn').forEach(btn => {
+        document.querySelectorAll('.incident-filter-btn, .segmented-pill-item[data-category]').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.incident-filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.incident-filter-btn, .segmented-pill-item[data-category]').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.selectedCategoryFilter = btn.getAttribute('data-category') || 'all';
                 this.renderFeed();

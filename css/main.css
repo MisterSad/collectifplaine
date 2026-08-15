@@ -141,11 +141,11 @@ h1, h2, h3, h4, h5, h6 {
     top: 25%;
     bottom: 25%;
     width: 3px;
-    background: var(--accent-primary);
+    background: var(--gradient-aurora);
     border-radius: 0 3px 3px 0;
     transform: scaleY(0);
     transition: transform var(--transition-spring);
-    box-shadow: var(--accent-glow);
+    box-shadow: var(--shadow-aurora);
 }
 
 .menu-link:hover:not(.active) {

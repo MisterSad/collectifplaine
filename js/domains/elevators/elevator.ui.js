@@ -1,6 +1,6 @@
 /**
- * @fileoverview Contrôleur d'interface pour le domaine Ascenseurs & Pannes (Standards 2026).
- * Gère le rendu de la grille des 76 entrées, recherche instantanée, filtres dynamiques, et modales.
+ * @fileoverview Contrôleur d'interface pour le domaine Ascenseurs & Pannes (Style Soft-Pill & Tracking 2026).
+ * Gère le rendu des cartes de suivi 24px, la recherche instantanée, les segmented pills et les modales.
  */
 
 import { Elevator } from './elevator.service.js';
@@ -50,9 +50,9 @@ class ElevatorUIController {
         const list = elevatorsList || Elevator.getAll();
         if (list.length === 0) {
             grid.innerHTML = `
-                <div class="loading-placeholder glass" style="padding: 2.5rem; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
-                    <div style="display: inline-block; width: 24px; height: 24px; border: 2px solid var(--accent-primary); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 0.75rem;"></div>
-                    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">Chargement des 76 ascenseurs en temps réel...</div>
+                <div class="loading-placeholder glass-card" style="padding: 2.5rem; text-align: center; grid-column: 1 / -1;">
+                    <div style="display: inline-block; width: 28px; height: 28px; border: 3px solid var(--accent-primary); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 0.75rem;"></div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 600;">Chargement des 76 ascenseurs en direct...</div>
                 </div>
             `;
             return;
@@ -64,7 +64,7 @@ class ElevatorUIController {
             filtered = filtered.filter(e => e.status === this.statusFilter);
         }
 
-        // 2. Filtrage par recherche textuelle (numéro d'entrée)
+        // 2. Filtrage par recherche
         if (this.searchQuery.trim()) {
             const q = this.searchQuery.toLowerCase().trim();
             filtered = filtered.filter(e => 
@@ -76,16 +76,18 @@ class ElevatorUIController {
 
         if (filtered.length === 0) {
             grid.innerHTML = `
-                <div class="no-results-box glass" style="padding: 3rem 1.5rem; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border-color); grid-column: 1 / -1;">
-                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); margin-bottom: 0.75rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">Aucun ascenseur trouvé</div>
-                    <div style="font-size: 0.825rem; color: var(--text-muted);">Essayez de modifier votre terme de recherche ou réinitialisez les filtres.</div>
+                <div class="glass-card" style="padding: 3rem 1.5rem; text-align: center; grid-column: 1 / -1;">
+                    <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--badge-purple-bg); color: var(--badge-purple-color); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Aucun ascenseur trouvé</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Essayez de modifier votre recherche ou réinitialisez les filtres.</div>
                 </div>
             `;
             return;
         }
 
-        // Tri : Pannes en premier, puis maintenance, puis service croissant
+        // Tri : Pannes en premier, puis maintenance, puis numéro d'entrée croissant
         const sorted = [...filtered].sort((a, b) => {
             const priority = { en_panne: 0, en_maintenance: 1, en_service: 2 };
             const pDiff = (priority[a.status] ?? 2) - (priority[b.status] ?? 2);
@@ -105,50 +107,70 @@ class ElevatorUIController {
 
             const statusClass = isBroken ? 'badge-broken' : isMaint ? 'badge-maintenance' : 'badge-functional';
             const statusLabel = isBroken ? 'En Panne' : isMaint ? 'Maintenance' : 'En Service';
+            const iconBadgeType = isBroken ? 'coral' : isMaint ? 'pink' : 'purple';
 
             const lastChange = timeAgo(el.last_status_change);
             const reportCount = el.reports?.length || 0;
             const downtimeHours = el.downtimeHours || 0;
 
             html += `
-                <div class="elevator-card glass-card ${isBroken ? 'card-broken-highlight' : ''}" data-entrance="${sanitizeHTML(el.id)}">
-                    <div class="card-header">
-                        <div class="entrance-label">
-                            <span class="title">N° ${sanitizeHTML(el.id)}</span>
-                            <span class="road">${sanitizeHTML(conf.street)}</span>
-                        </div>
-                        <span class="status-badge ${statusClass}">${statusLabel}</span>
-                    </div>
-
-                    <div class="card-content">
-                        <div class="card-summary-msg" style="font-size: 0.825rem; font-weight: 500; color: var(--text-secondary); line-height: 1.4;">
-                            ${el.status === 'en_service' ? 'Fonctionnement nominal' : (sanitizeHTML(el.maintenance_notes) || 'Arrêt constaté par les résidents')}
-                        </div>
-                        
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.6rem; font-size: 0.725rem; color: var(--text-muted);">
-                            <span>Mis à jour ${lastChange}</span>
-                            ${downtimeHours > 0 ? `<span class="downtime-pill font-data" style="color: var(--color-warning); font-weight: 600;">⏱️ ${downtimeHours}h d'arrêt</span>` : ''}
-                        </div>
-
-                        ${reportCount > 0 ? `
-                            <div class="report-counter-tag" style="margin-top: 0.5rem;">
-                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                <span>${reportCount} signalement${reportCount > 1 ? 's' : ''}</span>
+                <div class="glass-card elevator-card ${isBroken ? 'card-broken-highlight' : ''}" data-entrance="${sanitizeHTML(el.id)}" style="padding: 1.35rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-card);">
+                    
+                    <!-- En-tête de carte de tracking (Style Colis / Tracking de la maquette) -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 0.85rem;">
+                                <div class="badge-icon-box ${iconBadgeType}">
+                                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="5" y="3" width="14" height="18" rx="2" ry="2"/>
+                                        <polyline points="9 10 12 7 15 10"/>
+                                        <polyline points="9 14 12 17 15 14"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); line-height: 1.2;">
+                                        Entrée N° ${sanitizeHTML(el.id)}
+                                    </div>
+                                    <div style="font-size: 0.775rem; color: var(--text-muted); font-weight: 500; margin-top: 2px;">
+                                        ${sanitizeHTML(conf.street)}
+                                    </div>
+                                </div>
                             </div>
-                        ` : ''}
+                            <span class="status-badge ${statusClass}">${statusLabel}</span>
+                        </div>
+
+                        <!-- Timeline d'étapes de suivi (Style Pickup/Dropoff de la maquette) -->
+                        <div class="tracking-timeline">
+                            <div class="tracking-step ${el.status === 'en_service' ? 'completed' : isBroken ? 'broken' : ''}">
+                                <span class="tracking-step-label">État Opérationnel</span>
+                                <span class="tracking-step-desc">
+                                    ${el.status === 'en_service' ? 'Cabine en fonctionnement nominal' : (sanitizeHTML(el.maintenance_notes) || 'Arrêt constaté par les locataires')}
+                                </span>
+                            </div>
+                            <div class="tracking-step">
+                                <span class="tracking-step-label">Dernière mise à jour</span>
+                                <span class="tracking-step-desc">Actualisé ${lastChange}</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="card-actions">
-                        <button type="button" class="btn btn-secondary btn-sm" data-action="details" data-id="${sanitizeHTML(el.id)}" aria-label="Historique entrée ${el.id}">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            Détails & Historique
-                        </button>
-                        ${el.status === 'en_service' ? `
-                            <button type="button" class="btn btn-report btn-sm" data-action="report" data-id="${sanitizeHTML(el.id)}" aria-label="Signaler panne entrée ${el.id}">
-                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                Signaler
+                    <!-- Ligne basse d'action et métrique (Style maquette avec bouton noir) -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">
+                            ${downtimeHours > 0 ? `<span class="downtime-pill font-data" style="color: var(--color-warning);">⏱️ ${downtimeHours}h d'arrêt</span>` : '<span style="color: var(--color-success); font-weight: 700;">✓ 100% Dispo</span>'}
+                            ${reportCount > 0 ? `<span style="margin-left: 0.4rem; color: var(--text-faint);">(${reportCount} signalement${reportCount > 1 ? 's' : ''})</span>` : ''}
+                        </div>
+
+                        <div style="display: flex; gap: 0.4rem;">
+                            <button type="button" class="btn-pill-dark" data-action="details" data-id="${sanitizeHTML(el.id)}" aria-label="Historique entrée ${el.id}">
+                                Détails
                             </button>
-                        ` : ''}
+                            ${el.status === 'en_service' ? `
+                                <button type="button" class="btn-pill-primary" style="padding: 0.55rem 1rem; font-size: 0.8rem; width: auto;" data-action="report" data-id="${sanitizeHTML(el.id)}" aria-label="Signaler panne entrée ${el.id}">
+                                    Signaler
+                                </button>
+                            ` : ''}
+                        </div>
                     </div>
                 </div>
             `;
@@ -263,7 +285,7 @@ class ElevatorUIController {
         let html = '';
         for (const rep of reports) {
             html += `
-                <div class="report-item glass" style="padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 0.75rem;">
+                <div class="report-item glass-card" style="padding: 1rem; border-radius: var(--radius-md); margin-bottom: 0.75rem;">
                     <div class="report-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                         <div class="report-meta">
                             <strong style="color: var(--text-primary); font-size: 0.85rem;">${sanitizeHTML(ELEVATOR_ISSUE_TYPES[rep.type] || rep.type)}</strong>
@@ -342,12 +364,12 @@ class ElevatorUIController {
                 datasets: [{
                     label: 'Disponibilité (%)',
                     data: dataValues,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.12)',
                     fill: true,
                     tension: 0.35,
                     pointRadius: 4,
-                    pointBackgroundColor: '#3b82f6'
+                    pointBackgroundColor: '#8b5cf6'
                 }]
             },
             options: {
@@ -436,10 +458,10 @@ class ElevatorUIController {
             });
         }
 
-        // Filtres par statut
-        document.querySelectorAll('.btn-filter-elevator').forEach(btn => {
+        // Filtres par statut (Segmented Pill)
+        document.querySelectorAll('.btn-filter-elevator, .segmented-pill-item[data-filter]').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.btn-filter-elevator').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.btn-filter-elevator, .segmented-pill-item[data-filter]').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.statusFilter = btn.getAttribute('data-filter') || 'all';
                 this.renderGrid();
