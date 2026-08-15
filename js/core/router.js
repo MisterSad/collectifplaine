@@ -9,12 +9,9 @@ import { Auth } from './auth.js';
 const ROUTE_MAP = {
     'onboarding': { panelId: 'tab-onboarding', title: 'Bienvenue', fullscreen: true },
     'ascenseurs': { panelId: 'tab-ascenseurs', altId: 'tab-elevators', title: 'Ascenseurs' },
-    'incidents': { panelId: 'tab-incidents', title: 'Incidents' },
-    'petitions': { panelId: 'tab-petitions', title: 'Pétitions' },
-    'guides': { panelId: 'tab-guides', title: 'Guides & Droit' },
-    'charges': { panelId: 'tab-charges', title: 'Audit des Charges' },
-    'stats': { panelId: 'tab-stats', title: 'Statistiques', adminOnly: true },
-    'compte': { panelId: 'tab-compte', title: 'Mon Compte' }
+    'incidents': { panelId: 'tab-incidents', title: 'Incidents Communs' },
+    'stats': { panelId: 'tab-stats', title: 'Tableau de Bord', adminOnly: true },
+    'compte': { panelId: 'tab-compte', title: 'Espace Résident' }
 };
 
 class RouterService {

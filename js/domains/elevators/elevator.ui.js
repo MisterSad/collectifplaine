@@ -165,7 +165,7 @@ class ElevatorUIController {
                     <!-- Ligne basse d'action et métrique -->
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 0.5rem;">
                         <div style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">
-                            ${downtimeHours > 0 ? `<span class="downtime-pill font-data" style="color: var(--color-warning);">⏱️ ${downtimeHours}h d'arrêt</span>` : '<span style="color: var(--color-success); font-weight: 700;">✓ 100% Dispo</span>'}
+                            ${downtimeHours > 0 ? `<span class="downtime-pill font-data" style="color: var(--color-warning); display: inline-flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${downtimeHours}h d'arrêt</span>` : '<span style="color: var(--color-success); font-weight: 700; display: inline-flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 100% Dispo</span>'}
                             ${reportCount > 0 ? `<span style="margin-left: 0.4rem; color: var(--text-faint);">(${reportCount} signalement${reportCount > 1 ? 's' : ''})</span>` : ''}
                         </div>
 

@@ -12,10 +12,6 @@ import { Elevator } from './domains/elevators/elevator.service.js';
 import { ElevatorUI } from './domains/elevators/elevator.ui.js';
 import { Incident } from './domains/incidents/incident.service.js';
 import { IncidentUI } from './domains/incidents/incident.ui.js';
-import { Petitions } from './domains/democracy/petitions.service.js';
-import { DemocracyUI } from './domains/democracy/democracy.ui.js';
-import { WikiUI } from './domains/wiki/wiki.ui.js';
-import { exportElevatorHistory } from './domains/legal/legal-generator.js';
 import { sanitizeHTML, isValidPassword } from './utils/security.js';
 import { playSuccessSound, playAlertSound } from './utils/audio-feedback.js';
 import { CONFIG } from './config/config.js';
@@ -26,7 +22,7 @@ class App {
     }
 
     async bootstrap() {
-        console.log(`🚀 Démarrage de ${CONFIG.appName} Mobile v${CONFIG.appVersion}...`);
+        console.log(`[App] Démarrage de ${CONFIG.appName} Mobile v${CONFIG.appVersion}...`);
 
         // 1. Initialiser le stockage IndexedDB et l'Authentification
         await Storage.init();
@@ -38,8 +34,6 @@ class App {
         // 3. Initialiser les contrôleurs de domaine
         ElevatorUI.init();
         IncidentUI.init();
-        DemocracyUI.init();
-        WikiUI.init();
 
         // 4. Initialiser le routeur SPA Mobile
         Router.init();
@@ -55,15 +49,14 @@ class App {
         this._setupOfflineSyncWorker();
         this._registerServiceWorker();
 
-        console.log("✅ Application Mobile Collectif Plaine prête.");
+        console.log("[App] Application Mobile Collectif Plaine prête.");
     }
 
     async _loadDomainData() {
         try {
             await Promise.allSettled([
                 Elevator.loadAll(),
-                Incident.loadAll(),
-                Petitions.loadAll()
+                Incident.loadAll()
             ]);
         } catch (e) {
             console.warn("[App] Erreur chargement initial:", e);
@@ -293,25 +286,6 @@ class App {
                 });
             });
         });
-
-        // Génération Mise en Demeure PDF
-        const noticeBtn = document.getElementById('btn-generate-formal-notice');
-        if (noticeBtn) {
-            noticeBtn.addEventListener('click', () => {
-                const profile = Auth.getProfile();
-                const defaultEntrance = profile?.entrance || '50';
-                const el = Elevator.getById(defaultEntrance);
-                if (el) {
-                    exportElevatorHistory(el);
-                    playSuccessSound();
-                    EventBus.emit(EVENTS.TOAST_NOTIFY, {
-                        title: "Document PDF généré",
-                        message: "Votre lettre de mise en demeure a été téléchargée.",
-                        type: "success"
-                    });
-                }
-            });
-        }
     }
 
     _setupTheme() {
@@ -342,12 +316,12 @@ class App {
 
     _setupOfflineSyncWorker() {
         window.addEventListener('online', () => {
-            console.log("🌐 Connexion rétablie. Synchronisation des données...");
+            console.log("[Network] Connexion rétablie. Synchronisation des données...");
             EventBus.emit(EVENTS.NETWORK_ONLINE);
         });
 
         window.addEventListener('offline', () => {
-            console.log("📴 Mode hors-ligne activé.");
+            console.log("[Network] Mode hors-ligne activé.");
             EventBus.emit(EVENTS.NETWORK_OFFLINE);
             EventBus.emit(EVENTS.TOAST_NOTIFY, {
                 title: "Mode Hors-ligne",
@@ -361,15 +335,20 @@ class App {
         if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log("📲 Service Worker actif:", reg.scope))
-                    .catch(err => console.warn("SW non actif en local:", err.message));
+                    .then(reg => console.log("[SW] Service Worker actif:", reg.scope))
+                    .catch(err => console.warn("[SW] SW non actif en local:", err.message));
             });
         }
     }
 }
 
 // Bootstrap au chargement du DOM
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        const app = new App();
+        app.bootstrap();
+    });
+} else {
     const app = new App();
     app.bootstrap();
-});
+}

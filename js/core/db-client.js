@@ -20,7 +20,7 @@ export function getSupabase() {
     // Le bundle Supabase est chargé localement via js/db-lib.js (window.supabase)
     const factory = window.supabase?.createClient;
     if (typeof factory !== 'function') {
-        console.error("❌ [DB Client] SDK Supabase non disponible dans l'environnement global (window.supabase).");
+        console.error("[DB Client] SDK Supabase non disponible dans l'environnement global (window.supabase).");
         throw new Error("SDK Supabase manquant");
     }
 

@@ -57,7 +57,10 @@ class IncidentUIController {
 
         let html = '';
         for (const inc of filtered) {
-            const catInfo = INCIDENT_CATEGORIES[inc.category] || { label: inc.category || "Autre", icon: "⚠️" };
+            const catInfo = INCIDENT_CATEGORIES[inc.category] || { 
+                label: inc.category || "Autre", 
+                iconSvg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>` 
+            };
             const statusClass = inc.status === 'resolu' ? 'incident-badge-repare' :
                                 inc.status === 'en_cours' ? 'incident-badge-encours' : 'incident-badge-nouveau';
             const statusText = inc.status === 'resolu' ? 'Résolu' :
@@ -77,7 +80,7 @@ class IncidentUIController {
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.85rem;">
                         <div style="display: flex; align-items: center; gap: 0.85rem;">
                             <div class="badge-icon-box ${badgeColorType}">
-                                <span style="font-size: 1.25rem;">${catInfo.icon}</span>
+                                ${catInfo.iconSvg}
                             </div>
                             <div>
                                 <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); line-height: 1.2;">
@@ -106,8 +109,8 @@ class IncidentUIController {
                     <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.75rem; font-size: 0.775rem; color: var(--text-muted); flex-wrap: wrap; gap: 0.5rem;">
                         <span>Signalé par <strong>${sanitizeHTML(inc.user || 'Voisin')}</strong> • ${timeAgo(inc.created_at)}</span>
                         ${canUpdate ? `
-                            <button type="button" class="btn-pill-dark" data-action="update-incident" data-id="${sanitizeHTML(inc.id)}" data-status="${sanitizeHTML(inc.status || 'nouveau')}" data-desc="${sanitizeHTML(inc.description || '')}">
-                                ⚙️ Actualiser
+                            <button type="button" class="btn-pill-dark" data-action="update-incident" data-id="${sanitizeHTML(inc.id)}" data-status="${sanitizeHTML(inc.status || 'nouveau')}" data-desc="${sanitizeHTML(inc.description || '')}" style="display: inline-flex; align-items: center; gap: 4px;">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Actualiser
                             </button>
                         ` : ''}
                     </div>
