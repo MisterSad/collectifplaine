@@ -31,22 +31,22 @@
 .segmented-pill-bar {
     display: flex;
     background: var(--bg-secondary);
-    padding: 6px;
+    padding: 5px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
     gap: 4px;
-    width: fit-content;
-    max-width: 100%;
-    overflow-x: auto;
+    width: 100%;
 }
 
 .segmented-pill-item {
-    padding: 0.55rem 1.35rem;
+    flex: 1;
+    justify-content: center;
+    padding: 0.55rem 0.75rem;
     border-radius: var(--radius-pill);
     font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.825rem;
+    font-weight: 700;
     color: var(--text-muted);
     border: none;
     background: transparent;
@@ -55,7 +55,7 @@
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.45rem;
 }
 
 .segmented-pill-item:hover:not(.active) {
@@ -443,57 +443,43 @@
     letter-spacing: 0.02em;
 }
 
-/* ── STATUS BADGES ── */
+/* ── STATUS BADGES (Binaire Fonctionne / En Panne) ── */
 .status-badge {
-    padding: 0.3rem 0.65rem;
+    padding: 0.35rem 0.75rem;
     border-radius: var(--radius-pill);
-    font-size: 0.68rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    font-weight: 800;
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
+    justify-content: center;
+    gap: 0.35rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
+    letter-spacing: 0.04em;
+    line-height: 1;
 }
 
 .status-badge::before {
-    content: '';
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    flex-shrink: 0;
+    display: none !important;
+    content: none !important;
 }
 
 .badge-functional {
-    background: var(--color-success-bg);
+    background: rgba(16, 185, 129, 0.15);
     color: var(--color-success);
-    border: 1px solid var(--color-success-border);
-}
-.badge-functional::before {
-    background: var(--color-success);
-    box-shadow: 0 0 4px var(--color-success);
-}
-
-.badge-maintenance {
-    background: var(--color-warning-bg);
-    color: var(--color-warning);
-    border: 1px solid var(--color-warning-border);
-}
-.badge-maintenance::before {
-    background: var(--color-warning);
-    box-shadow: 0 0 4px var(--color-warning);
+    border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .badge-broken {
-    background: var(--color-danger-bg);
-    color: var(--color-danger);
-    border: 1px solid var(--color-danger-border);
-    animation: pulseDanger 2s infinite;
+    background: rgba(239, 68, 68, 0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
 }
-.badge-broken::before {
-    background: var(--color-danger);
-    box-shadow: 0 0 6px var(--color-danger);
+
+.badge-maintenance {
+    background: rgba(245, 158, 11, 0.18);
+    color: var(--color-warning);
+    border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 /* ── FILTRES RAPIDES (Ascenseurs & Incidents) ── */

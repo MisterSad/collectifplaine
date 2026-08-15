@@ -80,7 +80,6 @@ class ElevatorService {
                     maintenance_notes: el.maintenance_notes || '',
                     reports: elReports,
                     history: elHistory,
-                    downtimeHours: metrics.downtimeHours,
                     downtimeDays: metrics.downtimeDays
                 };
 
@@ -151,10 +150,10 @@ class ElevatorService {
             totalDowntimeMs += Math.max(0, Date.now() - start);
         }
 
-        const downtimeHours = parseFloat((totalDowntimeMs / (1000 * 60 * 60)).toFixed(1));
-        const downtimeDays = parseFloat((totalDowntimeMs / (1000 * 60 * 60 * 24)).toFixed(1));
+        // Calcul du nombre de jours de panne
+        const downtimeDays = Math.max(0, Math.floor(totalDowntimeMs / (1000 * 60 * 60 * 24)));
 
-        return { totalDowntimeMs, downtimeHours, downtimeDays };
+        return { totalDowntimeMs, downtimeDays };
     }
 
     /**

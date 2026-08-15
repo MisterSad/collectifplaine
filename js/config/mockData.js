@@ -28,7 +28,6 @@ export function getInitialElevatorsMock() {
                     details: "État nominal initial"
                 }
             ],
-            downtimeHours: 0,
             downtimeDays: 0
         }));
 }

@@ -278,6 +278,93 @@ body.fullscreen-mode .mobile-app-content {
     transform: scale(0.99);
 }
 
+/* ── TUILES ASCENSEURS 2026 (Vision Binaire Fonctionne / En Panne) ── */
+@keyframes pulseDot {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.pulse-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-danger);
+    border-radius: 50%;
+    animation: pulseDot 1.8s infinite;
+}
+
+.card-broken-highlight {
+    border: 1px solid rgba(239, 68, 68, 0.45) !important;
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.08) 0%, rgba(15, 23, 42, 0.95) 100%) !important;
+    box-shadow: 0 8px 28px rgba(239, 68, 68, 0.15), 0 0 0 1px rgba(239, 68, 68, 0.2) !important;
+}
+
+.card-functional-highlight {
+    border: 1px solid rgba(16, 185, 129, 0.2) !important;
+    background: var(--bg-elevated) !important;
+}
+
+.tile-breakdown-banner {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: var(--radius-md);
+    padding: 0.9rem 1rem;
+    margin: 0.85rem 0;
+}
+
+.tile-breakdown-days {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-danger);
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-bottom: 0.35rem;
+}
+
+.tile-breakdown-days strong {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+}
+
+.tile-breakdown-reason {
+    font-size: 0.825rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.tile-breakdown-since {
+    font-size: 0.725rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+}
+
+.tile-nominal-banner {
+    background: rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    margin: 0.85rem 0;
+}
+
+.tile-nominal-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-success);
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.tile-nominal-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
 /* ── BARRE D'ACTION ERGONOMIQUE BAS D'ÉCRAN (Thumb Zone) ── */
 .mobile-bottom-action-bar {
     position: fixed;

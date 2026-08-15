@@ -95,11 +95,11 @@ class ElevatorUIController {
             return;
         }
 
-        // Tri : Pannes en premier, puis maintenance, puis numéro d'entrée croissant
+        // Tri : Pannes en premier, puis numéro d'entrée croissant
         const sorted = [...filtered].sort((a, b) => {
-            const priority = { en_panne: 0, en_maintenance: 1, en_service: 2 };
-            const pDiff = (priority[a.status] ?? 2) - (priority[b.status] ?? 2);
-            if (pDiff !== 0) return pDiff;
+            const isBrokenA = a.status === 'en_panne' ? 0 : 1;
+            const isBrokenB = b.status === 'en_panne' ? 0 : 1;
+            if (isBrokenA !== isBrokenB) return isBrokenA - isBrokenB;
             return parseInt(a.id, 10) - parseInt(b.id, 10);
         });
 
@@ -111,24 +111,18 @@ class ElevatorUIController {
             };
 
             const isBroken = el.status === 'en_panne';
-            const isMaint = el.status === 'en_maintenance';
-
-            const statusClass = isBroken ? 'badge-broken' : isMaint ? 'badge-maintenance' : 'badge-functional';
-            const statusLabel = isBroken ? 'En Panne' : isMaint ? 'Maintenance' : 'En Service';
-            const iconBadgeType = isBroken ? 'coral' : isMaint ? 'pink' : 'purple';
-
+            const daysOffline = el.downtimeDays || 0;
             const lastChange = timeAgo(el.last_status_change);
             const reportCount = el.reports?.length || 0;
-            const downtimeHours = el.downtimeHours || 0;
 
             html += `
-                <div class="glass-card elevator-card ${isBroken ? 'card-broken-highlight' : ''}" data-entrance="${sanitizeHTML(el.id)}" style="padding: 1.35rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-card);">
+                <div class="glass-card elevator-card ${isBroken ? 'card-broken-highlight' : 'card-functional-highlight'}" data-entrance="${sanitizeHTML(el.id)}" style="padding: 1.35rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-card);">
                     
-                    <!-- En-tête de carte de tracking -->
+                    <!-- En-tête de tuile : Entrée & Statut Binaire Ultra-Clair -->
                     <div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.85rem;">
                             <div style="display: flex; align-items: center; gap: 0.85rem;">
-                                <div class="badge-icon-box ${iconBadgeType}">
+                                <div class="badge-icon-box ${isBroken ? 'coral' : 'purple'}">
                                     <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                                         <rect x="5" y="3" width="14" height="18" rx="2" ry="2"/>
                                         <polyline points="9 10 12 7 15 10"/>
@@ -136,7 +130,7 @@ class ElevatorUIController {
                                     </svg>
                                 </div>
                                 <div>
-                                    <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); line-height: 1.2;">
+                                    <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); line-height: 1.2;">
                                         Entrée N° ${sanitizeHTML(el.id)}
                                     </div>
                                     <div style="font-size: 0.775rem; color: var(--text-muted); font-weight: 500; margin-top: 2px;">
@@ -144,36 +138,55 @@ class ElevatorUIController {
                                     </div>
                                 </div>
                             </div>
-                            <span class="status-badge ${statusClass}">${statusLabel}</span>
+                            ${isBroken ? `
+                                <span class="status-badge badge-broken" style="display: inline-flex; align-items: center; gap: 6px; padding: 0.35rem 0.75rem; font-weight: 800; font-size: 0.75rem;">
+                                    <span class="pulse-dot"></span> EN PANNE
+                                </span>
+                            ` : `
+                                <span class="status-badge badge-functional" style="display: inline-flex; align-items: center; gap: 5px; padding: 0.35rem 0.75rem; font-weight: 700; font-size: 0.75rem;">
+                                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg> FONCTIONNE
+                                </span>
+                            `}
                         </div>
 
-                        <!-- Timeline d'étapes de suivi -->
-                        <div class="tracking-timeline">
-                            <div class="tracking-step ${el.status === 'en_service' ? 'completed' : isBroken ? 'broken' : ''}">
-                                <span class="tracking-step-label">État Opérationnel</span>
-                                <span class="tracking-step-desc">
-                                    ${el.status === 'en_service' ? 'Cabine en fonctionnement nominal' : (sanitizeHTML(el.maintenance_notes) || 'Arrêt constaté par les locataires')}
-                                </span>
+                        <!-- Corps de la tuile : Synthèse & Jours de panne -->
+                        ${isBroken ? `
+                            <div class="tile-breakdown-banner">
+                                <div class="tile-breakdown-days">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <span><strong>${daysOffline} jour${daysOffline > 1 ? 's' : ''}</strong> de panne</span>
+                                </div>
+                                <div class="tile-breakdown-reason">
+                                    ${sanitizeHTML(el.maintenance_notes) || "Ascenseur immobilisé / Hors service"}
+                                </div>
+                                <div class="tile-breakdown-since">
+                                    Depuis le ${formatDateFR(el.last_status_change)} (${lastChange})
+                                </div>
                             </div>
-                            <div class="tracking-step">
-                                <span class="tracking-step-label">Dernière mise à jour</span>
-                                <span class="tracking-step-desc">Actualisé ${lastChange}</span>
+                        ` : `
+                            <div class="tile-nominal-banner">
+                                <div class="tile-nominal-status">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span>Ascenseur en service</span>
+                                </div>
+                                <div class="tile-nominal-sub">
+                                    0 jour de panne actuel • Contrôlé ${lastChange}
+                                </div>
                             </div>
-                        </div>
+                        `}
                     </div>
 
-                    <!-- Ligne basse d'action et métrique -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 0.5rem;">
-                        <div style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">
-                            ${downtimeHours > 0 ? `<span class="downtime-pill font-data" style="color: var(--color-warning); display: inline-flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${downtimeHours}h d'arrêt</span>` : '<span style="color: var(--color-success); font-weight: 700; display: inline-flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 100% Dispo</span>'}
-                            ${reportCount > 0 ? `<span style="margin-left: 0.4rem; color: var(--text-faint);">(${reportCount} signalement${reportCount > 1 ? 's' : ''})</span>` : ''}
+                    <!-- Pied de tuile : Signalements & Boutons d'Action -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid var(--border-color); flex-wrap: wrap; gap: 0.5rem;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+                            ${reportCount > 0 ? `<span style="color: var(--text-secondary);">${reportCount} signalement${reportCount > 1 ? 's' : ''}</span>` : '<span>Aucun problème signalé</span>'}
                         </div>
 
                         <div style="display: flex; gap: 0.4rem;">
-                            <button type="button" class="btn-pill-dark" data-action="details" data-id="${sanitizeHTML(el.id)}" aria-label="Historique entrée ${el.id}">
+                            <button type="button" class="btn-pill-dark" data-action="details" data-id="${sanitizeHTML(el.id)}" aria-label="Détails entrée ${el.id}">
                                 Détails
                             </button>
-                            ${el.status === 'en_service' ? `
+                            ${!isBroken ? `
                                 <button type="button" class="btn-pill-primary" style="padding: 0.55rem 1rem; font-size: 0.8rem; width: auto;" data-action="report" data-id="${sanitizeHTML(el.id)}" aria-label="Signaler panne entrée ${el.id}">
                                     Signaler
                                 </button>
@@ -190,26 +203,18 @@ class ElevatorUIController {
     renderStatsSummary(elevators) {
         const total = elevators.length;
         const broken = elevators.filter(e => e.status === 'en_panne').length;
-        const maintenance = elevators.filter(e => e.status === 'en_maintenance').length;
-        const functional = elevators.filter(e => e.status === 'en_service').length;
-        const totalDowntimeHours = elevators.reduce((acc, e) => acc + (e.downtimeHours || 0), 0);
-        const totalDowntimeDays = (totalDowntimeHours / 24).toFixed(1);
+        const functional = total - broken;
+        const totalDowntimeDays = elevators.reduce((acc, e) => acc + (e.downtimeDays || 0), 0);
 
         const statFunctional = document.getElementById('stat-functional');
-        const statMaintenance = document.getElementById('stat-maintenance');
         const statBroken = document.getElementById('stat-broken');
         const statDowntime = document.getElementById('stat-downtime');
 
         if (statFunctional) statFunctional.textContent = String(functional);
-        if (statMaintenance) statMaintenance.textContent = String(maintenance);
         if (statBroken) statBroken.textContent = String(broken);
-        if (statDowntime) statDowntime.textContent = `${totalDowntimeDays} j (${totalDowntimeHours}h)`;
-
-        // Landing KPIs
-        const landingElevators = document.getElementById('landing-elevators-count');
-        const landingElevatorsDesc = document.getElementById('landing-stat-elevators-desc');
-        if (landingElevators) landingElevators.textContent = `${functional}/${total}`;
-        if (landingElevatorsDesc) landingElevatorsDesc.textContent = broken > 0 ? `${broken} en panne actuellement` : "Tous opérationnels";
+        if (statDowntime) {
+            statDowntime.textContent = totalDowntimeDays === 0 ? "0 jour de panne" : `${totalDowntimeDays} jour${totalDowntimeDays > 1 ? 's' : ''} d'arrêt`;
+        }
     }
 
     openDetailsModal(entranceId) {
@@ -219,6 +224,9 @@ class ElevatorUIController {
         this.selectedEntranceId = entranceId;
         const modal = document.getElementById('details-modal');
         if (!modal) return;
+
+        const isBroken = el.status === 'en_panne';
+        const daysOffline = el.downtimeDays || 0;
 
         const entranceNumEl = document.getElementById('details-entrance-num');
         const statusTextEl = document.getElementById('details-status-text');
@@ -232,15 +240,11 @@ class ElevatorUIController {
         if (entranceNumEl) entranceNumEl.textContent = el.id;
 
         if (statusTextEl) {
-            statusTextEl.textContent = el.status === 'en_service' ? 'En Service (Opérationnel)' :
-                                       el.status === 'en_maintenance' ? 'En Maintenance (Technicien prévenu)' : 'En Panne (Hors Service)';
+            statusTextEl.textContent = isBroken ? 'En Panne (À l\'arrêt)' : 'En Service (Opérationnel)';
         }
 
         if (statusBadgeEl) {
-            statusBadgeEl.className = 'status-indicator-large ' + (
-                el.status === 'en_service' ? 'bg-functional' :
-                el.status === 'en_maintenance' ? 'bg-maintenance' : 'bg-broken'
-            );
+            statusBadgeEl.className = 'status-indicator-large ' + (isBroken ? 'bg-broken' : 'bg-functional');
         }
 
         if (lastChangeEl) {
@@ -248,7 +252,13 @@ class ElevatorUIController {
         }
 
         if (downtimeEl) {
-            downtimeEl.textContent = `Cumul d'arrêt récent : ${el.downtimeHours} heures (${el.downtimeDays} jours)`;
+            if (isBroken) {
+                downtimeEl.textContent = `${daysOffline} jour${daysOffline > 1 ? 's' : ''} de panne consécutifs`;
+                downtimeEl.className = 'downtime-pill font-data alert-danger';
+            } else {
+                downtimeEl.textContent = "0 jour de panne actuel (Opérationnel)";
+                downtimeEl.className = 'downtime-pill font-data alert-success';
+            }
         }
 
         if (maintenanceBox && maintenanceDetails) {
