@@ -204,7 +204,7 @@ class ElevatorService {
             type: type,
             description: description,
             photo_url: photoUrl,
-            user: authorName,
+            user_display: authorName,
             user_id: userId,
             created_at: new Date().toISOString()
         };
@@ -259,11 +259,11 @@ class ElevatorService {
 
             // Ajout d'une entrée d'historique
             const histItem = {
+                id: `h_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
                 entrance: idStr,
                 status: newStatus,
                 created_at: now,
-                user: Auth.getProfile()?.username || "Résident",
-                details: notes
+                notes: notes || (newStatus === 'en_service' ? "Remise en service" : "Signalement de panne")
             };
             await supabase.from('histories').insert([histItem]);
         } else {

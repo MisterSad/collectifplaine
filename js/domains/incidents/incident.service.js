@@ -103,7 +103,7 @@ class IncidentService {
             description: description,
             photo_url: photoUrl,
             status: "nouveau",
-            user: authorName,
+            user_display: authorName,
             created_by: user?.id || null,
             created_at: new Date().toISOString()
         };
