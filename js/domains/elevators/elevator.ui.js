@@ -1,6 +1,6 @@
 /**
- * @fileoverview Contrôleur d'interface pour le domaine Ascenseurs & Pannes.
- * Gère le rendu de la grille des 76 entrées, les modales de détails et de signalement.
+ * @fileoverview Contrôleur d'interface pour le domaine Ascenseurs & Pannes (Standards 2026).
+ * Gère le rendu de la grille des 76 entrées, recherche instantanée, filtres dynamiques, et modales.
  */
 
 import { Elevator } from './elevator.service.js';
@@ -16,16 +16,14 @@ class ElevatorUIController {
         this.selectedEntranceId = null;
         this.selectedPhotoBlob = null;
         this.historyChartInstance = null;
+        this.searchQuery = '';
+        this.statusFilter = 'all';
         this._initialized = false;
     }
 
-    /**
-     * Initialise les écouteurs du DOM et les souscriptions d'événements.
-     */
     init() {
         if (this._initialized) return;
 
-        // Souscriptions EventBus
         EventBus.on(EVENTS.ELEVATORS_UPDATED, (elevators) => {
             this.renderGrid(elevators);
             this.renderStatsSummary(elevators);
@@ -45,22 +43,50 @@ class ElevatorUIController {
         this._initialized = true;
     }
 
-    /**
-     * Rendu complet de la grille des ascenseurs dans #elevators-grid.
-     * @param {Array<Object>} [elevatorsList]
-     */
     renderGrid(elevatorsList) {
         const grid = document.getElementById('elevators-grid');
         if (!grid) return;
 
         const list = elevatorsList || Elevator.getAll();
         if (list.length === 0) {
-            grid.innerHTML = `<div class="loading-placeholder">Aucun ascenseur répertorié.</div>`;
+            grid.innerHTML = `
+                <div class="loading-placeholder glass" style="padding: 2.5rem; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <div style="display: inline-block; width: 24px; height: 24px; border: 2px solid var(--accent-primary); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 0.75rem;"></div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); font-weight: 500;">Chargement des 76 ascenseurs en temps réel...</div>
+                </div>
+            `;
             return;
         }
 
-        // Tri : les ascenseurs en panne et en maintenance en premier
-        const sorted = [...list].sort((a, b) => {
+        // 1. Filtrage par statut
+        let filtered = list;
+        if (this.statusFilter !== 'all') {
+            filtered = filtered.filter(e => e.status === this.statusFilter);
+        }
+
+        // 2. Filtrage par recherche textuelle (numéro d'entrée)
+        if (this.searchQuery.trim()) {
+            const q = this.searchQuery.toLowerCase().trim();
+            filtered = filtered.filter(e => 
+                String(e.id).includes(q) ||
+                `entrée ${e.id}`.toLowerCase().includes(q) ||
+                `n° ${e.id}`.toLowerCase().includes(q)
+            );
+        }
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `
+                <div class="no-results-box glass" style="padding: 3rem 1.5rem; text-align: center; border-radius: var(--radius-lg); border: 1px solid var(--border-color); grid-column: 1 / -1;">
+                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-muted); margin-bottom: 0.75rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">Aucun ascenseur trouvé</div>
+                    <div style="font-size: 0.825rem; color: var(--text-muted);">Essayez de modifier votre terme de recherche ou réinitialisez les filtres.</div>
+                </div>
+            `;
+            return;
+        }
+
+        // Tri : Pannes en premier, puis maintenance, puis service croissant
+        const sorted = [...filtered].sort((a, b) => {
             const priority = { en_panne: 0, en_maintenance: 1, en_service: 2 };
             const pDiff = (priority[a.status] ?? 2) - (priority[b.status] ?? 2);
             if (pDiff !== 0) return pDiff;
@@ -71,20 +97,21 @@ class ElevatorUIController {
         for (const el of sorted) {
             const conf = CONFIG.entrances.find(e => String(e.id) === String(el.id)) || {
                 label: `Entrée ${el.id}`,
-                street: "Division Leclerc"
+                street: "Avenue Division Leclerc"
             };
 
-            const statusClass = el.status === 'en_service' ? 'badge-functional' :
-                                el.status === 'en_maintenance' ? 'badge-maintenance' : 'badge-broken';
+            const isBroken = el.status === 'en_panne';
+            const isMaint = el.status === 'en_maintenance';
 
-            const statusLabel = el.status === 'en_service' ? 'En Service' :
-                                el.status === 'en_maintenance' ? 'En Maintenance' : 'En Panne';
+            const statusClass = isBroken ? 'badge-broken' : isMaint ? 'badge-maintenance' : 'badge-functional';
+            const statusLabel = isBroken ? 'En Panne' : isMaint ? 'Maintenance' : 'En Service';
 
             const lastChange = timeAgo(el.last_status_change);
             const reportCount = el.reports?.length || 0;
+            const downtimeHours = el.downtimeHours || 0;
 
             html += `
-                <div class="elevator-card" data-entrance="${sanitizeHTML(el.id)}">
+                <div class="elevator-card glass-card ${isBroken ? 'card-broken-highlight' : ''}" data-entrance="${sanitizeHTML(el.id)}">
                     <div class="card-header">
                         <div class="entrance-label">
                             <span class="title">N° ${sanitizeHTML(el.id)}</span>
@@ -92,20 +119,34 @@ class ElevatorUIController {
                         </div>
                         <span class="status-badge ${statusClass}">${statusLabel}</span>
                     </div>
+
                     <div class="card-content">
-                        <div class="card-summary-msg">
-                            ${el.status === 'en_service' ? 'Fonctionnement nominal' : (sanitizeHTML(el.maintenance_notes) || 'Arrêt signalé par les résidents')}
+                        <div class="card-summary-msg" style="font-size: 0.825rem; font-weight: 500; color: var(--text-secondary); line-height: 1.4;">
+                            ${el.status === 'en_service' ? 'Fonctionnement nominal' : (sanitizeHTML(el.maintenance_notes) || 'Arrêt constaté par les résidents')}
                         </div>
-                        <div class="time-since">Statut mis à jour ${lastChange}</div>
-                        ${reportCount > 0 ? `<div class="report-counter-tag">⚠️ ${reportCount} signalement${reportCount > 1 ? 's' : ''}</div>` : ''}
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.6rem; font-size: 0.725rem; color: var(--text-muted);">
+                            <span>Mis à jour ${lastChange}</span>
+                            ${downtimeHours > 0 ? `<span class="downtime-pill font-data" style="color: var(--color-warning); font-weight: 600;">⏱️ ${downtimeHours}h d'arrêt</span>` : ''}
+                        </div>
+
+                        ${reportCount > 0 ? `
+                            <div class="report-counter-tag" style="margin-top: 0.5rem;">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <span>${reportCount} signalement${reportCount > 1 ? 's' : ''}</span>
+                            </div>
+                        ` : ''}
                     </div>
+
                     <div class="card-actions">
-                        <button type="button" class="btn btn-secondary btn-sm btn-view-details" data-action="details" data-id="${sanitizeHTML(el.id)}">
-                            Historique
+                        <button type="button" class="btn btn-secondary btn-sm" data-action="details" data-id="${sanitizeHTML(el.id)}" aria-label="Historique entrée ${el.id}">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            Détails & Historique
                         </button>
                         ${el.status === 'en_service' ? `
-                            <button type="button" class="btn btn-report btn-sm btn-report-card" data-action="report" data-id="${sanitizeHTML(el.id)}">
-                                Signaler panne
+                            <button type="button" class="btn btn-report btn-sm" data-action="report" data-id="${sanitizeHTML(el.id)}" aria-label="Signaler panne entrée ${el.id}">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                Signaler
                             </button>
                         ` : ''}
                     </div>
@@ -116,31 +157,31 @@ class ElevatorUIController {
         grid.innerHTML = html;
     }
 
-    /**
-     * Met à jour les compteurs du résumé KPI en haut de page.
-     * @param {Array<Object>} elevators
-     */
     renderStatsSummary(elevators) {
         const total = elevators.length;
         const broken = elevators.filter(e => e.status === 'en_panne').length;
         const maintenance = elevators.filter(e => e.status === 'en_maintenance').length;
         const functional = elevators.filter(e => e.status === 'en_service').length;
+        const totalDowntimeHours = elevators.reduce((acc, e) => acc + (e.downtimeHours || 0), 0);
+        const totalDowntimeDays = (totalDowntimeHours / 24).toFixed(1);
 
-        const statTotal = document.getElementById('stat-total-elevators');
-        const statFunctional = document.getElementById('stat-functional-elevators');
-        const statMaintenance = document.getElementById('stat-maintenance-elevators');
-        const statBroken = document.getElementById('stat-broken-elevators');
+        const statFunctional = document.getElementById('stat-functional');
+        const statMaintenance = document.getElementById('stat-maintenance');
+        const statBroken = document.getElementById('stat-broken');
+        const statDowntime = document.getElementById('stat-downtime');
 
-        if (statTotal) statTotal.textContent = String(total);
         if (statFunctional) statFunctional.textContent = String(functional);
         if (statMaintenance) statMaintenance.textContent = String(maintenance);
         if (statBroken) statBroken.textContent = String(broken);
+        if (statDowntime) statDowntime.textContent = `${totalDowntimeDays} j (${totalDowntimeHours}h)`;
+
+        // Landing KPIs
+        const landingElevators = document.getElementById('landing-elevators-count');
+        const landingElevatorsDesc = document.getElementById('landing-stat-elevators-desc');
+        if (landingElevators) landingElevators.textContent = `${functional}/${total}`;
+        if (landingElevatorsDesc) landingElevatorsDesc.textContent = broken > 0 ? `${broken} en panne actuellement` : "Tous opérationnels";
     }
 
-    /**
-     * Ouvre la modale de détails pour un ascenseur donné.
-     * @param {string} entranceId
-     */
     openDetailsModal(entranceId) {
         const el = Elevator.getById(entranceId);
         if (!el) return;
@@ -173,7 +214,7 @@ class ElevatorUIController {
         }
 
         if (lastChangeEl) {
-            lastChangeEl.textContent = `Mis à jour ${timeAgo(el.last_status_change)}`;
+            lastChangeEl.textContent = `Dernière modification : ${timeAgo(el.last_status_change)}`;
         }
 
         if (downtimeEl) {
@@ -189,7 +230,7 @@ class ElevatorUIController {
             }
         }
 
-        // Afficher la section d'administration si rôle admin
+        // Section Admin
         if (adminSection) {
             if (Auth.isAdmin()) {
                 adminSection.classList.remove('hidden');
@@ -215,25 +256,25 @@ class ElevatorUIController {
         if (!container) return;
 
         if (reports.length === 0) {
-            container.innerHTML = `<div class="no-data-msg">Aucun signalement récent pour cet ascenseur.</div>`;
+            container.innerHTML = `<div class="no-data-msg" style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Aucun signalement récent enregistré pour cette entrée.</div>`;
             return;
         }
 
         let html = '';
         for (const rep of reports) {
             html += `
-                <div class="report-item">
-                    <div class="report-header">
+                <div class="report-item glass" style="padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 0.75rem;">
+                    <div class="report-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
                         <div class="report-meta">
-                            <strong>${sanitizeHTML(ELEVATOR_ISSUE_TYPES[rep.type] || rep.type)}</strong>
-                            <span class="report-author">Par ${sanitizeHTML(rep.user || 'Voisin')}</span>
+                            <strong style="color: var(--text-primary); font-size: 0.85rem;">${sanitizeHTML(ELEVATOR_ISSUE_TYPES[rep.type] || rep.type)}</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Signalé par ${sanitizeHTML(rep.user || 'Voisin')}</div>
                         </div>
-                        <span class="report-time">${timeAgo(rep.created_at)}</span>
+                        <span class="report-time" style="font-size: 0.725rem; color: var(--text-faint);">${timeAgo(rep.created_at)}</span>
                     </div>
                     <div class="report-content">
-                        <p>${sanitizeHTML(rep.description)}</p>
+                        <p style="font-size: 0.825rem; color: var(--text-secondary); margin: 0; line-height: 1.4;">${sanitizeHTML(rep.description)}</p>
                         ${rep.photo_url ? `
-                            <div class="report-photo-thumb" style="background-image: url('${sanitizeHTML(rep.photo_url)}'); cursor: pointer;" data-action="zoom-photo" data-url="${sanitizeHTML(rep.photo_url)}"></div>
+                            <div class="report-photo-thumb" style="background-image: url('${sanitizeHTML(rep.photo_url)}'); width: 80px; height: 80px; background-size: cover; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-top: 0.5rem; cursor: pointer;" data-action="zoom-photo" data-url="${sanitizeHTML(rep.photo_url)}"></div>
                         ` : ''}
                     </div>
                 </div>
@@ -248,7 +289,7 @@ class ElevatorUIController {
         if (!timeline) return;
 
         if (history.length === 0) {
-            timeline.innerHTML = `<div class="no-data-msg">Historique indisponible.</div>`;
+            timeline.innerHTML = `<div class="no-data-msg" style="padding: 1rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Historique d'entretien non disponible.</div>`;
             return;
         }
 
@@ -259,14 +300,14 @@ class ElevatorUIController {
             const markerClass = h.status === 'en_service' ? 'bg-functional' :
                                 h.status === 'en_maintenance' ? 'bg-maintenance' : 'bg-broken';
             const title = h.status === 'en_service' ? 'Remise en service' :
-                          h.status === 'en_maintenance' ? 'Intervention / Diagnostic' : 'Panne constatée';
+                          h.status === 'en_maintenance' ? 'Intervention technique' : 'Arrêt / Panne constatée';
 
             html += `
-                <div class="timeline-item">
-                    <div class="timeline-marker ${markerClass}"></div>
-                    <span class="timeline-date">${formatDateFR(h.created_at || h.timestamp)}</span>
-                    <div class="timeline-title">${title}</div>
-                    ${h.details ? `<div class="timeline-desc">${sanitizeHTML(h.details)}</div>` : ''}
+                <div class="timeline-item" style="position: relative; padding-left: 1.5rem; margin-bottom: 1rem; border-left: 2px solid var(--border-color);">
+                    <div class="timeline-marker ${markerClass}" style="position: absolute; left: -6px; top: 3px; width: 10px; height: 10px; border-radius: 50%;"></div>
+                    <span class="timeline-date font-data" style="font-size: 0.725rem; color: var(--text-muted);">${formatDateFR(h.created_at || h.timestamp)}</span>
+                    <div class="timeline-title" style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary);">${title}</div>
+                    ${h.details ? `<div class="timeline-desc" style="font-size: 0.775rem; color: var(--text-secondary); margin-top: 2px;">${sanitizeHTML(h.details)}</div>` : ''}
                 </div>
             `;
         }
@@ -283,7 +324,6 @@ class ElevatorUIController {
             this.historyChartInstance = null;
         }
 
-        // Agréger les états sur les 7 derniers jours
         const labels = [];
         const dataValues = [];
         for (let i = 6; i >= 0; i--) {
@@ -291,7 +331,7 @@ class ElevatorUIController {
             d.setDate(d.getDate() - i);
             const dayStr = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' });
             labels.push(dayStr);
-            dataValues.push(1); // 1 = 100% fonctionnel par défaut
+            dataValues.push(100);
         }
 
         const ctx = canvas.getContext('2d');
@@ -300,13 +340,14 @@ class ElevatorUIController {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Disponibilité',
+                    label: 'Disponibilité (%)',
                     data: dataValues,
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
                     fill: true,
-                    tension: 0.3,
-                    pointRadius: 4
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3b82f6'
                 }]
             },
             options: {
@@ -314,17 +355,13 @@ class ElevatorUIController {
                 maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { min: 0, max: 1.2, display: false },
-                    x: { grid: { display: false } }
+                    y: { min: 0, max: 110, display: false },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 } } }
                 }
             }
         });
     }
 
-    /**
-     * Ouvre la modale de signalement de panne.
-     * @param {string} [presetEntrance]
-     */
     openReportModal(presetEntrance = "") {
         const modal = document.getElementById('report-modal');
         if (!modal) return;
@@ -376,7 +413,6 @@ class ElevatorUIController {
 
         for (const sel of selects) {
             if (!sel) continue;
-            // Conserver les options statiques par défaut
             const firstOption = sel.firstElementChild;
             sel.innerHTML = '';
             if (firstOption) sel.appendChild(firstOption);
@@ -391,7 +427,26 @@ class ElevatorUIController {
     }
 
     _bindDOMEvents() {
-        // Délégation d'événements sur la grille des ascenseurs
+        // Recherche instantanée
+        const searchInput = document.getElementById('elevator-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.searchQuery = e.target.value;
+                this.renderGrid();
+            });
+        }
+
+        // Filtres par statut
+        document.querySelectorAll('.btn-filter-elevator').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.btn-filter-elevator').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.statusFilter = btn.getAttribute('data-filter') || 'all';
+                this.renderGrid();
+            });
+        });
+
+        // Délégation de clics
         document.addEventListener('click', (e) => {
             const target = e.target.closest('[data-action]');
             if (!target) return;
@@ -419,13 +474,13 @@ class ElevatorUIController {
             });
         });
 
-        // Bouton global de signalement
+        // Boutons de signalement
+        const quickReportBtn = document.getElementById('quick-report-btn');
         const globalReportBtn = document.getElementById('btn-open-report-modal');
-        if (globalReportBtn) {
-            globalReportBtn.addEventListener('click', () => this.openReportModal());
-        }
+        if (quickReportBtn) quickReportBtn.addEventListener('click', () => this.openReportModal());
+        if (globalReportBtn) globalReportBtn.addEventListener('click', () => this.openReportModal());
 
-        // Soumission du formulaire de signalement
+        // Soumission Formulaire Signalement
         const reportForm = document.getElementById('report-form');
         if (reportForm) {
             reportForm.addEventListener('submit', async (e) => {
@@ -434,7 +489,7 @@ class ElevatorUIController {
             });
         }
 
-        // Gestion de la photo de signalement avec compression
+        // Capture et compression photo
         const photoInput = document.getElementById('report-photo');
         if (photoInput) {
             photoInput.addEventListener('change', async (e) => {
@@ -450,7 +505,7 @@ class ElevatorUIController {
                         previewContainer.classList.remove('hidden');
                     }
                 } catch (err) {
-                    alert("Erreur lors du traitement de l'image : " + err.message);
+                    alert("Erreur lors de la compression de l'image : " + err.message);
                 }
             });
         }
@@ -460,7 +515,7 @@ class ElevatorUIController {
             removePhotoBtn.addEventListener('click', () => this._clearPhotoPreview());
         }
 
-        // Formulaire d'administration de statut
+        // Formulaire Statut Admin
         const adminStatusForm = document.getElementById('admin-status-form');
         if (adminStatusForm) {
             adminStatusForm.addEventListener('submit', async (e) => {

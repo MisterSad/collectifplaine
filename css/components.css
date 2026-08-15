@@ -242,6 +242,52 @@
     box-shadow: 0 0 6px var(--color-danger);
 }
 
+/* ── FILTRES RAPIDES (Ascenseurs & Incidents) ── */
+.btn-filter-elevator,
+.incident-filter-btn {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.775rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-filter-elevator:hover,
+.incident-filter-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background: var(--bg-hover);
+}
+
+.btn-filter-elevator.active,
+.incident-filter-btn.active {
+    background: var(--accent-primary-dim);
+    color: var(--accent-primary);
+    border-color: var(--accent-primary-border);
+    font-weight: 700;
+}
+
+.card-broken-highlight {
+    border-color: var(--color-danger-border) !important;
+    box-shadow: var(--shadow-glow-red) !important;
+}
+
+.downtime-pill {
+    background: var(--color-warning-bg);
+    border: 1px solid var(--color-warning-border);
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--radius-xs);
+    font-size: 0.7rem;
+}
+
 /* Badges d'incidents autonomes (préservent le texte sur mobile) */
 .incident-badge {
     padding: 0.25rem 0.65rem;

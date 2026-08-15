@@ -849,11 +849,11 @@ button, a, select, input, textarea, label {
    STREET GROUPING - MOBILE ADAPTIVE OVERRIDES
    ============================================================ */
 @media (max-width: 640px) {
-    /* Prevent the grid layout and make it vertical stack on mobile */
+    /* Grille propre 1 colonne sur mobile */
     .entrances-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 1.5rem !important;
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
     }
 
     /* Set the street card container to a clean single column grid layout on mobile */

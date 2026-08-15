@@ -1,145 +1,149 @@
 /* ============================================================
-   DESIGN SYSTEM — Collectif Plaine
-   Style : Minimalist Trust & Professional
-   Palette : Slate & Ocean Blue
+   DESIGN SYSTEM 2026 — Collectif Plaine
+   Thèmes : OLED Dark Mode & Clean High-Contrast Light Mode
+   Polices : Outfit (Titres) + Inter (Interface) + Fira Code (Métriques)
    ============================================================ */
 
-/* Google Fonts Import — Fira Code (data) + Inter (body) + Plus Jakarta Sans (headings) */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap');
 
 :root {
-    /* ── LIGHT THEME COLORS (Default) ── */
-    --bg-primary:      #f8fafc;         /* Slate 50 - clean off-white */
-    --bg-secondary:    #ffffff;         /* White - cards and sidebar */
-    --bg-tertiary:     #f1f5f9;         /* Slate 100 - list items, header */
-    --bg-elevated:     #ffffff;         /* White - elevated surfaces/modals */
-    --bg-hover:        #f8fafc;         /* Slate 50 - hover bg */
-
-    /* ── BORDERS ── */
-    --border-color:    #e2e8f0;         /* Slate 200 - thin borders */
-    --border-hover:    #cbd5e1;         /* Slate 300 - hover border */
-    --border-active:   #3b82f6;         /* Blue 500 - focus border */
-
-    /* ── TEXT ── */
-    --text-primary:    #0f172a;         /* Slate 900 - titles, headers */
-    --text-secondary:  #334155;         /* Slate 700 - body text */
-    --text-muted:      #64748b;         /* Slate 500 - labels, secondary */
-    --text-faint:      #94a3b8;         /* Slate 400 - placeholders, timestamps */
-
-    /* ── ACCENT — Trust Blue ── */
-    --accent-primary:          #2563eb; /* Blue 600 - primary actions */
-    --accent-primary-dim:      rgba(37, 99, 235, 0.08); /* Blue 50 equivalent */
-    --accent-primary-border:   rgba(37, 99, 235, 0.2);
-    --accent-glow:             none;    /* No glow for minimalist look */
-    --accent-glow-strong:      none;
-    --accent-gradient:         linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-
-    /* ── NAV ACCENT — Professional Slate/Navy ── */
-    --nav-accent:          #1e293b;     /* Slate 800 */
-    --nav-accent-dim:      rgba(15, 23, 42, 0.05);
-    --nav-accent-border:   rgba(15, 23, 42, 0.1);
-    --nav-glow:            none;
-    --nav-gradient:        linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-
-    /* ── SEMANTIC STATUS COLORS ── */
-    --color-success:           #059669; /* Emerald 600 */
-    --color-success-bg:        #ecfdf5; /* Emerald 50 */
-    --color-success-border:    #a7f3d0; /* Emerald 200 */
-    --color-success-glow:      none;
-
-    --color-warning:           #d97706; /* Amber 600 */
-    --color-warning-bg:        #fef3c7; /* Amber 50 */
-    --color-warning-border:    #fde68a; /* Amber 200 */
-    --color-warning-glow:      none;
-
-    --color-danger:            #e11d48; /* Rose/Red 600 */
-    --color-danger-bg:         #fff1f2; /* Rose 50 */
-    --color-danger-border:     #fecdd3; /* Rose 200 */
-    --color-danger-glow:       none;
-
-    --color-info:              #0284c7; /* Sky 600 */
-    --color-info-bg:           #f0f9ff; /* Sky 50 */
-    --color-info-border:       #bae6fd; /* Sky 200 */
-
-    /* ── GLASSMORPHISM (Clean white glass) ── */
-    --glass-bg:        rgba(255, 255, 255, 0.75);
-    --glass-bg-light:  rgba(255, 255, 255, 0.9);
-    --glass-blur:      20px;
-    --glass-border:    1px solid rgba(226, 232, 240, 0.8);
-    --glass-shadow:    0 8px 32px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-
-    /* ── COMMON GEOMETRY & TYPOGRAPHY ── */
+    /* ── TYPOGRAPHIE ── */
+    --font-heading:    'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-body:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-heading:    'Plus Jakarta Sans', var(--font-body);
-    --font-data:       'Inter', var(--font-body); /* Using Inter for tabular numbers */
+    --font-mono:       'Fira Code', ui-monospace, monospace;
 
+    /* ── GÉOMÉTRIE & RAYONS ── */
     --radius-xs:       6px;
     --radius-sm:       10px;
-    --radius-md:       12px;
-    --radius-lg:       16px;
-    --radius-xl:       24px;
-    --radius-pill:     999px;
+    --radius-md:       14px;
+    --radius-lg:       20px;
+    --radius-xl:       28px;
+    --radius-pill:     9999px;
 
-    /* ── TRANSITIONS ── */
-    --transition-fast:    0.15s ease;
+    /* ── TRANSITIONS MICRO-INTERACTIONS ── */
+    --transition-fast:    0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-normal:  0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-slow:    0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring:  0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-bounce:  0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    /* ── LAYOUT ── */
-    --sidebar-width:   260px;
-    --topbar-height:   64px;
-    --mobile-nav-h:    72px;
-    --max-width:       1200px;
+    /* ── DIMENSIONS LAYOUT ── */
+    --sidebar-width:      260px;
+    --topbar-height:      64px;
+    --mobile-nav-height:  72px;
+    --max-content-width:  1400px;
+    --touch-target-min:   48px;
+
+    /* ── THÈME CLAIR HAUTE LISIBILITÉ (Default) ── */
+    --bg-primary:         #f8fafc;
+    --bg-secondary:       #ffffff;
+    --bg-tertiary:        #f1f5f9;
+    --bg-elevated:        #ffffff;
+    --bg-hover:           #f1f5f9;
+
+    --border-color:       #e2e8f0;
+    --border-subtle:      #edf2f7;
+    --border-hover:       #cbd5e1;
+    --border-active:      #3b82f6;
+
+    --text-primary:       #0f172a;
+    --text-secondary:     #334155;
+    --text-muted:         #64748b;
+    --text-faint:         #94a3b8;
+
+    --accent-primary:          #2563eb;
+    --accent-primary-hover:    #1d4ed8;
+    --accent-primary-dim:      rgba(37, 99, 235, 0.08);
+    --accent-primary-border:   rgba(37, 99, 235, 0.2);
+    --accent-gradient:         linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+
+    --color-success:           #10b981;
+    --color-success-bg:        #ecfdf5;
+    --color-success-border:    #a7f3d0;
+    --color-success-text:      #065f46;
+
+    --color-warning:           #f59e0b;
+    --color-warning-bg:        #fffbeb;
+    --color-warning-border:    #fde68a;
+    --color-warning-text:      #92400e;
+
+    --color-danger:            #ef4444;
+    --color-danger-bg:         #fef2f2;
+    --color-danger-border:     #fecaca;
+    --color-danger-text:       #991b1b;
+
+    --color-info:              #0ea5e9;
+    --color-info-bg:           #f0f9ff;
+    --color-info-border:       #bae6fd;
+    --color-info-text:         #075985;
+
+    --glass-bg:                rgba(255, 255, 255, 0.82);
+    --glass-bg-light:          rgba(255, 255, 255, 0.94);
+    --glass-blur:              16px;
+    --glass-border:            1px solid rgba(226, 232, 240, 0.85);
+
+    --shadow-sm:               0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md:               0 4px 12px rgba(15, 23, 42, 0.06);
+    --shadow-lg:               0 10px 25px rgba(15, 23, 42, 0.08);
+    --shadow-xl:               0 20px 35px rgba(15, 23, 42, 0.12);
+    --shadow-glow-red:         0 0 20px rgba(239, 68, 68, 0.18);
+    --shadow-glow-green:       0 0 20px rgba(16, 185, 129, 0.18);
+    --shadow-glow-blue:        0 0 20px rgba(37, 99, 235, 0.20);
 }
 
-/* ── DARK THEME COLORS ── */
+/* ── THÈME SOMBRE OLED HAUTE PERFORMANCE ── */
 [data-theme="dark"] {
-    --bg-primary:      #0b0f19;         /* Deep Slate - premium dark */
-    --bg-secondary:    #111827;         /* Gray 900 - cards & sidebar */
-    --bg-tertiary:     #1f2937;         /* Gray 800 - nested items */
-    --bg-elevated:     #1f2937;         /* Gray 800 - modals */
-    --bg-hover:        rgba(255, 255, 255, 0.03);
+    --bg-primary:         #020617; /* Slate 950 ultra profond */
+    --bg-secondary:       #0b1329; /* Carte bleu nuit profonde */
+    --bg-tertiary:        #111c3a; /* Surface imbriquée */
+    --bg-elevated:        #152247; /* Modales et menus */
+    --bg-hover:           rgba(255, 255, 255, 0.05);
 
-    --border-color:    rgba(255, 255, 255, 0.08);
-    --border-hover:    rgba(255, 255, 255, 0.16);
-    --border-active:   #3b82f6;
+    --border-color:       rgba(255, 255, 255, 0.08);
+    --border-subtle:      rgba(255, 255, 255, 0.04);
+    --border-hover:       rgba(255, 255, 255, 0.18);
+    --border-active:      #3b82f6;
 
-    --text-primary:    #f9fafb;         /* Gray 50 */
-    --text-secondary:  #e5e7eb;         /* Gray 200 */
-    --text-muted:      #9ca3af;         /* Gray 400 */
-    --text-faint:      #6b7280;         /* Gray 500 */
+    --text-primary:       #f8fafc;
+    --text-secondary:     #cbd5e1;
+    --text-muted:         #94a3b8;
+    --text-faint:         #64748b;
 
-    --accent-primary:          #3b82f6; /* Blue 500 */
+    --accent-primary:          #3b82f6;
+    --accent-primary-hover:    #60a5fa;
     --accent-primary-dim:      rgba(59, 130, 246, 0.15);
-    --accent-primary-border:   rgba(59, 130, 246, 0.3);
-    --accent-gradient:         linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    --accent-primary-border:   rgba(59, 130, 246, 0.35);
+    --accent-gradient:         linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
 
-    --nav-accent:          #3b82f6;
-    --nav-accent-dim:      rgba(59, 130, 246, 0.15);
-    --nav-accent-border:   rgba(59, 130, 246, 0.3);
+    --color-success:           #10b981;
+    --color-success-bg:        rgba(16, 185, 129, 0.12);
+    --color-success-border:    rgba(16, 185, 129, 0.30);
+    --color-success-text:      #34d399;
 
-    /* Semantic Status colors in Dark mode - slightly higher brightness */
-    --color-success:           #10b981; /* Emerald 500 */
-    --color-success-bg:        rgba(16, 185, 129, 0.1);
-    --color-success-border:    rgba(16, 185, 129, 0.25);
+    --color-warning:           #f59e0b;
+    --color-warning-bg:        rgba(245, 158, 11, 0.12);
+    --color-warning-border:    rgba(245, 158, 11, 0.30);
+    --color-warning-text:      #fbbf24;
 
-    --color-warning:           #f59e0b; /* Amber 500 */
-    --color-warning-bg:        rgba(245, 158, 11, 0.1);
-    --color-warning-border:    rgba(245, 158, 11, 0.25);
+    --color-danger:            #ef4444;
+    --color-danger-bg:         rgba(239, 68, 68, 0.14);
+    --color-danger-border:     rgba(239, 68, 68, 0.35);
+    --color-danger-text:       #f87171;
 
-    --color-danger:            #ef4444; /* Red 500 */
-    --color-danger-bg:         rgba(239, 68, 68, 0.1);
-    --color-danger-border:     rgba(239, 68, 68, 0.25);
+    --color-info:              #38bdf8;
+    --color-info-bg:           rgba(56, 189, 248, 0.12);
+    --color-info-border:       rgba(56, 189, 248, 0.30);
+    --color-info-text:         #7dd3fc;
 
-    --color-info:              #38bdf8; /* Sky 400 */
-    --color-info-bg:           rgba(56, 189, 248, 0.1);
-    --color-info-border:       rgba(56, 189, 248, 0.25);
+    --glass-bg:                rgba(11, 19, 41, 0.80);
+    --glass-bg-light:          rgba(17, 28, 58, 0.92);
+    --glass-blur:              20px;
+    --glass-border:            1px solid rgba(255, 255, 255, 0.08);
 
-    /* Glassmorphism Dark */
-    --glass-bg:        rgba(17, 24, 39, 0.75);
-    --glass-bg-light:  rgba(31, 41, 55, 0.9);
-    --glass-blur:      20px;
-    --glass-border:    1px solid rgba(255, 255, 255, 0.08);
-    --glass-shadow:    0 8px 32px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    --shadow-sm:               0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md:               0 6px 16px rgba(0, 0, 0, 0.6);
+    --shadow-lg:               0 12px 30px rgba(0, 0, 0, 0.75);
+    --shadow-xl:               0 24px 45px rgba(0, 0, 0, 0.9);
+    --shadow-glow-red:         0 0 25px rgba(239, 68, 68, 0.25);
+    --shadow-glow-green:       0 0 25px rgba(16, 185, 129, 0.25);
+    --shadow-glow-blue:        0 0 25px rgba(59, 130, 246, 0.30);
 }

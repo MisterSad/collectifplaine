@@ -1,5 +1,5 @@
 /**
- * @fileoverview Contrôleur d'interface pour le registre des incidents des parties communes.
+ * @fileoverview Contrôleur d'interface pour le registre des incidents des parties communes (Standards 2026).
  */
 
 import { Incident } from './incident.service.js';
@@ -44,8 +44,8 @@ class IncidentUIController {
 
         if (filtered.length === 0) {
             feed.innerHTML = `
-                <div class="card glass center-text" style="padding: 2.5rem 1rem;">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎉</div>
+                <div class="card glass center-text" style="padding: 3rem 1rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-success); margin-bottom: 0.75rem;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                     <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.25rem;">Aucun incident signalé</h3>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">Les parties communes ne présentent aucune anomalie dans cette catégorie.</p>
                 </div>
@@ -62,36 +62,40 @@ class IncidentUIController {
                                inc.status === 'en_cours' ? 'En cours' : 'Nouveau';
 
             const entranceLabel = inc.entrance === 'tous' ? 'Espaces Communs / Espaces Verts' : `Bâtiment ${sanitizeHTML(inc.entrance)}`;
-
             const canUpdate = Auth.isAdmin() || (inc.created_by && inc.created_by === Auth.getUser()?.id);
 
             html += `
-                <div class="card glass report-item" style="margin-bottom: 1rem; padding: 1.25rem;" data-incident-id="${sanitizeHTML(inc.id)}">
-                    <div class="report-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <div class="card glass-card report-item" style="margin-bottom: 1rem; padding: 1.25rem; border-radius: var(--radius-lg);" data-incident-id="${sanitizeHTML(inc.id)}">
+                    <div class="report-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                         <div>
-                            <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-primary); display: flex; align-items: center; gap: 0.35rem;">
+                            <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 0.05em;">
                                 ${catInfo.icon} ${sanitizeHTML(catInfo.label)}
                             </span>
-                            <h4 style="margin: 0.2rem 0 0; font-size: 1rem; color: var(--text-primary); font-weight: 700;">
+                            <h4 style="margin: 0.2rem 0 0; font-size: 1.05rem; color: var(--text-primary); font-weight: 700;">
                                 ${entranceLabel}
                             </h4>
                         </div>
                         <span class="incident-badge ${statusClass}">${statusText}</span>
                     </div>
 
-                    <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">
                         ${sanitizeHTML(inc.description)}
                     </p>
 
                     ${inc.photo_url ? `
-                        <div class="report-photo-thumb" style="background-image: url('${sanitizeHTML(inc.photo_url)}'); height: 160px; border-radius: var(--radius-md); margin-bottom: 0.75rem; cursor: pointer;" data-action="zoom-lightbox" data-url="${sanitizeHTML(inc.photo_url)}" data-caption="Incident - ${entranceLabel}"></div>
+                        <div class="report-photo-thumb" style="background-image: url('${sanitizeHTML(inc.photo_url)}'); height: 180px; background-size: cover; background-position: center; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 0.75rem; cursor: pointer; position: relative;" data-action="zoom-lightbox" data-url="${sanitizeHTML(inc.photo_url)}" data-caption="Incident - ${entranceLabel}">
+                            <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.65); color: white; padding: 3px 8px; border-radius: var(--radius-pill); font-size: 0.7rem; display: flex; align-items: center; gap: 4px;">
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Agrandir
+                            </div>
+                        </div>
                     ` : ''}
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.65rem; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; gap: 0.5rem;">
                         <span>Signalé par <strong>${sanitizeHTML(inc.user || 'Voisin')}</strong> • ${timeAgo(inc.created_at)}</span>
                         ${canUpdate ? `
                             <button type="button" class="btn btn-secondary btn-sm" data-action="update-incident" data-id="${sanitizeHTML(inc.id)}" data-status="${sanitizeHTML(inc.status || 'nouveau')}" data-desc="${sanitizeHTML(inc.description || '')}">
-                                ⚙️ Actualiser
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                                Actualiser
                             </button>
                         ` : ''}
                     </div>
@@ -140,11 +144,11 @@ class IncidentUIController {
     }
 
     _bindEvents() {
-        // Bouton de création d'incident
-        const openBtn = document.getElementById('btn-open-incident-modal');
-        if (openBtn) {
-            openBtn.addEventListener('click', () => this.openIncidentModal());
-        }
+        // Boutons de création d'incident
+        const openBtn1 = document.getElementById('btn-open-incident-modal');
+        const openBtn2 = document.getElementById('quick-incident-btn');
+        if (openBtn1) openBtn1.addEventListener('click', () => this.openIncidentModal());
+        if (openBtn2) openBtn2.addEventListener('click', () => this.openIncidentModal());
 
         // Filtres par catégorie
         document.querySelectorAll('.incident-filter-btn').forEach(btn => {
@@ -215,7 +219,7 @@ class IncidentUIController {
                     await Incident.updateStatus(id, status, desc);
                     playSuccessSound();
                     EventBus.emit(EVENTS.TOAST_NOTIFY, {
-                        title: "Incident mis à jour",
+                        title: "Incident actualisé",
                         message: "L'état de l'incident a été enregistré.",
                         type: "success"
                     });
@@ -226,7 +230,7 @@ class IncidentUIController {
             });
         }
 
-        // Gestion globale des clics sur les boutons d'incidents
+        // Délégation clics
         document.addEventListener('click', (e) => {
             const target = e.target.closest('[data-action]');
             if (!target) return;
